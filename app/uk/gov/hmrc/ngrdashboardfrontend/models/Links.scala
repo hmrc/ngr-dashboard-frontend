@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,27 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.ngrdashboardfrontend.views.html.components.CardComponent
-@import uk.gov.hmrc.ngrdashboardfrontend.models.Card
+package uk.gov.hmrc.ngrdashboardfrontend.models
 
-@this(layout: Layout)
-
-@(cards: Seq[Card])(implicit request: RequestHeader, messages: Messages)
-
-@layout(pageTitle = Some("ngr-dashboard-frontend")) {
-    <h1 class="govuk-heading-xl">ngr-dashboard-frontend</h1>
-    <p class="govuk-body">@{messages("service.text")}</p>
-
-    <div class="flex-container govuk-grid-row">
-     @cards.map{ card =>
-     @CardComponent(card)
-     }
-    </div>
-
-}
-
-@{
-    //$COVERAGE-OFF$
-}
+final case class Links(classes: String, links: Seq[Link])
