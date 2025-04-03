@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
+import play.api.i18n.I18nSupport
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.HelloWorldPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.ngrdashboardfrontend.models.{Card, DashboardCard, Link}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
@@ -26,10 +28,31 @@ import scala.concurrent.Future
 class HelloWorldController @Inject()(
   mcc: MessagesControllerComponents,
   helloWorldPage: HelloWorldPage)
-    extends FrontendController(mcc) {
+    extends FrontendController(mcc) with I18nSupport {
 
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(helloWorldPage()))
+  val dashboardCard: DashboardCard = DashboardCard(
+    titleKey = "home.yourAccountCard.title",
+    captionKey =  Some("home.yourAccountCard.caption"),
+    captionKey2 =  Some("home.yourAccountCard.caption2"),
+    captionKey3 =  Some("home.yourAccountCard.caption3"),
+    voaReference = Some("VOA176292C"),
+    tag = None,
+    links = Some(
+      Seq(
+        Link(
+          href       = Call(method = "GET",url = "some-href"),
+          linkId     = "LinkId-Card",
+          messageKey = "home.yourAccountCard.link1",
+        )
+      )
+    )
+  )
+
+  def helloWorld(): Action[AnyContent] = {
+    Action.async { implicit request =>
+      val singleCard: Card = DashboardCard.card(dashboardCard)
+      Future.successful(Ok(helloWorldPage(cards = Seq(singleCard, singleCard, singleCard, singleCard, singleCard, singleCard))))
+    }
   }
 
 }

@@ -30,3 +30,8 @@ lazy val it = project
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
   .settings(libraryDependencies ++= AppDependencies.it)
+
+onLoadMessage := {
+    val port = PlayKeys.playDefaultPort.value
+    s"🚀 Service is running! Click here: http://localhost:$port/ngr-dashboard-frontend/"
+}
