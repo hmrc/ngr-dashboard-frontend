@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(layout: Layout)
+package uk.gov.hmrc.ngrdashboardfrontend.config.features
 
-@()(implicit request: RequestHeader, messages: Messages)
+import play.api.Configuration
 
-@layout(pageTitle = Some("ngr-dashboard-frontend")) {
-    <h1 class="govuk-heading-xl">ngr-dashboard-frontend</h1>
-    <p class="govuk-body">@{messages("service.text")}</p>
-}
+class Feature(val key: String)(implicit config: Configuration) {
 
-@{
-    //$COVERAGE-OFF$
+  def apply(value: Boolean): Unit = sys.props += key -> value.toString
+
+  def apply(): Boolean = sys.props.get(key).fold(config.getOptional[Boolean](key).getOrElse(false))(_.toBoolean)
 }

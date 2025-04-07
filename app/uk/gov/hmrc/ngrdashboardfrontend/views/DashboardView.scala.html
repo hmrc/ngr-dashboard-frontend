@@ -15,15 +15,14 @@
  *@
 
 @import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
 
 @this(layout: Layout)
 
-@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@()(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(pageTitle)) {
-    <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>
-    <p class="govuk-body">@{Text(message).asHtml}</p>
+@layout(pageTitle = Some("ngr-dashboard-frontend")) {
+    <h1 class="govuk-heading-xl">ngr-dashboard-frontend</h1>
+    <p class="govuk-body">@{messages("service.text")}</p>
 }
 
 @{

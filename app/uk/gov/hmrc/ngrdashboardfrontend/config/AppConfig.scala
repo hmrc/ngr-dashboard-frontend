@@ -18,9 +18,24 @@ package uk.gov.hmrc.ngrdashboardfrontend.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import uk.gov.hmrc.ngrdashboardfrontend.config.features.Features
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+trait AppConfig {
+  val features: Features
+  def getString(key: String): String
+  val centralAuthServerUrl: String
+}
 
 @Singleton
-class AppConfig @Inject()(config: Configuration) {
-  val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) extends  AppConfig {
+  override val features = new Features()(config)
+  override val centralAuthServerUrl: String = sc.baseUrl("centralised-authorisation-server")
 
+  def getString(key: String): String =
+    config.getOptional[String](key)
+      .getOrElse(throwConfigNotFoundError(key))
+
+  private def throwConfigNotFoundError(key: String): String =
+    throw new RuntimeException(s"Could not find config key '$key'")
 }

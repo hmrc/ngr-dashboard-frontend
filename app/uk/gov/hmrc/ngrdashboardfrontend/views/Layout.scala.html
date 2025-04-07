@@ -15,23 +15,50 @@
  *@
 
 @import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrdashboardfrontend.views.html.FullWidthLayout
+@import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
 
+
 @this(
   appConfig: AppConfig,
+  hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
+  standardBetaBanner: StandardBetaBanner,
+  fullWidthLayout: FullWidthLayout,
   hmrcStandardPage: HmrcStandardPage
-)
+)(implicit cfConfig: ContactFrontendConfig)
 
-@(pageTitle: Option[String] = None)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+@(pageTitle: Option[String] = None,
+showBackLink: Boolean = false,
+fullWidth: Boolean = false
+)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
+
+
+@languageSelector = {
+    @hmrcLanguageSelectHelper()
+}
+
+@content = {
+    @if(appConfig.features.welshLanguageSupportEnabled()) {
+        @languageSelector
+    }
+    @contentBlock
+}
 
 @hmrcStandardPage(
-  HmrcStandardPageParams(
-    pageTitle = pageTitle,
-    isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled
-  )
-)(contentBlock)
-
-@{
-    //$COVERAGE-OFF$
-}
+    HmrcStandardPageParams(
+        pageTitle = pageTitle.map(title => messages("service.base.title", title)),
+        templateOverrides = TemplateOverrides(
+            mainContentLayout = if(fullWidth) Some(fullWidthLayout(_)) else None
+        ),
+        backLink = if (showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None,
+        banners = Banners(
+            phaseBanner = Some(standardBetaBanner()),
+        ),
+    )
+)(content)

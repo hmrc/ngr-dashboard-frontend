@@ -16,20 +16,27 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
-import uk.gov.hmrc.ngrdashboardfrontend.views.html.HelloWorldPage
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
+import uk.gov.hmrc.ngrdashboardfrontend.controllers.auth.AuthJourney
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HelloWorldController @Inject()(
-  mcc: MessagesControllerComponents,
-  helloWorldPage: HelloWorldPage)
-    extends FrontendController(mcc) {
+class DashboardController @Inject()(
+  dashboardView: DashboardView,
+  authenticate: AuthJourney,
+  mcc: MessagesControllerComponents
+  )(implicit appConfig: AppConfig, ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport {
 
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(helloWorldPage()))
-  }
-
+  def show(): Action[AnyContent] =
+    authenticate.authWithUserDetails.async { implicit request =>
+      Future.successful(Ok(dashboardView()))
+    }
 }
