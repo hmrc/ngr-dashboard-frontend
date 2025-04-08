@@ -25,8 +25,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AuthRetrievalsImpl @Inject()(
                                     val authConnector: AuthConnector,
                                     mcc: MessagesControllerComponents
@@ -60,7 +62,7 @@ class AuthRetrievalsImpl @Inject()(
             name = name
           )
         )
-      case _ ~ _ ~ confidenceLevel ~ _ => throw new Exception("confidenceLevel not met")
+      case _ ~ _ ~ confidenceLevel ~ _  => throw new Exception("confidenceLevel not met")
     }recoverWith {
       case ex: Throwable =>
         throw ex

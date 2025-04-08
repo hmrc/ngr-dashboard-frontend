@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrdashboardfrontend.config.features
 
 import play.api.Configuration
 
-class Feature(val key: String)(implicit config: Configuration) {
+final case class Feature(key: String)(implicit config: Configuration) {
 
   def apply(value: Boolean): Unit = sys.props += key -> value.toString
 
