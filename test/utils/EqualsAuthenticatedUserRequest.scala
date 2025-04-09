@@ -29,7 +29,7 @@ case class EqualsAuthenticatedUserRequest(expected: AuthenticatedUserRequest[_])
     override def apply(o: Any): String =
       o match {
         case request: AuthenticatedUserRequest[_] =>
-          s"AuthenticatedRequest { Original request: ${request.request},confidenceLevel: ${request.confidenceLevel}, authProvider: ${request.authProvider}, nino: ${request.nino}, email: ${request.email}, credId: ${request.credId}, affinityGroup: ${request.affinityGroup}, name: ${request.name}}"
+          s"AuthenticatedRequest { Original request: ${request.request}, authProvider: ${request.authProvider}, nino: ${request.nino}, email: ${request.email}, credId: ${request.credId}, affinityGroup: ${request.affinityGroup}, name: ${request.name}}"
         case _                                => o.toString
       }
   }

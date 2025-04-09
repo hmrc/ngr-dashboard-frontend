@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 @Singleton
 class AuthRetrievalsImpl @Inject()(
@@ -35,36 +36,28 @@ class AuthRetrievalsImpl @Inject()(
                                   )(implicit ec: ExecutionContext) extends AuthRetrievals
   with AuthorisedFunctions {
 
-  type RetrievalsType = Option[Credentials] ~ Option[String] ~ ConfidenceLevel ~ Option[String] ~ Option[AffinityGroup] ~ Option[Name]
+  type RetrievalsType = Option[Credentials] ~ Option[String] ~ Option[AffinityGroup]
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val retrievals: Retrieval[RetrievalsType] =
-      Retrievals.credentials and
-        Retrievals.nino and
-        Retrievals.confidenceLevel and
-        Retrievals.email and
-        Retrievals.affinityGroup and
-        Retrievals.name
+    val retrievals: Retrieval[RetrievalsType] = Retrievals.credentials and Retrievals.nino and Retrievals.affinityGroup
 
     authorised(ConfidenceLevel.L250).retrieve(retrievals){
-      case credentials ~ Some(nino) ~ confidenceLevel ~ email ~ affinityGroup ~ name =>
+      case credentials ~ Some(nino) ~ affinityGroup  =>
         block(
           AuthenticatedUserRequest(
             request = request,
-            confidenceLevel = Some(confidenceLevel),
             authProvider = credentials.map(_.providerType),
             nino = Nino(hasNino = true,Some(nino)),
-            email = email,
+            email = None,
             credId = credentials.map(_.providerId),
-            affinityGroup = affinityGroup,
-            name = name
+            affinityGroup = None,
+            name = None
           )
         )
-      case _ ~ _ ~ confidenceLevel ~ _  => throw new Exception("confidenceLevel not met")
     }recoverWith {
-      case ex: Throwable =>
+      case NonFatal(ex) =>
         throw ex
     }
   }

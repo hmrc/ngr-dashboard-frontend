@@ -44,7 +44,7 @@ fullWidth: Boolean = false
 }
 
 @content = {
-    @if(appConfig.features.welshLanguageSupportEnabled()) {
+    @if(appConfig.welshLanguageSupportEnabled) {
         @languageSelector
     }
     @contentBlock

@@ -17,14 +17,7 @@
 package mocks
 
 import play.api.Configuration
-import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.config.features.Features
 
-class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig{
+class MockAppConfig(val runModeConfiguration: Configuration) {
 
-  override val features: Features = new Features()(runModeConfiguration)
-
-  override def getString(key: String): String = "???"
-
-  override val centralAuthServerUrl: String = "https://localhost:15000"
 }

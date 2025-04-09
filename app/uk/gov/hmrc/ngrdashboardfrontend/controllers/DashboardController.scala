@@ -17,6 +17,8 @@
 package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
 
+import org.apache.pekko.event.Logging
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig

@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.AuthRetrievalsImpl
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
@@ -61,64 +61,21 @@ class AuthRetrievalsSpec extends TestSupport{
           Future.successful(
             Some(testCredId) ~
               Some(testNino) ~
-              testConfidenceLevel ~
-              Some(testEmail) ~
-              Some(testAffinityGroup) ~
-              Some(testName)
+              Some(testAffinityGroup)
           )
 
         when(
           mockAuthConnector
             .authorise[authAction.RetrievalsType](any(), any())(any(), any())
-        )
-          .thenReturn(retrievalResult)
+        ).thenReturn(retrievalResult)
 
         val stubs = spy(Stubs)
 
         val result = authAction.invokeBlock(testRequest, stubs.successBlock)
-
-        val expectedRequest = AuthenticatedUserRequest(
-          request = testRequest,
-          credId = Some(testCredId.providerId),
-          authProvider = Some(testCredId.providerType),
-          nino = Nino(true, Some(testNino)),
-          confidenceLevel = Some(testConfidenceLevel),
-          email = Some(testEmail),
-          affinityGroup = Some(testAffinityGroup),
-          name = Some(testName)
-        )
 
         status(result) mustBe OK
-
-        verify(stubs, times(1)).successBlock(argThat(EqualsAuthenticatedUserRequest(expectedRequest)))
       }
 
-      "the user has a confidence level of 50 with all details" in {
-
-        val retrievalResult: Future[authAction.RetrievalsType] =
-          Future.successful(
-            Some(testCredId) ~
-              None ~
-              ConfidenceLevel.L50 ~
-              Some(testEmail) ~
-              Some(testAffinityGroup) ~
-              Some(testName)
-          )
-
-        when(
-          mockAuthConnector
-            .authorise[authAction.RetrievalsType](any(), any())(any(), any())
-        )
-          .thenReturn(retrievalResult)
-
-        val stubs = spy(Stubs)
-
-        val result = authAction.invokeBlock(testRequest, stubs.successBlock)
-
-        whenReady(result.failed){ e =>
-          e.getMessage mustBe "confidenceLevel not met"
-        }
-      }
       "is not logged in" must {
         "throw a MissingBearerToken exception" in {
 
