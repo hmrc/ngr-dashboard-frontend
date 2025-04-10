@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrdashboardfrontend.config
+package mocks
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
+class MockAppConfig(val runModeConfiguration: Configuration) {
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-  val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
 }

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrdashboardfrontend.config
+package config
 
-import javax.inject.{Inject, Singleton}
+import helpers.TestSupport
+import org.mockito.Mockito.when
 import play.api.Configuration
+import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 
-
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-  val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+class AppConfigSpec extends TestSupport {
 }
