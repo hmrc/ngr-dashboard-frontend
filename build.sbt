@@ -24,6 +24,7 @@ lazy val microservice = Project("ngr-dashboard-frontend", file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings *)
   .settings(WartRemoverSettings.wartRemoverSettings *)
+  .disablePlugins(JUnitXmlReportPlugin)
 
 lazy val it = project
   .enablePlugins(PlayScala)
