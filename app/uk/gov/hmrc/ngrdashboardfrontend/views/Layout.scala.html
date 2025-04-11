@@ -30,7 +30,8 @@
   hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
   standardBetaBanner: StandardBetaBanner,
   fullWidthLayout: FullWidthLayout,
-  hmrcStandardPage: HmrcStandardPage
+  hmrcStandardPage: HmrcStandardPage,
+  stylesheets: Stylesheets
 )(implicit cfConfig: ContactFrontendConfig)
 
 @(pageTitle: Option[String] = None,
@@ -38,6 +39,9 @@ showBackLink: Boolean = false,
 fullWidth: Boolean = false
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
 
+@headScripts = {
+    @stylesheets()
+}
 
 @languageSelector = {
     @hmrcLanguageSelectHelper()
@@ -54,7 +58,8 @@ fullWidth: Boolean = false
     HmrcStandardPageParams(
         pageTitle = pageTitle.map(title => messages("service.base.title", title)),
         templateOverrides = TemplateOverrides(
-            mainContentLayout = if(fullWidth) Some(fullWidthLayout(_)) else None
+            mainContentLayout = if(fullWidth) Some(fullWidthLayout(_)) else None,
+            additionalHeadBlock = Some(headScripts)
         ),
         backLink = if (showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None,
         banners = Banners(

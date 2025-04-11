@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrdashboardfrontend.models.auth
 
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.retrieve.Name
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Nino}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Nino}
 
 
 sealed abstract class BaseUserRequest[A](

@@ -20,7 +20,7 @@ import com.google.inject.{ImplementedBy, Inject}
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrieval, ~}
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -52,11 +52,11 @@ class AuthRetrievalsImpl @Inject()(
             nino = Nino(hasNino = true,Some(nino)),
             email = None,
             credId = credentials.map(_.providerId),
-            affinityGroup = None,
+            affinityGroup = affinityGroup,
             name = None
           )
         )
-    }recoverWith {
+    } recoverWith {
       case NonFatal(ex) =>
         throw ex
     }
