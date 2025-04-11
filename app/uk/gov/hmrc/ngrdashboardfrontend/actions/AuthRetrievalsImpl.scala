@@ -56,7 +56,6 @@ class AuthRetrievalsImpl @Inject()(
             name = None
           )
         )
-      case _ => throw new RuntimeException("No retrievals found")
     } recoverWith {
       case NonFatal(ex) =>
         throw ex
