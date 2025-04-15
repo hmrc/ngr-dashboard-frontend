@@ -23,6 +23,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
@@ -45,6 +46,8 @@ trait TestSupport extends PlaySpec
     implicit val hc: HeaderCarrier         = HeaderCarrier()
     lazy implicit val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
     lazy val mcc: MessagesControllerComponents = inject[MessagesControllerComponents]
+    lazy val messagesApi: MessagesApi = inject[MessagesApi]
+    implicit lazy val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
 
     lazy val testCredId: Credentials = Credentials(providerId = "0000000022", providerType = "Government-Gateway")
     lazy val testNino: String = "AA000003D"

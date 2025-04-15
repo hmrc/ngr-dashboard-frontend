@@ -30,7 +30,7 @@ class DashboardControllerSpec extends ControllerSpecSupport {
     dashboardView,
     mockAuthJourney,
     mcc
-  )(appConfig = mockAppConfig, ec = ec)
+  )(appConfig = mockAppConfig)
 
   val pageTitle = "ngr-dashboard-frontend"
 

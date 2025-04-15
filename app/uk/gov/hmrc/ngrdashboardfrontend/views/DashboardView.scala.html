@@ -15,14 +15,22 @@
  *@
 
 @import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrdashboardfrontend.views.html.components.CardComponent
+@import uk.gov.hmrc.ngrdashboardfrontend.models.components.Card
 
 @this(layout: Layout)
 
-@()(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(cards: Seq[Card])(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some("ngr-dashboard-frontend")) {
     <h1 class="govuk-heading-xl">ngr-dashboard-frontend</h1>
     <p class="govuk-body">@{messages("service.text")}</p>
+
+    <div class="flex-container govuk-grid-row">
+     @cards.map{ card =>
+      @CardComponent(card)
+     }
+    </div>
 }
 
 @{

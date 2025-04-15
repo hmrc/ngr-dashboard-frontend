@@ -31,7 +31,6 @@ import scala.concurrent.ExecutionContext
 
 trait ControllerSpecSupport extends TestSupport {
 
-  implicit lazy val msgs: Messages          = MessagesImpl(Lang("en"), inject[MessagesApi])
   val mockAuthJourney: AuthJourney          = mock[AuthJourney]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   val mockAppConfig: AppConfig = mock[AppConfig]
