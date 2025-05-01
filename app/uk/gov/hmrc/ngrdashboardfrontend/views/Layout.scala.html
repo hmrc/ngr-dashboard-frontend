@@ -23,7 +23,8 @@
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
-
+@import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.ngrdashboardfrontend.views.html.components.navigationBarComponent
 
 @this(
   appConfig: AppConfig,
@@ -36,11 +37,18 @@
 
 @(pageTitle: Option[String] = None,
 showBackLink: Boolean = false,
-fullWidth: Boolean = false
+fullWidth: Boolean = false,
+navigationBarContent: Option[NavigationBarContent] = None
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
 
 @headScripts = {
     @stylesheets()
+}
+
+@navBar = {
+    @navigationBarContent.map { content =>
+        @navigationBarComponent(content)
+    }
 }
 
 @languageSelector = {
@@ -48,6 +56,9 @@ fullWidth: Boolean = false
 }
 
 @content = {
+    @if(navigationBarContent != None){
+        @navBar
+    }
     @if(appConfig.welshLanguageSupportEnabled) {
         @languageSelector
     }

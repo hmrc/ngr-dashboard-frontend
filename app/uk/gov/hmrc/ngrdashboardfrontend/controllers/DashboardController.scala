@@ -20,9 +20,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.auth.AuthJourney
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.{Card, DashboardCard, Link}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.CreateNavBar
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.{Card, DashboardCard, Link, NavBarContents, NavBarCurrentPage}
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
@@ -36,27 +38,46 @@ class DashboardController @Inject()(
 
   // for demonstration:
   val dashboardCard: DashboardCard = DashboardCard(
-    titleKey = "home.yourAccountCard.title",
-    captionKey = Some("home.yourAccountCard.caption"),
-    captionKey2 = Some("home.yourAccountCard.caption2"),
-    captionKey3 = Some("home.yourAccountCard.caption3"),
-    voaReference = Some("VOA176292C"),
-    tag = None,
+    titleKey = "home.propertiesCard.title",
+    captionKey = Some("home.propertiesCard.caption"),
+    captionKey2 = Some("home.propertiesCard.caption2"),
+    captionKey3 = None,
+    voaReference = None,
+    tag = Some("home.propertiesCard.tag"),
     links = Some(
       Seq(
         Link(
           href = Call(method = "GET", url = "some-href"),
           linkId = "LinkId-Card",
-          messageKey = "home.yourAccountCard.link1",
+          messageKey = "home.propertiesCard.addProperty",
+        ),
+        Link(
+          href = Call(method = "GET", url = "some-href"),
+          linkId = "LinkId2-Card",
+          messageKey = "home.propertiesCard.manageProperties",
         )
       )
     )
   )
 
+
   def show(): Action[AnyContent] = {
     authenticate.authWithUserDetails.async { implicit request =>
       val singleCard: Card = DashboardCard.card(dashboardCard)
-      Future.successful(Ok(dashboardView(Seq(singleCard,singleCard,singleCard))))
+      val name = request.name.flatMap(_.name).getOrElse("John Smith")
+      Future.successful(Ok(dashboardView(
+        cards = Seq(singleCard),
+        name = name,
+        navigationBarContent = CreateNavBar(
+          contents = NavBarContents(
+            homePage = Some(true),
+            messagesPage = Some(true),
+            profileAndSettingsPage = Some(true),
+            signOutPage = Some(true)
+          ),
+          currentPage = NavBarCurrentPage(homePage = true),
+          notifications = Some(1)
+        ))))
     }
   }
 

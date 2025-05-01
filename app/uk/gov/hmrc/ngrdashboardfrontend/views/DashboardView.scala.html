@@ -17,14 +17,15 @@
 @import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 @import uk.gov.hmrc.ngrdashboardfrontend.views.html.components.CardComponent
 @import uk.gov.hmrc.ngrdashboardfrontend.models.components.Card
+@import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavigationBarContent
 
 @this(layout: Layout)
 
-@(cards: Seq[Card])(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(cards: Seq[Card], name: String, navigationBarContent: NavigationBarContent)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some("ngr-dashboard-frontend")) {
-    <h1 class="govuk-heading-xl">ngr-dashboard-frontend</h1>
-    <p class="govuk-body">@{messages("service.text")}</p>
+@layout(pageTitle = Some("ngr-dashboard-frontend"), fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+    <p class="govuk-caption-l">@{messages("home.yourAccountCard.title")}</p>
+    <h1 class="govuk-heading-l">@name</h1>
 
     <div class="flex-container govuk-grid-row">
      @cards.map{ card =>
