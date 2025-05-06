@@ -18,7 +18,7 @@ package actions
 
 import helpers.TestSupport
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{spy, times, verify, when}
+import org.mockito.Mockito.{spy, when}
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -28,11 +28,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.AuthRetrievalsImpl
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
-import utils.EqualsAuthenticatedUserRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 class AuthRetrievalsSpec extends TestSupport{

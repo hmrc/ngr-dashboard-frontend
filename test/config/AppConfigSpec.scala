@@ -17,9 +17,6 @@
 package config
 
 import helpers.TestSupport
-import org.mockito.Mockito.when
-import play.api.Configuration
-import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 
 class AppConfigSpec extends TestSupport {
 }

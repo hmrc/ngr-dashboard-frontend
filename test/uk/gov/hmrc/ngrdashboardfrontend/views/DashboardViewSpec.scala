@@ -1,10 +1,26 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.gov.hmrc.ngrdashboardfrontend.views
 
 import helpers.ViewBaseSpec
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.{CreateNavBar, Selected}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.CreateNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.{DashboardCard, Link, NavBarContents, NavBarCurrentPage, NavigationBarContent}
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 
@@ -16,8 +32,8 @@ class DashboardViewSpec extends ViewBaseSpec {
     titleKey = "home.propertiesCard.title",
     captionKey = Some("home.propertiesCard.caption"),
     captionKey2 = Some("home.propertiesCard.caption2"),
-    captionKey3 = None,
-    voaReference = None,
+    captionKey3 = Some("home.propertiesCard.caption2"),
+    voaReference = Some("ref"),
     tag = Some("home.propertiesCard.tag"),
     links = Some(
       Seq(

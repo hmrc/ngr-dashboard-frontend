@@ -26,7 +26,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.views.html.Layout
 class LayoutSpec extends ViewBaseSpec {
 
   val injectedView: Layout = injector.instanceOf[Layout]
-  val navTitle = "ngr-dashboard-frontend"
+  val navTitle = "Manage your business rates valuation"
   val backLink = "Back"
 
   object Selectors {

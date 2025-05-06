@@ -17,9 +17,6 @@
 package helpers
 
 import org.mockito.Mockito.when
-import org.openqa.selenium.remote.tracing.HttpTracing.inject
-import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.mvc.{ActionBuilder, AnyContent, BodyParser, Request, Result}
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier

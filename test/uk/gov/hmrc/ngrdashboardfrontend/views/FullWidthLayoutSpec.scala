@@ -17,7 +17,6 @@
 package uk.gov.hmrc.ngrdashboardfrontend.views
 
 import helpers.ViewBaseSpec
-import org.openqa.selenium.remote.tracing.HttpTracing.inject
 import play.twirl.api.Html
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.FullWidthLayout
 

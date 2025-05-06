@@ -71,8 +71,8 @@ class DashboardController @Inject()(
         navigationBarContent = CreateNavBar(
           contents = NavBarContents(
             homePage = Some(true),
-            messagesPage = Some(true),
-            profileAndSettingsPage = Some(true),
+            messagesPage = Some(false),
+            profileAndSettingsPage = Some(false),
             signOutPage = Some(true)
           ),
           currentPage = NavBarCurrentPage(homePage = true),
