@@ -22,5 +22,13 @@ import play.api.Configuration
 
 @Singleton
 class AppConfig @Inject()(config: Configuration) {
-  val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+  lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+
+  lazy val feedbackFrontendHost = config.getOptional[String]("microservice.services.feedback-survey-frontend.host").getOrElse(throw new Exception(s"Missing key: microservice.services.feedback-survey-frontend.host"))
+
+  lazy val feedbackFrontendUrl = s"$feedbackFrontendHost/feedback/NGR-Dashboard"
+
+  lazy val basGatewayHost = config.getOptional[String]("microservice.services.bas-gateway-frontend.host").getOrElse(throw new Exception(s"Missing key: microservice.services.bas-gateway-frontend.host"))
+
+  lazy val logoutUrl: String = s"$basGatewayHost/bas-gateway/sign-out-without-state?continue=$feedbackFrontendUrl"
 }

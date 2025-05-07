@@ -17,6 +17,43 @@
 package config
 
 import helpers.TestSupport
+import org.mockito.Mockito.when
+import play.api.Configuration
+import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 
 class AppConfigSpec extends TestSupport {
+  "AppConfig" must {
+    "retrieve logout url correct from config" in {
+      val mockConfig = mock[Configuration]
+      val appConfig = new AppConfig(mockConfig)
+      when(mockConfig.getOptional[String]("microservice.services.feedback-survey-frontend.host")).thenReturn(Some("http://localhost:9514"))
+      when(mockConfig.getOptional[String]("microservice.services.bas-gateway-frontend.host")).thenReturn(Some("http://localhost:9553"))
+
+      appConfig.logoutUrl mustBe ("http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:9514/feedback/NGR-Dashboard")
+    }
+
+    "missing feedback host from config throws exception" in {
+      val mockConfig = mock[Configuration]
+      val appConfig = new AppConfig(mockConfig)
+            when(mockConfig.getOptional[String]("microservice.services.feedback-survey-frontend.host")).thenReturn(None)
+      when(mockConfig.getOptional[String]("microservice.services.bas-gateway-frontend.host")).thenReturn(Some("http://localhost:9553"))
+
+      val exception = intercept[Exception] {
+        appConfig.logoutUrl
+      }
+      exception.getMessage mustBe "Missing key: microservice.services.feedback-survey-frontend.host"
+    }
+
+    "missing bas gateway host from config throws exception" in {
+      val mockConfig = mock[Configuration]
+      val appConfig = new AppConfig(mockConfig)
+      when(mockConfig.getOptional[String]("microservice.services.feedback-survey-frontend.host")).thenReturn(Some("http://localhost:9514"))
+      when(mockConfig.getOptional[String]("microservice.services.bas-gateway-frontend.host")).thenReturn(None)
+
+      val exception = intercept[Exception] {
+        appConfig.logoutUrl
+      }
+      exception.getMessage mustBe "Missing key: microservice.services.bas-gateway-frontend.host"
+    }
+  }
 }
