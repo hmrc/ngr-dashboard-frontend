@@ -16,7 +16,6 @@
 
 package helpers
 
-import mocks.MockAppConfig
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{Assertion, BeforeAndAfterEach}

@@ -56,6 +56,7 @@ class AuthRetrievalsImpl @Inject()(
             name = None
           )
         )
+      case _ => Future.failed(new RuntimeException())
     } recoverWith {
       case NonFatal(ex) =>
         throw ex
