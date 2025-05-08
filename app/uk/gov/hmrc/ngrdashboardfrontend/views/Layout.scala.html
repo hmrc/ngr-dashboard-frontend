@@ -55,16 +55,16 @@ navigationBarContent: Option[NavigationBarContent] = None
     @hmrcLanguageSelectHelper()
 }
 
-@beforeContent = {
+@content = {
     @if(navigationBarContent != None){
         @navBar
+    }
+    @if(showBackLink){
+        <a href="#" class="govuk-back-link" data-module="hmrc-back-link">Back</a>
     }
     @if(appConfig.features.welshLanguageSupportEnabled()) {
         @languageSelector
     }
-}
-
-@content = {
     @contentBlock
 }
 
@@ -72,11 +72,10 @@ navigationBarContent: Option[NavigationBarContent] = None
     HmrcStandardPageParams(
         pageTitle = pageTitle.map(title => messages("service.base.title", title)),
         templateOverrides = TemplateOverrides(
-            beforeContentBlock = Some(beforeContent),
             mainContentLayout = if(fullWidth) Some(fullWidthLayout(_)) else None,
             additionalHeadBlock = Some(headScripts)
         ),
-        backLink = if (showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None,
+        backLink = None,
         banners = Banners(
             phaseBanner = Some(standardBetaBanner()),
         ),

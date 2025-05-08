@@ -48,7 +48,24 @@ case class NavigationBarContent(
                                )
 
 object NavBarPageContents {
-  val Selected: Option[Boolean] = Some(true)
+  private val navBarContents: NavBarContents = NavBarContents(
+    homePage = Some(true),
+    messagesPage = Some(false),
+    profileAndSettingsPage = Some(false),
+    signOutPage = Some(true)
+  )
+
+  def createDefaultNavBar: NavigationBarContent = CreateNavBar(
+    contents = navBarContents,
+    currentPage = NavBarCurrentPage(),
+    notifications = Some(1)
+  )
+
+  def createHomeNavBar: NavigationBarContent = CreateNavBar(
+    contents = navBarContents,
+    currentPage = NavBarCurrentPage(homePage = true),
+    notifications = Some(1)
+  )
 
   def CreateNavBar(contents: NavBarContents, currentPage: NavBarCurrentPage, notifications: Option[Int] = None): NavigationBarContent = {
 
