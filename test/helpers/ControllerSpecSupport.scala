@@ -17,7 +17,7 @@
 package helpers
 
 import org.mockito.Mockito.when
-import play.api.mvc.{ActionBuilder, AnyContent, BodyParser, Request, Result}
+import play.api.mvc._
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext
 
 trait ControllerSpecSupport extends TestSupport {
 
-  val mockAuthJourney: AuthJourney          = mock[AuthJourney]
+  val mockAuthJourney: AuthJourney   = mock[AuthJourney]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   val mockAppConfig: AppConfig = mock[AppConfig]
   mockRequest()
