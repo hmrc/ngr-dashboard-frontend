@@ -56,7 +56,7 @@ object NavBarPageContents {
     val homePageButton     = NavButton(fieldName = "HomePage", call = Call("GET", routes.DashboardController.show.url), messageKey = "nav.home", linkId = "Home", selected = currentPage.homePage, notification = None)
     val messagesPageButton = NavButton(fieldName = "MessagesPage",call = Call("GET", "/messages"),messageKey = "nav.messages",linkId = "Messages",selected = currentPage.messagesPage, notification = notifications)
     val profilePageButton   = NavButton(fieldName = "ProfileAndSettingsPage",call = Call("GET", ""),messageKey = "nav.profileAndSettings",linkId = "Profile",selected = currentPage.profileAndSettingsPage, notification = None)
-    val signOutPageButton  = NavButton(fieldName = "SignOutPage",call = Call("GET", routes.SignoutController.signout.url),messageKey = "nav.signOut",linkId = "SignOut",selected = currentPage.signOutPage, notification = None)
+    val signOutPageButton  = NavButton(fieldName = "SignOutPage",call = Call("GET", routes.BeforeYouGoController.signout.url),messageKey = "nav.signOut",linkId = "SignOut",selected = currentPage.signOutPage, notification = None)
 
     // Map fields to their NavButton equivalents
     val buttonMapping = Seq(

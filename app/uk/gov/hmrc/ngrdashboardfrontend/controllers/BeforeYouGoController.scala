@@ -20,22 +20,30 @@ import play.api.i18n.I18nSupport
 import play.api.i18n.Lang.logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.BeforeYouGoView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class SignoutController @Inject()(
-  mcc: MessagesControllerComponents
-  )(implicit appConfig: AppConfig)
+class BeforeYouGoController @Inject()(
+                                     beforeYouGoView: BeforeYouGoView,
+                                     mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
-  val logoutUrl: String = appConfig.logoutUrl
 
   def signout: Action[AnyContent] = Action { _ =>
+    Redirect(appConfig.logoutUrl).withNewSession
+  }
+
+  def show(): Action[AnyContent] = Action { implicit request =>
+      Ok(beforeYouGoView(routes.DashboardController.show.url, routes.BeforeYouGoController.feedback.url))
+    }
+
+  def feedback: Action[AnyContent] = Action { _ =>
     val uuid = randomUUID().toString
     val auditData = Map("feedbackId" -> uuid, "customMetric" -> "NGR-Dashboard")
     logger.info(s"Redirecting to feedback frontend $auditData")
-    Redirect(logoutUrl).withSession(("feedbackId", uuid))
+    Redirect(appConfig.feedbackFrontendUrl).withSession(("feedbackId", uuid))
   }
 }
