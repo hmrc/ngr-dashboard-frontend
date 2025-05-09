@@ -23,7 +23,7 @@
 
 @(cards: Seq[Card], name: String, navigationBarContent: NavigationBarContent)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some("ngr-dashboard-frontend"), fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("service.name")), fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
     <p class="govuk-caption-l">@{messages("home.yourAccountCard.title")}</p>
     <h1 class="govuk-heading-l">@name</h1>
 
