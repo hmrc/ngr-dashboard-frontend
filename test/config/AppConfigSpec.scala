@@ -44,6 +44,18 @@ class AppConfigSpec extends TestSupport {
       exception.getMessage mustBe "Missing key: dashboard.host"
     }
 
+    "empty dashboard host String from config throws exception" in {
+      val mockConfig = mock[Configuration]
+      val appConfig = new AppConfig(mockConfig)
+      when(mockConfig.getOptional[String]("dashboard.host")).thenReturn(Some(""))
+      when(mockConfig.getOptional[String]("microservice.services.bas-gateway-frontend.host")).thenReturn(Some("http://localhost:9553"))
+
+      val exception = intercept[Exception] {
+        appConfig.logoutUrl
+      }
+      exception.getMessage mustBe "Missing key: dashboard.host"
+    }
+
     "missing bas gateway host from config throws exception" in {
       val mockConfig = mock[Configuration]
       val appConfig = new AppConfig(mockConfig)
