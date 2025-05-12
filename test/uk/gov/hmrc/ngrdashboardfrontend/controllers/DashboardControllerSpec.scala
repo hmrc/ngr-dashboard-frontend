@@ -32,9 +32,9 @@ class DashboardControllerSpec extends ControllerSpecSupport {
     mcc
   )(appConfig = mockAppConfig)
 
-  val pageTitle = "ngr-dashboard-frontend"
+  val pageTitle = "Manage your business rates valuation - GOV.UK"
 
-  "Email Controller" must {
+  "Dashboard Controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         val result = controller().show()(authenticatedFakeRequest)

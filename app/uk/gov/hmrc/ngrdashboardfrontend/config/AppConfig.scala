@@ -16,19 +16,23 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
+
+import javax.inject.{Inject, Singleton}
 
 
 @Singleton
 class AppConfig @Inject()(config: Configuration) {
+  private def getOptionString(key: String) = config.getOptional[String](key).filter(!_.isBlank).getOrElse(throw new Exception(s"Missing key: $key"))
+
   lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
 
-  lazy val feedbackFrontendHost = config.getOptional[String]("microservice.services.feedback-survey-frontend.host").getOrElse(throw new Exception(s"Missing key: microservice.services.feedback-survey-frontend.host"))
+  private lazy val feedbackFrontendHost = getOptionString("microservice.services.feedback-survey-frontend.host")
+  private lazy val dashboardHost = getOptionString("dashboard.host")
+  private lazy val basGatewayHost = getOptionString("microservice.services.bas-gateway-frontend.host")
 
+  private lazy val dashboardBeforeYouGoUrl = s"$dashboardHost${routes.BeforeYouGoController.show.url}"
   lazy val feedbackFrontendUrl = s"$feedbackFrontendHost/feedback/NGR-Dashboard"
-
-  lazy val basGatewayHost = config.getOptional[String]("microservice.services.bas-gateway-frontend.host").getOrElse(throw new Exception(s"Missing key: microservice.services.bas-gateway-frontend.host"))
-
-  lazy val logoutUrl: String = s"$basGatewayHost/bas-gateway/sign-out-without-state?continue=$feedbackFrontendUrl"
+  lazy val logoutUrl: String = s"$basGatewayHost/bas-gateway/sign-out-without-state?continue=$dashboardBeforeYouGoUrl"
 }
