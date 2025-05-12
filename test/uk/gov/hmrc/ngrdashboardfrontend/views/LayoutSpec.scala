@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import play.twirl.api.Html
-import uk.gov.hmrc.ngrdashboardfrontend.views.html.Layout
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.{Layout, Stylesheets}
 
 class LayoutSpec extends ViewBaseSpec {
   val injectedView: Layout = injector.instanceOf[Layout]
@@ -78,4 +78,10 @@ class LayoutSpec extends ViewBaseSpec {
     }
   }
 
+    "stylesheets should render" in {
+      val stylesheet: Stylesheets = injector.instanceOf[Stylesheets]
+      stylesheet.apply().body must not be empty
+      stylesheet.render().body must not be empty
+      stylesheet.f().body must not be empty
+    }
 }

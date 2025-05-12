@@ -51,11 +51,6 @@ class DashboardController @Inject()(
           href = Call(method = "GET", url = "some-href"),
           linkId = "LinkId-Card",
           messageKey = "home.propertiesCard.addProperty",
-        ),
-        Link(
-          href = Call(method = "GET", url = "some-href"),
-          linkId = "LinkId2-Card",
-          messageKey = "home.propertiesCard.manageProperties",
         )
       )
     )

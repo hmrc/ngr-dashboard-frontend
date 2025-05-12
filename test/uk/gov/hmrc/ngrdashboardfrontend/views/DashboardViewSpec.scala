@@ -52,6 +52,24 @@ class DashboardViewSpec extends ViewBaseSpec {
     )
   )
 
+  val dashboardCardOneLink: DashboardCard = DashboardCard(
+    titleKey = "home.propertiesCard.title",
+    captionKey = Some("home.propertiesCard.caption"),
+    captionKey2 = Some("home.propertiesCard.caption2"),
+    captionKey3 = Some("home.propertiesCard.caption2"),
+    voaReference = Some("ref"),
+    tag = Some("home.propertiesCard.tag"),
+    links = Some(
+      Seq(
+        Link(
+          href = Call(method = "GET", url = "some-href"),
+          linkId = "LinkId-Card",
+          messageKey = "home.propertiesCard.addProperty",
+        )
+      )
+    )
+  )
+
   val navBarContent: NavigationBarContent = CreateNavBar(
     contents = NavBarContents(
       homePage = Some(true),
@@ -71,11 +89,14 @@ class DashboardViewSpec extends ViewBaseSpec {
 
   "Dashboard view" must {
     val dashboardView = view(cards = Seq(DashboardCard.card(dashboardCard)), name = "Greg", navigationBarContent = navBarContent)
+    val dashboardView2 = view(cards = Seq(DashboardCard.card(dashboardCardOneLink)), name = "Greg", navigationBarContent = navBarContent)
     lazy implicit val document: Document = Jsoup.parse(dashboardView.body)
     lazy val htmlF = view.f(Seq(DashboardCard.card(dashboardCard)), "Greg", navBarContent)
+    lazy val htmlFOneLink = view.f(Seq(DashboardCard.card(dashboardCardOneLink)), "Greg", navBarContent)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
+      htmlFOneLink.toString() must not be empty
     }
 
     "show account home button" in {

@@ -20,31 +20,32 @@ import helpers.TestSupport
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.Aliases.{CardTitle, Tag, Text}
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.{Card, CardCaption, DashboardCard, Link}
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.components.{CardComponent, LinkComponent}
 
 class DashboardCardSpec extends TestSupport {
+
+  val dashboardCard: DashboardCard = DashboardCard(
+    titleKey = "home.yourAccountCard.title",
+    captionKey =  Some("home.yourAccountCard.caption"),
+    captionKey2 =  Some("home.yourAccountCard.caption2"),
+    captionKey3 =  Some("home.yourAccountCard.caption3"),
+    voaReference = Some("VOA176292C"),
+    tag = Some("home.yourAccountCard.tag"),
+    links = Some(
+      Seq(
+        Link(
+          href       = Call(method = "GET",url = "some-href"),
+          linkId     = "LinkId-Card",
+          messageKey = "home.yourAccountCard.link1",
+        )
+      )
+    )
+  )
 
   "DashboardCard.card" should {
     "build a full Card with all optional values" in {
 
-      val input = DashboardCard(
-        titleKey = "home.yourAccountCard.title",
-        captionKey =  Some("home.yourAccountCard.caption"),
-        captionKey2 =  Some("home.yourAccountCard.caption2"),
-        captionKey3 =  Some("home.yourAccountCard.caption3"),
-        voaReference = Some("VOA176292C"),
-        tag = Some("home.yourAccountCard.tag"),
-        links = Some(
-          Seq(
-            Link(
-              href       = Call(method = "GET",url = "some-href"),
-              linkId     = "LinkId-Card",
-              messageKey = "home.yourAccountCard.link1",
-            )
-          )
-        )
-      )
-
-      val result: Card = DashboardCard.card(input)
+      val result: Card = DashboardCard.card(dashboardCard)
 
       result.titleKey mustBe Some(CardTitle(Text("Your account")))
       result.captionKey mustBe Some(CardCaption(Text("Add and manage rating agents.")))
@@ -60,7 +61,6 @@ class DashboardCardSpec extends TestSupport {
     "build a Card with only mandatory values" in {
 
       val input = DashboardCard(titleKey = "home.yourAccountCard.title")
-
       val result: Card = DashboardCard.card(input)
 
       result.titleKey mustBe Some(CardTitle(Text("Your account")))
@@ -71,6 +71,26 @@ class DashboardCardSpec extends TestSupport {
       result.tag mustBe None
       result.links mustBe None
     }
+
+    "card must render correctly" in {
+      val result: Card = DashboardCard.card(dashboardCard)
+      CardComponent.f(result)(messages).toString() must not be empty
+      CardComponent.render(result, messages).toString() must not be empty
+      CardComponent.apply(result).toString() must not be empty
+    }
+
+    "link component must render correctly" in {
+      val link = Link(
+        href       = Call(method = "GET",url = "some-href"),
+        linkId     = "LinkId-Card",
+        messageKey = "home.yourAccountCard.link1",
+      )
+      LinkComponent.f(link)(messages).toString() must not be empty
+      LinkComponent.apply(link).toString() must not be empty
+      LinkComponent.render(link, messages).toString() must not be empty
+    }
+
+
   }
 
 }
