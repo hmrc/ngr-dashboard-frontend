@@ -51,7 +51,7 @@ class BeforeYouGoViewSpec extends ViewBaseSpec {
     val beforeYouGoView = view(routes.DashboardController.show.url, routes.BeforeYouGoController.feedback.url)
     lazy implicit val document: Document = Jsoup.parse(beforeYouGoView.body)
     val htmlApply = view.apply(routes.DashboardController.show.url, routes.BeforeYouGoController.feedback.url).body
-    val htmlRender = view.render(routes.DashboardController.show.url, routes.BeforeYouGoController.feedback.url, request, messages, mockAppConfig).body
+    val htmlRender = view.render(routes.DashboardController.show.url, routes.BeforeYouGoController.feedback.url, request, messages, mockConfig).body
     lazy val htmlF = view.f(routes.DashboardController.show.url, routes.BeforeYouGoController.feedback.url)
 
     "htmlF is not empty" in {

@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrdashboardfrontend.config
+package uk.gov.hmrc.ngrdashboardfrontend.config.features
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
+import play.api.Configuration
 
-class Module extends AbstractModule {
+import javax.inject.Inject
 
-  override def configure(): Unit = {
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-  }
+class Features @Inject()(implicit config: Configuration) {
+  val welshLanguageSupportEnabled = new Feature("features.welsh-language-support")
+
 }

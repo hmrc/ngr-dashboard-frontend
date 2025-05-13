@@ -17,38 +17,36 @@
 package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
 import helpers.ControllerSpecSupport
-import org.mockito.Mockito.when
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.RequestHeader
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
+import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.BeforeYouGoView
 
 class BeforeYouGoControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
   implicit val requestHeader: RequestHeader = mock[RequestHeader]
   lazy val beforeYouGoView: BeforeYouGoView = inject[BeforeYouGoView]
   val pageTitle = "Manage your business rates valuation - GOV.UK"
-  val logoutUrl = "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:1503/ngr-dashboard-frontend/beforeYouGo"
+ lazy val frontendAppConfig: AppConfig = inject[AppConfig]
+  val expectedLogoutUrl = "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:1503/ngr-dashboard-frontend/beforeYouGo"
 
-  def controller() = new BeforeYouGoController(beforeYouGoView, mcc)(appConfig = mockAppConfig)
+  def controller() = new BeforeYouGoController(beforeYouGoView, mcc)(appConfig = mockConfig)
 
   "BeforeYouGoController" must {
     "redirect user to before you go page" when {
       "logout() is called it" should {
         "return status code 303" in {
-          when(mockAppConfig.logoutUrl).thenReturn(logoutUrl)
           val result = controller().signout()(authenticatedFakeRequest)
           status(result) mustBe SEE_OTHER
         }
 
         "return the bas gateway sign out url with before you go url" in {
-          when(mockAppConfig.logoutUrl).thenReturn(logoutUrl)
           val result = controller().signout()(authenticatedFakeRequest)
-          redirectLocation(result) mustBe Some(logoutUrl)
+          redirectLocation(result) mustBe Some(expectedLogoutUrl)
         }
 
         "new session contains no journeyId" in {
-          when(mockAppConfig.logoutUrl).thenReturn(logoutUrl)
           val result = controller().signout()(authenticatedFakeRequest)
           result.map(result =>
             result.session.get("journeyId").isDefined mustBe false
@@ -80,7 +78,6 @@ class BeforeYouGoControllerSpec extends ControllerSpecSupport with DefaultAwaitT
 
     "method feedback" must {
       "Return SEE_OTHER and feedback Id is the session" in {
-        when(mockAppConfig.feedbackFrontendUrl).thenReturn("http://localhost:9514/feedback/NGR-Dashboard")
         val result = controller().feedback()(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         result.map(result =>

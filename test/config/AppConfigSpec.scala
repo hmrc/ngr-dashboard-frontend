@@ -18,73 +18,56 @@ package config
 
 import helpers.TestSupport
 import org.mockito.Mockito.when
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.Configuration
-import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
+import uk.gov.hmrc.ngrdashboardfrontend.config.features.Features
+import uk.gov.hmrc.ngrdashboardfrontend.config.{AppConfig, FrontendAppConfig}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class AppConfigSpec extends TestSupport {
-  "AppConfig" must {
-    "retrieve logout url correct from config" in {
-      val mockConfig = mock[Configuration]
-      val appConfig = new AppConfig(mockConfig)
-      when(mockConfig.getOptional[String]("dashboard.host")).thenReturn(Some("http://localhost:1503"))
-      when(mockConfig.getOptional[String]("microservice.services.bas-gateway-frontend.host")).thenReturn(Some("http://localhost:9553"))
+  "FrontendAppConfig" must {
 
-      appConfig.logoutUrl mustBe ("http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:1503/ngr-dashboard-frontend/beforeYouGo")
+    "initialize features correctly" in {
+      val mockConfig = mock[Configuration]
+      val mockServicesConfig = mock[ServicesConfig]
+
+      val appConfig = new FrontendAppConfig(mockConfig, mockServicesConfig)
+
+      appConfig.features shouldBe a[Features] // Ensures Features is initialized
     }
 
-    "missing dashboard host from config throws exception" in {
+    "retrieve nextGenerationRatesUrl from ServicesConfig" in {
       val mockConfig = mock[Configuration]
-      val appConfig = new AppConfig(mockConfig)
-      when(mockConfig.getOptional[String]("dashboard.host")).thenReturn(None)
-      when(mockConfig.getOptional[String]("microservice.services.bas-gateway-frontend.host")).thenReturn(Some("http://localhost:9553"))
+      val mockServicesConfig = mock[ServicesConfig]
+      when(mockServicesConfig.baseUrl("next-generation-rates")).thenReturn("http://localhost/next-generation-rates")
 
-      val exception = intercept[Exception] {
-        appConfig.logoutUrl
+      val appConfig = new FrontendAppConfig(mockConfig, mockServicesConfig)
+
+      appConfig.nextGenerationRatesUrl shouldBe "http://localhost/next-generation-rates"
+    }
+
+    "retrieve existing config value using getString" in {
+      val mockConfig = mock[Configuration]
+      val mockServicesConfig = mock[ServicesConfig]
+      when(mockConfig.getOptional[String]("some.key")).thenReturn(Some("someValue"))
+
+      val appConfig = new FrontendAppConfig(mockConfig, mockServicesConfig)
+
+      appConfig.getString("some.key") shouldBe "someValue"
+    }
+
+    "throw an exception when config key is missing" in {
+      val mockConfig = mock[Configuration]
+      val mockServicesConfig = mock[ServicesConfig]
+      when(mockConfig.getOptional[String]("missing.key")).thenReturn(None)
+
+      val appConfig = new FrontendAppConfig(mockConfig, mockServicesConfig)
+
+      val exception = intercept[RuntimeException] {
+        appConfig.getString("missing.key")
       }
-      exception.getMessage mustBe "Missing key: dashboard.host"
-    }
 
-    "empty dashboard host String from config throws exception" in {
-      val mockConfig = mock[Configuration]
-      val appConfig = new AppConfig(mockConfig)
-      when(mockConfig.getOptional[String]("dashboard.host")).thenReturn(Some(""))
-      when(mockConfig.getOptional[String]("microservice.services.bas-gateway-frontend.host")).thenReturn(Some("http://localhost:9553"))
-
-      val exception = intercept[Exception] {
-        appConfig.logoutUrl
-      }
-      exception.getMessage mustBe "Missing key: dashboard.host"
-    }
-
-    "missing bas gateway host from config throws exception" in {
-      val mockConfig = mock[Configuration]
-      val appConfig = new AppConfig(mockConfig)
-      when(mockConfig.getOptional[String]("dashboard.host")).thenReturn(Some("http://localhost:9514"))
-      when(mockConfig.getOptional[String]("microservice.services.bas-gateway-frontend.host")).thenReturn(None)
-
-      val exception = intercept[Exception] {
-        appConfig.logoutUrl
-      }
-      exception.getMessage mustBe "Missing key: microservice.services.bas-gateway-frontend.host"
-    }
-
-    "retrieve feedback url correct from config" in {
-      val mockConfig = mock[Configuration]
-      val appConfig = new AppConfig(mockConfig)
-      when(mockConfig.getOptional[String]("microservice.services.feedback-survey-frontend.host")).thenReturn(Some("http://localhost:9514"))
-
-      appConfig.feedbackFrontendUrl mustBe ("http://localhost:9514/feedback/NGR-Dashboard")
-    }
-
-    "missing feedback host from config throws exception" in {
-      val mockConfig = mock[Configuration]
-      val appConfig = new AppConfig(mockConfig)
-      when(mockConfig.getOptional[String]("microservice.services.feedback-survey-frontend.host")).thenReturn(None)
-
-      val exception = intercept[Exception] {
-        appConfig.feedbackFrontendUrl
-      }
-      exception.getMessage mustBe "Missing key: microservice.services.feedback-survey-frontend.host"
+      exception.getMessage shouldBe "Could not find config key 'missing.key'"
     }
   }
 }

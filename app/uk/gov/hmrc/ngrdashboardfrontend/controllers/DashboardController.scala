@@ -18,10 +18,10 @@ package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.controllers.auth.AuthJourney
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.CreateNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.{Card, DashboardCard, Link, NavBarContents, NavBarCurrentPage}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -31,7 +31,8 @@ import scala.concurrent.Future
 @Singleton
 class DashboardController @Inject()(
   dashboardView: DashboardView,
-  authenticate: AuthJourney,
+  authenticate: AuthRetrievals,
+  isRegisteredCheck: RegistrationAction,
   mcc: MessagesControllerComponents
   )(implicit appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
@@ -61,8 +62,7 @@ class DashboardController @Inject()(
   )
 
 
-  def show(): Action[AnyContent] = {
-    authenticate.authWithUserDetails.async { implicit request =>
+  def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async {implicit request =>
       val singleCard: Card = DashboardCard.card(dashboardCard)
       val name = request.name.flatMap(_.name).getOrElse("John Smith")
       Future.successful(Ok(dashboardView(
@@ -79,6 +79,4 @@ class DashboardController @Inject()(
           notifications = Some(1)
         ))))
     }
-  }
-
 }

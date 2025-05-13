@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrdashboardfrontend.config
+package uk.gov.hmrc.ngrdashboardfrontend.models.registration
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 
-class Module extends AbstractModule {
+sealed trait AgentStatus extends EnumEntry
 
-  override def configure(): Unit = {
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-  }
+object AgentStatus extends Enum[AgentStatus] with PlayJsonEnum[AgentStatus]  {
+
+  val values = findValues
+
+  case object Agent  extends AgentStatus
+  case object Autonomous extends AgentStatus
+
 }
