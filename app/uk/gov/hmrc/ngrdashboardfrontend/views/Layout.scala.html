@@ -55,13 +55,16 @@ navigationBarContent: Option[NavigationBarContent] = None
     @hmrcLanguageSelectHelper()
 }
 
-@content = {
+@beforeContent = {
     @if(navigationBarContent != None){
         @navBar
     }
     @if(appConfig.features.welshLanguageSupportEnabled()) {
         @languageSelector
     }
+}
+
+@content = {
     @contentBlock
 }
 
@@ -69,6 +72,7 @@ navigationBarContent: Option[NavigationBarContent] = None
     HmrcStandardPageParams(
         pageTitle = pageTitle.map(title => messages("service.base.title", title)),
         templateOverrides = TemplateOverrides(
+            beforeContentBlock = Some(beforeContent),
             mainContentLayout = if(fullWidth) Some(fullWidthLayout(_)) else None,
             additionalHeadBlock = Some(headScripts)
         ),
