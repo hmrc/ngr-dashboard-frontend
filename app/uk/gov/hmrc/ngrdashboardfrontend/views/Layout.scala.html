@@ -47,7 +47,7 @@ navigationBarContent: Option[NavigationBarContent] = None
 
 @navBar = {
     @navigationBarContent.map { content =>
-        @navigationBarComponent(content)
+        @navigationBarComponent(content, showBackLink)
     }
 }
 
@@ -59,10 +59,7 @@ navigationBarContent: Option[NavigationBarContent] = None
     @if(navigationBarContent != None){
         @navBar
     }
-    @if(showBackLink){
-        <a href="#" class="govuk-back-link" data-module="hmrc-back-link">Back</a>
-    }
-    @if(appConfig.features.welshLanguageSupportEnabled()) {
+    @if(appConfig.features.welshLanguageSupportEnabled) {
         @languageSelector
     }
     @contentBlock

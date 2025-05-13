@@ -17,7 +17,7 @@ home.propertiesCard.addProperty=Add a property
 home.propertiesCard.manageProperties=Manage your properties
 
 #yourAccountCard
-home.yourAccountCard.title=Your account
+home.yourAccountCard.title=Account home
 home.yourAccountCard.caption=Add and manage rating agents.
 home.yourAccountCard.caption2=Rating agents can deal with the VOA and your business rates on your behalf.
 home.yourAccountCard.caption3=Your client code is:
