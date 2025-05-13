@@ -29,8 +29,9 @@ class DashboardControllerSpec extends ControllerSpecSupport {
   def controller() = new DashboardController(
     dashboardView,
     mockAuthJourney,
+    mockIsRegisteredCheck,
     mcc
-  )(appConfig = mockAppConfig)
+  )(appConfig = mockConfig)
 
   val pageTitle = "Manage your business rates valuation - GOV.UK"
 

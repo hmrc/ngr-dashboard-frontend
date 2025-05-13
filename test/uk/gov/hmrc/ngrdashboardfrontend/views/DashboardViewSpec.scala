@@ -17,6 +17,7 @@
 package uk.gov.hmrc.ngrdashboardfrontend.views
 
 import helpers.ViewBaseSpec
+import mocks.MockAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call

@@ -20,27 +20,41 @@ import org.mockito.Mockito.when
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.auth.AuthJourney
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpecSupport extends TestSupport {
 
-  val mockAuthJourney: AuthJourney   = mock[AuthJourney]
+  val mockIsRegisteredCheck: RegistrationAction = mock[RegistrationAction]
+  val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
-  val mockAppConfig: AppConfig = mock[AppConfig]
   mockRequest()
 
   def mockRequest(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
-    when(mockAuthJourney.authWithUserDetails) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
-      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => concurrent.Future[Result]): concurrent.Future[Result] =  {
-        val authRequest = AuthenticatedUserRequest(request, None, None, if (hasCredId) Some("1234") else None, None, None, nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None))
+    when(mockAuthJourney andThen mockIsRegisteredCheck) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
+      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] =  {
+        val authRequest = AuthenticatedUserRequest(request, None, None, Some("user@email.com"), if (hasCredId) Some("1234") else None, None, None, nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None))
         block(authRequest)
       }
       override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
       override protected def executionContext: ExecutionContext = ec
     }
+
+
+  def mockRequest(authRequest: AuthenticatedUserRequest[AnyContentAsEmpty.type]): Unit = {
+    when(mockAuthJourney  andThen mockIsRegisteredCheck) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
+      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
+        block(authRequest.asInstanceOf[AuthenticatedUserRequest[A]])
+      }
+
+      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+
+      override protected def executionContext: ExecutionContext = ec
+    }
+  }
 
 }

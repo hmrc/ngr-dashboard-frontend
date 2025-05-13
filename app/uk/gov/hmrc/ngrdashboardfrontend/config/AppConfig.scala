@@ -17,13 +17,32 @@
 package uk.gov.hmrc.ngrdashboardfrontend.config
 
 import play.api.Configuration
+import uk.gov.hmrc.ngrdashboardfrontend.config.features.Features
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
 
+trait AppConfig {
+  val features: Features
+  val logoutUrl:String
+  val registrationUrl: String
+  val feedbackFrontendUrl:String
+  val nextGenerationRatesUrl: String
+  def getString(key: String): String
+}
 
 @Singleton
-class AppConfig @Inject()(config: Configuration) {
+class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) extends AppConfig{
+  override val registrationUrl: String = sc.baseUrl("ngr-login-register-frontend")
+  override val features = new Features()(config)
+  override val nextGenerationRatesUrl: String = sc.baseUrl("next-generation-rates")
+  def getString(key: String): String =
+    config.getOptional[String](key)
+      .getOrElse(throwConfigNotFoundError(key))
+  private def throwConfigNotFoundError(key: String): String =
+    throw new RuntimeException(s"Could not find config key '$key'")
+
   private def getOptionString(key: String) = config.getOptional[String](key).filter(!_.isBlank).getOrElse(throw new Exception(s"Missing key: $key"))
 
   lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)

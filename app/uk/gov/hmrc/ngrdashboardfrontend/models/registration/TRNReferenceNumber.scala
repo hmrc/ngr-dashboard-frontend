@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrdashboardfrontend.config
+package uk.gov.hmrc.ngrdashboardfrontend.models.registration
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
+import play.api.libs.json.{Json, OFormat}
 
-class Module extends AbstractModule {
+case class TRNReferenceNumber(referenceType: ReferenceType,
+                              value: String)
 
-  override def configure(): Unit = {
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-  }
+object TRNReferenceNumber {
+  implicit val format: OFormat[TRNReferenceNumber] = Json.format[TRNReferenceNumber]
 }

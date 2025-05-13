@@ -17,7 +17,15 @@
 package mocks
 
 import play.api.Configuration
+import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
+import uk.gov.hmrc.ngrdashboardfrontend.config.features.Features
 
-class MockAppConfig(val runModeConfiguration: Configuration) {
-
+class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig{
+  override val features: Features = new Features()(runModeConfiguration)
+  override val nextGenerationRatesUrl: String = "https://localhost:1500"
+  override def getString(key: String): String = "???"
+  val dashboard: String = "https://localhost:1503"
+  override val logoutUrl: String = "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:1503/ngr-dashboard-frontend/beforeYouGo"
+  override val registrationUrl: String = "https://localhost:1502"
+  override val feedbackFrontendUrl: String = "http://localhost:9514/feedback/NGR-Dashboard"
 }

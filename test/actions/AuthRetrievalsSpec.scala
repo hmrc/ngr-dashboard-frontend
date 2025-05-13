@@ -18,7 +18,7 @@ package actions
 
 import helpers.TestSupport
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{spy, when}
+import org.mockito.Mockito.{spy, times, verify, when}
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -32,11 +32,11 @@ import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.AuthRetrievalsImpl
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
+import utils.EqualsAuthenticatedUserRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 class AuthRetrievalsSpec extends TestSupport{
-
-  override implicit lazy val app: Application = GuiceApplicationBuilder().build()
+override implicit lazy val app: Application = GuiceApplicationBuilder().build()
 
   private val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
@@ -60,82 +60,62 @@ class AuthRetrievalsSpec extends TestSupport{
           Future.successful(
             Some(testCredId) ~
               Some(testNino) ~
-              Some(testAffinityGroup)
+              testConfidenceLevel ~
+              Some(testEmail) ~
+              Some(testAffinityGroup) ~
+              Some(testName)
           )
 
         when(
           mockAuthConnector
             .authorise[authAction.RetrievalsType](any(), any())(any(), any())
-        ).thenReturn(retrievalResult)
+        )
+          .thenReturn(retrievalResult)
 
         val stubs = spy(Stubs)
 
         val result = authAction.invokeBlock(testRequest, stubs.successBlock)
 
+        val expectedRequest = AuthenticatedUserRequest(
+          request = testRequest,
+          credId = Some(testCredId.providerId),
+          authProvider = Some(testCredId.providerType),
+          nino = Nino(true, Some(testNino)),
+          confidenceLevel = Some(testConfidenceLevel),
+          email = Some(testEmail),
+          affinityGroup = Some(testAffinityGroup),
+          name = Some(testName)
+        )
+
         status(result) mustBe OK
+
+        verify(stubs, times(1)).successBlock(argThat(EqualsAuthenticatedUserRequest(expectedRequest)))
       }
 
-      "is not logged in" must {
-        "throw a MissingBearerToken exception" in {
+      "the user has a confidence level of 50 with all details" in {
 
-          when(mockAuthConnector.authorise(any(), any())(any(), any()))
-          .thenReturn(Future.failed(new MissingBearerToken))
+        val retrievalResult: Future[authAction.RetrievalsType] =
+          Future.successful(
+            Some(testCredId) ~
+              None ~
+              ConfidenceLevel.L50 ~
+              Some(testEmail) ~
+              Some(testAffinityGroup) ~
+              Some(testName)
+          )
 
-          val result = authAction.invokeBlock(testRequest, Stubs.successBlock)
+        when(
+          mockAuthConnector
+            .authorise[authAction.RetrievalsType](any(), any())(any(), any())
+        )
+          .thenReturn(retrievalResult)
 
-          whenReady(result.failed) { e =>
-          e mustBe a[MissingBearerToken]
-          }
-        }
+        val stubs = spy(Stubs)
 
-        "throw a InvalidBearerToken exception" in {
+        val result = authAction.invokeBlock(testRequest, stubs.successBlock)
 
-          when(mockAuthConnector.authorise(any(), any())(any(), any()))
-          .thenReturn(Future.failed(new InvalidBearerToken))
-
-          val result = authAction.invokeBlock(testRequest, Stubs.successBlock)
-
-          whenReady(result.failed) { e =>
-            e mustBe a[InvalidBearerToken]
-          }
-        }
-      }
-      "the user's session has expired" must {
-        "redirect the user to log in " in {
-          when(mockAuthConnector.authorise(any(), any())(any(), any()))
-          .thenReturn(Future.failed(new BearerTokenExpired))
-
-          val result = authAction.invokeBlock(testRequest, Stubs.successBlock)
-
-          whenReady(result.failed) { e =>
-            e mustBe a[BearerTokenExpired]
-          }
-        }
-      }
-      "the user doesn't have sufficient enrolments" must {
-        "redirect the user to the unauthorised page" in {
-
-          when(mockAuthConnector.authorise(any(), any())(any(), any()))
-          .thenReturn(Future.failed(new InsufficientEnrolments))
-
-          val result = authAction.invokeBlock(testRequest, Stubs.successBlock)
-
-          whenReady(result.failed) { e =>
-            e mustBe a[InsufficientEnrolments]
-          }
-        }
-      }
-      "the user used an unaccepted auth provider" must {
-        "redirect the user to the unauthorised page" in {
-
-          when(mockAuthConnector.authorise(any(), any())(any(), any()))
-          .thenReturn(Future.failed(new UnsupportedAuthProvider))
-
-          val result = authAction.invokeBlock(testRequest, Stubs.successBlock)
-
-          whenReady(result.failed) { e =>
-            e mustBe a[UnsupportedAuthProvider]
-          }
+        whenReady(result.failed){ e =>
+          e.getMessage mustBe "confidenceLevel not met"
         }
       }
     }

@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrdashboardfrontend.config
+package uk.gov.hmrc.ngrdashboardfrontend.models.registration
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
+import play.api.libs.json.{Format, Json}
 
-class Module extends AbstractModule {
+final case class Email(value: String) {
+  override def toString: String = value
+}
 
-  override def configure(): Unit = {
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-  }
+object Email  {
+  implicit val format: Format[Email] = Json.format[Email]
 }

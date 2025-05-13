@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrdashboardfrontend.config
+package uk.gov.hmrc.ngrdashboardfrontend.models.registration
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
+import play.api.libs.json.{Json, OFormat}
 
-class Module extends AbstractModule {
+final case class PhoneNumber(value: String)
 
-  override def configure(): Unit = {
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-  }
+object PhoneNumber {
+  implicit val format: OFormat[PhoneNumber] = Json.format[PhoneNumber]
 }
