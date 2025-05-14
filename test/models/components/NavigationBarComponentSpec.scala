@@ -16,11 +16,15 @@
 
 package models.components
 
-import helpers.TestSupport
+import helpers.ViewBaseSpec
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.{NavBarContents, NavBarCurrentPage, NavBarPageContents, NavigationBarContent}
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.components.navigationBarComponent
 
-class NavigationBarComponentSpec extends TestSupport {
+class NavigationBarComponentSpec extends ViewBaseSpec {
+  val injectedView: navigationBarComponent = injector.instanceOf[navigationBarComponent]
 
   val content: NavigationBarContent = NavBarPageContents.CreateNavBar(
     contents = NavBarContents(
@@ -33,9 +37,29 @@ class NavigationBarComponentSpec extends TestSupport {
     notifications = Some(1)
   )
 
-  "navigation bar should render correctly" in {
-    navigationBarComponent.f(content)(fakeRequest, messages).toString() must not be empty
-    navigationBarComponent.render(content, fakeRequest, messages).toString() must not be empty
+  val backLine = "Back"
+
+  object Selectors {
+    val backLine = " div > a"
   }
 
+  "The Nav Bar template" when {
+    "navigation bar should render correctly" in {
+      injectedView.f(content, false)(request, messages).toString() must not be empty
+      injectedView.render(content, false, request, messages).toString() must not be empty
+    }
+
+    "back link should be created when showBackLine sets to true" in {
+      val view = injectedView(content, true)(request, messages)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      elementText(Selectors.backLine) mustBe backLine
+    }
+
+    "back link should be missing when showBackLine sets to false" in {
+      val htmlReader = injectedView.render(content, false, request, messages).toString()
+
+      htmlReader contains "<a href=\"#\" class=\"govuk-back-link\" data-module=\"hmrc-back-link\">Back</a>" shouldBe false
+    }
+  }
 }

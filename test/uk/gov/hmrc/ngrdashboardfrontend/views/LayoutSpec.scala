@@ -29,7 +29,7 @@ class LayoutSpec extends ViewBaseSpec {
 
   object Selectors {
     val navTitle = ".govuk-header__service-name"
-    val languageSelector = "body > div > nav > ul > li:nth-child(1) > span"
+    val languageSelector = "#main-content > div > div > nav > ul > li:nth-child(1) > span"
     val backLink = ".govuk-back-link"
   }
 

@@ -32,7 +32,8 @@
   standardBetaBanner: StandardBetaBanner,
   fullWidthLayout: FullWidthLayout,
   hmrcStandardPage: HmrcStandardPage,
-  stylesheets: Stylesheets
+  stylesheets: Stylesheets,
+  navigationBarComponent: navigationBarComponent
 )(implicit cfConfig: ContactFrontendConfig)
 
 @(pageTitle: Option[String] = None,
@@ -59,7 +60,7 @@ navigationBarContent: Option[NavigationBarContent] = None
     @if(navigationBarContent != None){
         @navBar
     }
-    @if(appConfig.features.welshLanguageSupportEnabled) {
+    @if(appConfig.features.welshLanguageSupportEnabled()) {
         @languageSelector
     }
     @contentBlock
