@@ -7,4 +7,4 @@ GET        /beforeYouGo             uk.gov.hmrc.ngrdashboardfrontend.controllers
 GET        /feedback                uk.gov.hmrc.ngrdashboardfrontend.controllers.BeforeYouGoController.feedback
 GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
 GET        /addProperty             uk.gov.hmrc.ngrdashboardfrontend.controllers.AddPropertyToYourAccountController.show
-GET        /addProperty             uk.gov.hmrc.ngrdashboardfrontend.controllers.AddPropertyToYourAccountController.submit
+POST       /addProperty             uk.gov.hmrc.ngrdashboardfrontend.controllers.AddPropertyToYourAccountController.submit
