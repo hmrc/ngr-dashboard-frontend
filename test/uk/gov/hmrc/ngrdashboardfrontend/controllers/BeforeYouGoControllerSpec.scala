@@ -27,7 +27,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.views.html.BeforeYouGoView
 class BeforeYouGoControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
   implicit val requestHeader: RequestHeader = mock[RequestHeader]
   lazy val beforeYouGoView: BeforeYouGoView = inject[BeforeYouGoView]
-  val pageTitle = "Manage your business rates valuation - GOV.UK"
+  val pageTitle = "Manage your business rates valuation"
  lazy val frontendAppConfig: AppConfig = inject[AppConfig]
   val expectedLogoutUrl = "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:1503/ngr-dashboard-frontend/beforeYouGo"
 

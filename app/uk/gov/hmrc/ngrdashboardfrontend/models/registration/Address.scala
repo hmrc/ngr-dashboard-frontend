@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.models.registration
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, optional, text}
 import play.api.libs.json.{Json, OFormat}
 
 final case class Address(line1: String,

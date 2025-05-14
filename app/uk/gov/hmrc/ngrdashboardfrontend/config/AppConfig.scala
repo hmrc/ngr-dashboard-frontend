@@ -45,7 +45,7 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
 
   private def getOptionString(key: String) = config.getOptional[String](key).filter(!_.isBlank).getOrElse(throw new Exception(s"Missing key: $key"))
 
-  lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+  lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(true)
 
   private lazy val feedbackFrontendHost = getOptionString("microservice.services.feedback-survey-frontend.host")
   private lazy val dashboardHost = getOptionString("dashboard.host")

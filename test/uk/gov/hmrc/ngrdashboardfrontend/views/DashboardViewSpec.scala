@@ -17,7 +17,6 @@
 package uk.gov.hmrc.ngrdashboardfrontend.views
 
 import helpers.ViewBaseSpec
-import mocks.MockAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
@@ -89,7 +88,6 @@ class DashboardViewSpec extends ViewBaseSpec {
 
   "Dashboard view" must {
     val dashboardView = view(cards = Seq(DashboardCard.card(dashboardCard)), name = "Greg", navigationBarContent = navBarContent)
-    val dashboardView2 = view(cards = Seq(DashboardCard.card(dashboardCardOneLink)), name = "Greg", navigationBarContent = navBarContent)
     lazy implicit val document: Document = Jsoup.parse(dashboardView.body)
     lazy val htmlF = view.f(Seq(DashboardCard.card(dashboardCard)), "Greg", navBarContent)
     lazy val htmlFOneLink = view.f(Seq(DashboardCard.card(dashboardCardOneLink)), "Greg", navBarContent)

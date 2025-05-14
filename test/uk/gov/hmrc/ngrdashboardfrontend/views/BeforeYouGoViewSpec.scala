@@ -21,13 +21,12 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
-import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.{BeforeYouGoView, Layout}
 
 class BeforeYouGoViewSpec extends ViewBaseSpec {
   val layout: Layout = MockitoSugar.mock[Layout]
   lazy val view: BeforeYouGoView = inject[BeforeYouGoView]
-  val title = "Manage your business rates valuation - GOV.UK"
+  val title = "Manage your business rates valuation"
   val heading = "You have signed out"
   val signInHref = "Sign in to the service"
   val subHeading = "Before you go"
