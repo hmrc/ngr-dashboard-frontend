@@ -43,13 +43,10 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   private def throwConfigNotFoundError(key: String): String =
     throw new RuntimeException(s"Could not find config key '$key'")
 
-  private def getOptionString(key: String) = config.getOptional[String](key).filter(!_.isBlank).getOrElse(throw new Exception(s"Missing key: $key"))
-
   lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
-
-  private lazy val feedbackFrontendHost = getOptionString("microservice.services.feedback-survey-frontend.host")
-  private lazy val dashboardHost = getOptionString("dashboard.host")
-  private lazy val basGatewayHost = getOptionString("microservice.services.bas-gateway-frontend.host")
+  private lazy val feedbackFrontendHost = getString("microservice.services.feedback-survey-frontend.host")
+  private lazy val dashboardHost = getString("dashboard.host")
+  private lazy val basGatewayHost = getString("microservice.services.bas-gateway-frontend.host")
 
   private lazy val dashboardBeforeYouGoUrl = s"$dashboardHost${routes.BeforeYouGoController.show.url}"
   lazy val feedbackFrontendUrl = s"$feedbackFrontendHost/feedback/NGR-Dashboard"
