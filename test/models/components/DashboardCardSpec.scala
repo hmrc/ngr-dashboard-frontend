@@ -47,7 +47,7 @@ class DashboardCardSpec extends TestSupport {
 
       val result: Card = DashboardCard.card(dashboardCard)
 
-      result.titleKey mustBe Some(CardTitle(Text("Your account")))
+      result.titleKey mustBe Some(CardTitle(Text("Account home")))
       result.captionKey mustBe Some(CardCaption(Text("Add and manage rating agents.")))
       result.captionKey2 mustBe Some(CardCaption(Text("Rating agents can deal with the VOA and your business rates on your behalf.")))
       result.captionKey3 mustBe Some(CardCaption(Text("Your client code is:")))
@@ -63,7 +63,7 @@ class DashboardCardSpec extends TestSupport {
       val input = DashboardCard(titleKey = "home.yourAccountCard.title")
       val result: Card = DashboardCard.card(input)
 
-      result.titleKey mustBe Some(CardTitle(Text("Your account")))
+      result.titleKey mustBe Some(CardTitle(Text("Account home")))
       result.captionKey mustBe None
       result.captionKey2 mustBe None
       result.captionKey3 mustBe None
