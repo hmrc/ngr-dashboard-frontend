@@ -1,14 +1,15 @@
 service.name = Manage your business rates valuation
 service.base.title = {0} - GOV.UK
 service.text = This is your new service
+service.base.title = Manage your business rates valuation
 
 #Dashboard
 home.heading=Your business rates valuation account
 home.caption=Account home
 
 #propertiesCard
-home.propertiesCard.title=Properties
-home.propertiesCard.caption=Add and manage properties you have a connection with.
+home.propertiesCard.title=Add a property
+home.propertiesCard.caption=Add a property you have a connection with.
 home.propertiesCard.caption2=You must tell us within 60 days of becoming the ratepayer. Do this by adding the property to your account.
 home.propertiesCard.tag=Action needed
 home.propertiesCard.addProperty=Add a property

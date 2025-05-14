@@ -33,7 +33,7 @@ class DashboardControllerSpec extends ControllerSpecSupport {
     mcc
   )(appConfig = mockConfig)
 
-  val pageTitle = "Manage your business rates valuation - GOV.UK"
+  val pageTitle = "Manage your business rates valuation"
 
   "Dashboard Controller" must {
     "method show" must {

@@ -17,13 +17,6 @@
 package connector
 
 import mocks.MockHttpV2
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatest.RecoverMethods.recoverToSucceededIf
-import org.scalatest.TestData
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HttpResponse, StringContextOps}
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, Email, RatepayerRegistration, RatepayerRegistrationValuation, TRNReferenceNumber}

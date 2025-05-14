@@ -22,6 +22,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.net.URL
 import javax.inject.{Inject, Singleton}
