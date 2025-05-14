@@ -66,7 +66,7 @@ class RegistrationActionImpl @Inject()(
   }
 
   def redirectToDashboard(): Future[Result] = {
-    Future.successful(Redirect(s"${appConfig.registrationUrl}/register"))
+    Future.successful(Redirect(s"${appConfig.registrationUrl}/ngr-login-register-frontend/register"))
   }
   // $COVERAGE-OFF$
   override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
