@@ -15,8 +15,10 @@
  *@
 
 @import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.backlink.BackLink
 
-@this()
+@this(govukBackLink: GovukBackLink)
 
 @(navigationBar: NavigationBarContent, showBackLink: Boolean = false)(implicit request: RequestHeader, messages: Messages)
 
@@ -49,6 +51,6 @@
         </ul>
     </nav>
     @if(showBackLink){
-    <a href="#" class="govuk-back-link" data-module="hmrc-back-link">Back</a>
+    @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
     }
 </div>
