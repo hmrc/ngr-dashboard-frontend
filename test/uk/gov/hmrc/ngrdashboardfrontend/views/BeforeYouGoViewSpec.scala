@@ -19,12 +19,10 @@ package uk.gov.hmrc.ngrdashboardfrontend.views
 import helpers.ViewBaseSpec
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
-import uk.gov.hmrc.ngrdashboardfrontend.views.html.{BeforeYouGoView, Layout}
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.BeforeYouGoView
 
 class BeforeYouGoViewSpec extends ViewBaseSpec {
-  val layout: Layout = MockitoSugar.mock[Layout]
   lazy val view: BeforeYouGoView = inject[BeforeYouGoView]
   val title = "Manage your business rates valuation"
   val heading = "You have signed out"

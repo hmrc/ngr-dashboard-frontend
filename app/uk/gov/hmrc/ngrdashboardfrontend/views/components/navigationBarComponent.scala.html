@@ -1,5 +1,5 @@
 @*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,30 +15,42 @@
  *@
 
 @import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.backlink.BackLink
 
-@(navigationBar: NavigationBarContent)(implicit request: RequestHeader, messages: Messages)
+@this(govukBackLink: GovukBackLink)
 
-<nav id="secondary-nav" class="hmrc-account-menu">
-    @navigationBar.accountHome.map{ Home =>
-        <a href=@Home.call.url class="hmrc-account-menu__link hmrc-account-menu__link@if(Home.selected != false){--active}  hmrc-account-menu__link--home">
+@(navigationBar: NavigationBarContent, showBackLink: Boolean = false)(implicit request: RequestHeader, messages: Messages)
+
+
+<div class="govuk-width-container" style="margin-top: -45px; margin-bottom: @if(showBackLink) {10px} else {30px};">
+    <nav id="secondary-nav" class="hmrc-account-menu">
+        @navigationBar.accountHome.map{ Home =>
+        <a href=@Home.call.url
+           class="hmrc-account-menu__link hmrc-account-menu__link@if(Home.selected != false){--active} hmrc-account-menu__link--home">
             <span class="hmrc-account-icon hmrc-account-icon--home">
                 @messages(Home.messageKey)
             </span>
         </a>
-    }
-
-    <ul class="hmrc-account-menu__main">
-        @navigationBar.navigationButtons.map{ buttons =>
-            @buttons.map{ button =>
-                <li>
-                    <a href=@button.call.url class="hmrc-account-menu__link hmrc-account-menu__link@if(button.selected != false){--active}">
-                        @button.notification.map{ notification =>
-                            <span class="hmrc-notification-badge">@notification</span>
-                        }
-                        @messages(button.messageKey)
-                    </a>
-                </li>
-            }
         }
-    </ul>
-</nav>
+
+        <ul class="hmrc-account-menu__main">
+            @navigationBar.navigationButtons.map{ buttons =>
+            @buttons.map{ button =>
+            <li>
+                <a href=@button.call.url
+                   class=@if(button.fieldName.equals("SignOutPage")){"hmrc-account-menu__link2 hmrc-account-menu__link@if(button.selected != false){--active}"}else{"hmrc-account-menu__link hmrc-account-menu__link@if(button.selected != false){--active}"}>
+                    @button.notification.map{ notification =>
+                    <span class="hmrc-notification-badge">@notification</span>
+                    }
+                    @messages(button.messageKey)
+                </a>
+            </li>
+            }
+            }
+        </ul>
+    </nav>
+    @if(showBackLink){
+    @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
+    }
+</div>

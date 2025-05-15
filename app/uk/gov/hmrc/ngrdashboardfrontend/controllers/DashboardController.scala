@@ -20,7 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.CreateNavBar
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -48,7 +48,7 @@ class DashboardController @Inject()(
     links = Some(
       Seq(
         Link(
-          href = Call(method = "GET", url = "some-href"),
+          href = Call(method = "GET", url = routes.AddPropertyToYourAccountController.show.url.replace("/", "")),
           linkId = "LinkId-Card",
           messageKey = "home.propertiesCard.addProperty",
         )
@@ -63,15 +63,6 @@ class DashboardController @Inject()(
       Future.successful(Ok(dashboardView(
         cards = Seq(singleCard),
         name = name,
-        navigationBarContent = CreateNavBar(
-          contents = NavBarContents(
-            homePage = Some(true),
-            messagesPage = Some(false),
-            profileAndSettingsPage = Some(false),
-            signOutPage = Some(true)
-          ),
-          currentPage = NavBarCurrentPage(homePage = true),
-          notifications = Some(1)
-        ))))
+        navigationBarContent = createHomeNavBar)))
     }
 }

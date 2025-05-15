@@ -32,7 +32,8 @@
   standardBetaBanner: StandardBetaBanner,
   fullWidthLayout: FullWidthLayout,
   hmrcStandardPage: HmrcStandardPage,
-  stylesheets: Stylesheets
+  stylesheets: Stylesheets,
+  navigationBarComponent: navigationBarComponent
 )(implicit cfConfig: ContactFrontendConfig)
 
 @(pageTitle: Option[String] = None,
@@ -47,7 +48,7 @@ navigationBarContent: Option[NavigationBarContent] = None
 
 @navBar = {
     @navigationBarContent.map { content =>
-        @navigationBarComponent(content)
+        @navigationBarComponent(content, showBackLink)
     }
 }
 
@@ -55,16 +56,13 @@ navigationBarContent: Option[NavigationBarContent] = None
     @hmrcLanguageSelectHelper()
 }
 
-@beforeContent = {
+@content = {
     @if(navigationBarContent != None){
         @navBar
     }
     @if(appConfig.features.welshLanguageSupportEnabled()) {
         @languageSelector
     }
-}
-
-@content = {
     @contentBlock
 }
 
@@ -72,11 +70,10 @@ navigationBarContent: Option[NavigationBarContent] = None
     HmrcStandardPageParams(
         pageTitle = pageTitle.map(title => messages("service.base.title", title)),
         templateOverrides = TemplateOverrides(
-            beforeContentBlock = Some(beforeContent),
             mainContentLayout = if(fullWidth) Some(fullWidthLayout(_)) else None,
             additionalHeadBlock = Some(headScripts)
         ),
-        backLink = if (showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None,
+        backLink = None,
         banners = Banners(
             phaseBanner = Some(standardBetaBanner()),
         ),

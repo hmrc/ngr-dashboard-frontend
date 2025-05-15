@@ -24,7 +24,7 @@
 @(cards: Seq[Card], name: String, navigationBarContent: NavigationBarContent)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("service.name")), fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
-    <p class="govuk-caption-l">@{messages("home.yourAccountCard.title")}</p>
+    <span class="govuk-caption-m">@{messages("home.yourAccountCard.title")}</span>
     <h1 class="govuk-heading-l">@name</h1>
 
     <div class="flex-container govuk-grid-row">

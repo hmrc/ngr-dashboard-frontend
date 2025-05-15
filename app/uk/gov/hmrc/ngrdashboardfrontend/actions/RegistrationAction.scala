@@ -34,7 +34,7 @@ class RegistrationActionImpl @Inject()(
                                     authenticate: AuthRetrievals,
                                     appConfig: AppConfig,
                                     mcc: MessagesControllerComponents
-                                  )(implicit ec: ExecutionContext)  extends  RegistrationAction{
+                                  )(implicit ec: ExecutionContext) extends RegistrationAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
 
