@@ -21,26 +21,34 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.views.html.AddPropertyToYourAccountView
+import uk.gov.hmrc.ngrdashboardfrontend.models.forms.FindAProperty.form
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.FindAPropertyView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class AddPropertyToYourAccountController @Inject()(
-                                                    addPropertyToYourAccountView: AddPropertyToYourAccountView,
-                                                    authenticate: AuthRetrievals,
-                                                    isRegisteredCheck: RegistrationAction,
-                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+class FindAPropertyController @Inject()(
+                                         findAPropertyView: FindAPropertyView,
+                                         authenticate: AuthRetrievals,
+                                         isRegisteredCheck: RegistrationAction,
+                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
+
   def show(): Action[AnyContent] =
     (authenticate andThen isRegisteredCheck).async { implicit request =>
-      Future.successful(Ok(addPropertyToYourAccountView(createDefaultNavBar)))
+      Future.successful(Ok(findAPropertyView(form(), createDefaultNavBar)))
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen isRegisteredCheck).async { _ =>
-      Future.successful(Redirect(routes.DashboardController.show.url))
+    (authenticate andThen isRegisteredCheck).async { implicit request =>
+      form()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(findAPropertyView(formWithErrors, createDefaultNavBar))),
+          findAProperty => {
+            Future.successful(Redirect(routes.DashboardController.show.url))
+          })
     }
 }
