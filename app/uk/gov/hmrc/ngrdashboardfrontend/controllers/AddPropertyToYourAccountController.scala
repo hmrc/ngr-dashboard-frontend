@@ -41,6 +41,6 @@ class AddPropertyToYourAccountController @Inject()(
 
   def submit(): Action[AnyContent] =
     (authenticate andThen isRegisteredCheck).async { implicit request =>
-      Future.successful(Redirect(routes.DashboardController.show.url))
+      Future.successful(Redirect(routes.WhatYouNeedController.show.url))
     }
 }

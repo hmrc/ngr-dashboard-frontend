@@ -20,10 +20,10 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.CreateNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.{NavBarContents, NavBarCurrentPage}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.WhatYouNeedView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
@@ -32,19 +32,8 @@ class WhatYouNeedController @Inject()(authenticate: AuthRetrievals,
                                       isRegisteredCheck: RegistrationAction,
                                       view: WhatYouNeedView, mcc: MessagesControllerComponents)(implicit appConfig: AppConfig) extends FrontendController(mcc) with I18nSupport {
 
-  private lazy val navBarContents = CreateNavBar(
-    contents = NavBarContents(
-      homePage = Some(true),
-      messagesPage = Some(false),
-      profileAndSettingsPage = Some(false),
-      signOutPage = Some(true)
-    ),
-    currentPage = NavBarCurrentPage(),
-    notifications = None
-  )
-
   def show: Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
-   Future.successful(Ok(view(navBarContents, createLink)))
+   Future.successful(Ok(view(createDefaultNavBar, createLink)))
   }
 
   def next: Action[AnyContent] = {
@@ -60,7 +49,5 @@ class WhatYouNeedController @Inject()(authenticate: AuthRetrievals,
     val content = text.replace(linkText, link)
     s"""<p class="govuk-body">$content</p>"""
   }
-
-  //test
 
 }
