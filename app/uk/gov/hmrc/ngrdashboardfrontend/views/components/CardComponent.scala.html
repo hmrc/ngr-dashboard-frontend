@@ -82,13 +82,11 @@
                         </div>
                     } else {
                         <ul class="govuk-list">
-                            <a class="govuk-link">
-                                @cardAction.links.map { link =>
+                            @cardAction.links.map { link =>
                                 <li>
                                     @LinkComponent(link)
                                 </li>
-                                }
-                            </a>
+                            }
                         </ul>
                     }
                 }
