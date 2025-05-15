@@ -16,31 +16,38 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.views.html.AddPropertyToYourAccountView
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.WhatYouNeedView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class AddPropertyToYourAccountController @Inject()(
-                                                    addPropertyToYourAccountView: AddPropertyToYourAccountView,
-                                                    authenticate: AuthRetrievals,
-                                                    isRegisteredCheck: RegistrationAction,
-                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
-  extends FrontendController(mcc) with I18nSupport {
-  def show(): Action[AnyContent] =
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
-      Future.successful(Ok(addPropertyToYourAccountView(createDefaultNavBar)))
-    }
+class WhatYouNeedController @Inject()(authenticate: AuthRetrievals,
+                                      isRegisteredCheck: RegistrationAction,
+                                      view: WhatYouNeedView, mcc: MessagesControllerComponents)(implicit appConfig: AppConfig) extends FrontendController(mcc) with I18nSupport {
 
-  def submit(): Action[AnyContent] =
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
-      Future.successful(Redirect(routes.WhatYouNeedController.show.url))
+  def show: Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
+   Future.successful(Ok(view(createDefaultNavBar, createLink)))
+  }
+
+  def next: Action[AnyContent] = {
+    Action.async {
+      Future.successful(Redirect(routes.DashboardController.show))
     }
+  }
+
+  private def createLink(implicit messages: Messages): String = {
+    val text = messages("whatYouNeed.p2")
+    val linkText = messages("whatYouNeed.link")
+    val link = s"""<a href="https://www.gov.uk/contact-your-local-council-about-business-rates" target="_blank">$linkText</a>"""
+    val content = text.replace(linkText, link)
+    s"""<p class="govuk-body">$content</p>"""
+  }
+
 }
