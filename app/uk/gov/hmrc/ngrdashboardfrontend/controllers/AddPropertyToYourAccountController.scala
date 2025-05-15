@@ -24,9 +24,10 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.cre
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.AddPropertyToYourAccountView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class AddPropertyToYourAccountController @Inject()(
                                                     addPropertyToYourAccountView: AddPropertyToYourAccountView,
                                                     authenticate: AuthRetrievals,
