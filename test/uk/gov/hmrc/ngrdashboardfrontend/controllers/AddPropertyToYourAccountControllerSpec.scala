@@ -53,7 +53,7 @@ class AddPropertyToYourAccountControllerSpec extends ControllerSpecSupport with 
       "Return OK and the correct view" in {
         val result = controller().submit()(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.DashboardController.show.url)
+        redirectLocation(result) shouldBe Some(routes.WhatYouNeedController.show.url)
       }
     }
   }
