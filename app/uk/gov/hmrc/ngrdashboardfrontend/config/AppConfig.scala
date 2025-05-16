@@ -29,6 +29,7 @@ trait AppConfig {
   val registrationUrl: String
   val feedbackFrontendUrl:String
   val nextGenerationRatesUrl: String
+  val addAPropertyUrl: String
   def getString(key: String): String
 }
 
@@ -44,10 +45,12 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
 
   lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
   private lazy val feedbackFrontendHost = getString("microservice.services.feedback-survey-frontend.host")
-  private lazy val dashboardHost = getString("dashboard.host")
+  private lazy val propertyLinkingFrontendHost = getString("microservice.services.ngr-property-linking-frontend.host")
+  private lazy val envHost = getString("environment.host")
   private lazy val basGatewayHost = getString("microservice.services.bas-gateway-frontend.host")
 
-  private lazy val dashboardBeforeYouGoUrl = s"$dashboardHost${routes.BeforeYouGoController.show.url}"
-  lazy val feedbackFrontendUrl = s"$feedbackFrontendHost/feedback/NGR-Dashboard"
+  private lazy val dashboardBeforeYouGoUrl: String = s"$envHost${routes.BeforeYouGoController.show.url}"
+  lazy val feedbackFrontendUrl: String = s"$feedbackFrontendHost/feedback/Next-Generation-Rates"
+  lazy val addAPropertyUrl: String = s"$propertyLinkingFrontendHost/ngr-property-linking-frontend/add-a-property"
   lazy val logoutUrl: String = s"$basGatewayHost/bas-gateway/sign-out-without-state?continue=$dashboardBeforeYouGoUrl"
 }

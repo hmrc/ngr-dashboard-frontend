@@ -20,8 +20,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.views.html.AddPropertyToYourAccountView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -29,18 +27,12 @@ import scala.concurrent.Future
 
 @Singleton
 class AddPropertyToYourAccountController @Inject()(
-                                                    addPropertyToYourAccountView: AddPropertyToYourAccountView,
                                                     authenticate: AuthRetrievals,
                                                     isRegisteredCheck: RegistrationAction,
                                                     mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
   def show(): Action[AnyContent] =
     (authenticate andThen isRegisteredCheck).async { implicit request =>
-      Future.successful(Ok(addPropertyToYourAccountView(createDefaultNavBar)))
-    }
-
-  def submit(): Action[AnyContent] =
-    (authenticate andThen isRegisteredCheck).async { _ =>
-      Future.successful(Redirect(routes.DashboardController.show.url))
+      Future.successful(Redirect(appConfig.addAPropertyUrl))
     }
 }
