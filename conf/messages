@@ -1,7 +1,6 @@
 service.name = Manage your business rates valuation
 service.base.title = {0} - GOV.UK
 service.text = This is your new service
-service.base.title = Manage your business rates valuation
 service.continue = Continue
 
 #Dashboard

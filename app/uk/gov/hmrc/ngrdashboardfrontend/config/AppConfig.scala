@@ -43,7 +43,6 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   private def throwConfigNotFoundError(key: String): String =
     throw new RuntimeException(s"Could not find config key '$key'")
 
-  lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
   private lazy val feedbackFrontendHost = getString("microservice.services.feedback-survey-frontend.host")
   private lazy val propertyLinkingFrontendHost = getString("microservice.services.ngr-property-linking-frontend.host")
   private lazy val envHost = getString("environment.host")
