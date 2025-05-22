@@ -24,7 +24,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.views.html.BeforeYouGoView
 
 class BeforeYouGoViewSpec extends ViewBaseSpec {
   lazy val view: BeforeYouGoView = inject[BeforeYouGoView]
-  val title = "Manage your business rates valuation"
+  val title = "You have signed out - GOV.UK"
   val heading = "You have signed out"
   val signInHref = "Sign in to the service"
   val subHeading = "Before you go"

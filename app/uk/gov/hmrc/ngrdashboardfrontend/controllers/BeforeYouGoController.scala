@@ -42,7 +42,7 @@ class BeforeYouGoController @Inject()(
 
   def feedback: Action[AnyContent] = Action { _ =>
     val uuid = randomUUID().toString
-    val auditData = Map("feedbackId" -> uuid, "customMetric" -> "NGR-Dashboard")
+    val auditData = Map("feedbackId" -> uuid, "customMetric" -> "Next-Generation-Rates")
     logger.info(s"Redirecting to feedback frontend $auditData")
     Redirect(appConfig.feedbackFrontendUrl).withSession(("feedbackId", uuid))
   }

@@ -21,7 +21,6 @@ lazy val microservice = Project("ngr-dashboard-frontend", file("."))
     Compile / scalacOptions -= "utf8",
     PlayKeys.playDefaultPort := 1503,
   )
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings *)
   .settings(WartRemoverSettings.wartRemoverSettings *)
   .disablePlugins(JUnitXmlReportPlugin)
