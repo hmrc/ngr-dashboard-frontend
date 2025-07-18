@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrdashboardfrontend.views
 import helpers.ViewBaseSpec
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.{Layout, Stylesheets}
 
 class LayoutSpec extends ViewBaseSpec {
@@ -37,6 +37,9 @@ class LayoutSpec extends ViewBaseSpec {
     super.beforeEach()
     mockConfig.features.welshLanguageSupportEnabled(false)
   }
+
+  lazy val view: HtmlFormat.Appendable = injectedView(pageTitle = Some("Title of page"))(Html("Test"))(request,messages,mockConfig)
+  lazy implicit val document: Document = Jsoup.parse(view.body)
 
 
   "The Layout template" when {

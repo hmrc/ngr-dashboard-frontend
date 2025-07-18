@@ -61,3 +61,14 @@ beforeYouGo.p1=We will save your answers for 28 days.
 beforeYouGo.p2=Your feedback helps us make our service better.
 beforeYouGo.feedback=Take a short survey
 beforeYouGo.p3= to share your feedback on this service.
+
+whatYouWillNeed.title=What do you want to tell us?
+whatYouWillNeed.property=Property
+whatYouWillNeed.changed.property.features.link=You changed property features or use of space
+whatYouWillNeed.rent.agreement=Rent agreement
+whatYouWillNeed.rent.agreement.p1=You have moved into a property and have a new agreement to rent it. You may have signed a lease or licence, or agreed it verbally. You will still have an agreement even if you do not pay rent.
+whatYouWillNeed.new.agreement.link=You have a new agreement
+whatYouWillNeed.rent.agreement.p2=Your agreement to rent a property has ended and you have a new agreement to keep renting it. You may have signed a lease or licence, or agreed it verbally.
+whatYouWillNeed.renew.agreement.link=You renewed your agreement
+whatYouWillNeed.rent.agreement.p3=You have agreed a new rent on the date set out in your agreement.
+whatYouWillNeed.review.rent.link=You reviewed your rent
