@@ -1,24 +1,23 @@
-import play.sbt.PlayImport.*
 import sbt.*
 
 object AppDependencies {
 
-  private val bootstrapVersion = "9.11.0"
-  private val enumeratumVersion = "1.8.2"
+  private val bootstrapVersion = "9.16.0"
+  private val enumeratumVersion = "1.9.0"
   
 
-  val compile = Seq(
+  val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-frontend-play-30"                        % bootstrapVersion,
-    "uk.gov.hmrc"             %% "play-frontend-hmrc-play-30"                        % "12.1.0",
-    "uk.gov.hmrc"             %% "centralised-authorisation-resource-client-play-30" % "1.7.0",
+    "uk.gov.hmrc"             %% "play-frontend-hmrc-play-30"                        % "12.7.0",
+    "uk.gov.hmrc"             %% "centralised-authorisation-resource-client-play-30" % "1.9.0",
     "uk.gov.hmrc"             %% "domain-play-30"                                    % "11.0.0",
     "com.beachape"            %% "enumeratum-play"                                   %  enumeratumVersion
   )
 
-  val test = Seq(
+  val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-test-play-30"     % bootstrapVersion    % Test,
-    "org.jsoup"               %  "jsoup"                      % "1.13.1"            % Test,
+    "org.jsoup"               %  "jsoup"                      % "1.21.1"            % Test,
   )
 
-  val it = Seq.empty
+  val it: Seq[Nothing] = Seq.empty
 }
