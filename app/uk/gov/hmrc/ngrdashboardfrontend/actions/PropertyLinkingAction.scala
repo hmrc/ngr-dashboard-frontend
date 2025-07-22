@@ -19,22 +19,23 @@ package uk.gov.hmrc.ngrdashboardfrontend.actions
 import com.google.inject.ImplementedBy
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
+import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegistrationActionImpl @Inject()(
+class PropertyLinkingActionImpl @Inject()(
                                     ngrConnector: NGRConnector,
                                     authenticate: AuthRetrievals,
                                     appConfig: AppConfig,
                                     mcc: MessagesControllerComponents
-                                  )(implicit ec: ExecutionContext) extends RegistrationAction {
+                                  )(implicit ec: ExecutionContext) extends PropertyLinkingAction with RegistrationAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
 
@@ -43,28 +44,35 @@ class RegistrationActionImpl @Inject()(
 
       val credId = CredId(authRequest.credId.getOrElse(""))
 
-      ngrConnector.getRatepayer(credId).flatMap{ maybeRatepayer =>
+      def checkPropertyLinking(): Future[Result] =
+        ngrConnector.getPropertyLinkingUserAnswers(credId).flatMap { maybePropertyLinkingUserAnswers =>
+          if (maybePropertyLinkingUserAnswers.isDefined) {
+            block(authRequest)
+          } else {
+            redirectToDashboard()
+          }
+        }
+
+      ngrConnector.getRatepayer(credId).flatMap { maybeRatepayer =>
         val isRegistered = maybeRatepayer
           .flatMap(_.ratepayerRegistration)
           .flatMap(_.isRegistered)
           .getOrElse(false)
 
-        val name:Option[String] = maybeRatepayer
-          .flatMap(user => user.ratepayerRegistration)
-          .map(info => info.name.map(value => value.value))
-          .getOrElse(Some(""))
-
-        if (isRegistered) {
-          block(authRequest.copy( name = Some(Name(name = name, lastName = Some("")))))
-        } else {
-         redirectToRegister()
-        }
+        if (isRegistered)
+          checkPropertyLinking()
+        else
+          redirectToRegister()
       }
     })
   }
 
   private def redirectToRegister(): Future[Result] = {
     Future.successful(Redirect(s"${appConfig.registrationUrl}/ngr-login-register-frontend/register"))
+  }
+
+  private def redirectToDashboard(): Future[Result] = {
+    Future.successful(Redirect(routes.DashboardController.show.url))
   }
   // $COVERAGE-OFF$
   override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
@@ -74,5 +82,5 @@ class RegistrationActionImpl @Inject()(
 
 }
 
-@ImplementedBy(classOf[RegistrationActionImpl])
-trait RegistrationAction extends ActionBuilder[AuthenticatedUserRequest, AnyContent] with ActionFunction[Request, AuthenticatedUserRequest]
+@ImplementedBy(classOf[PropertyLinkingActionImpl])
+trait PropertyLinkingAction extends ActionBuilder[AuthenticatedUserRequest, AnyContent] with ActionFunction[Request, AuthenticatedUserRequest]

@@ -27,6 +27,9 @@ class WhatDoYouWantToTellUsViewSpec extends ViewBaseSpec {
 
   val view: WhatDoYouWantToTellUsView = app.injector.instanceOf[WhatDoYouWantToTellUsView]
 
+  val address = "Bug Me Not PVT LTD, RODLEY LANE, RODLEY, LEEDS, BH1 1HU"
+  val propertyReference = "2191322564521"
+
   val navBarContent: NavigationBarContent = CreateNavBar(
     contents = NavBarContents(
       homePage = Some(true),
@@ -45,12 +48,12 @@ class WhatDoYouWantToTellUsViewSpec extends ViewBaseSpec {
 
     val backLink = "#main-content > div > div > div > a"
     val mainContent = "#main-content > div > div"
+    val addressSpan = "#main-content > div > div > span"
     val mainContentText = "What do you want to tell us?"
     val mainContentSubheading1 = "#main-content > div > div > h2:nth-child(4)"
     val mainContentSubheading2 = "#main-content > div > div > h2:nth-child(7)"
     val mainContentLink1 = "#main-content > div > div > p:nth-child(5) > a"
     val mainContentP1 = "#main-content > div > div > p:nth-child(8)"
-    val mainContentP1Text = "#main-content > div > div > p:nth-child(8)"
     val mainContentLink2 = "#main-content > div > div > p:nth-child(9) > a"
     val mainContentP2 = "#main-content > div > div > p:nth-child(11)"
     val mainContentLink3 = "#main-content > div > div > p:nth-child(12) > a"
@@ -59,10 +62,10 @@ class WhatDoYouWantToTellUsViewSpec extends ViewBaseSpec {
   }
 
   "WhatDoYouWantToTellUsView" must {
-    val whatDoYouWantToTellUsView = view(navigationBarContent = navBarContent)
+    val whatDoYouWantToTellUsView = view(navBarContent, address, propertyReference)
     lazy implicit val document: Document = Jsoup.parse(whatDoYouWantToTellUsView.body)
-    lazy val htmlF = view.f(navBarContent)
-    lazy val htmlFOneLink = view.f(navBarContent)
+    lazy val htmlF = view.f(navBarContent, address, propertyReference)
+    lazy val htmlFOneLink = view.f(navBarContent, address, propertyReference)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
@@ -83,6 +86,10 @@ class WhatDoYouWantToTellUsViewSpec extends ViewBaseSpec {
 
     "show correct title" in {
       document.title() mustBe "What do you want to tell us? - Manage your business rates valuation - GOV.UK"
+    }
+
+    "show correct address" in {
+      elementText(Selectors.addressSpan) mustBe address
     }
 
     "show correct heading" in {

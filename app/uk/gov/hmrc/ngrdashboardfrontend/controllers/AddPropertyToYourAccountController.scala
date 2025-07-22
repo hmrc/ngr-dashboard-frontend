@@ -32,7 +32,7 @@ class AddPropertyToYourAccountController @Inject()(
                                                     mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
   def show(): Action[AnyContent] =
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
+    (authenticate andThen isRegisteredCheck).async(_ =>
       Future.successful(Redirect(appConfig.addAPropertyUrl))
-    }
+    )
 }

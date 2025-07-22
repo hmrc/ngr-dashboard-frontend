@@ -18,11 +18,12 @@ package uk.gov.hmrc.ngrdashboardfrontend.connector
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, NotFoundException, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty}
 
 import java.net.URL
 import javax.inject.{Inject, Singleton}
@@ -42,5 +43,22 @@ class NGRConnector @Inject()(http: HttpClientV2,
     http.get(url("get-ratepayer"))
       .withBody(Json.toJson(model))
       .execute[Option[RatepayerRegistrationValuation]]
+  }
+
+  def getPropertyLinkingUserAnswers(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[PropertyLinkingUserAnswers]] = {
+    implicit val rds: HttpReads[PropertyLinkingUserAnswers] = readFromJson
+    val dummyVMVProperty: VMVProperty = VMVProperty(0L, "", "", "", List.empty)
+    val model: PropertyLinkingUserAnswers = PropertyLinkingUserAnswers(credId, dummyVMVProperty)
+    http.get(url("get-property-linking-user-answers"))
+      .withBody(Json.toJson(model))
+      .execute[Option[PropertyLinkingUserAnswers]]
+  }
+
+  def getLinkedProperty(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[VMVProperty]] = {
+    getPropertyLinkingUserAnswers(credId)
+      .map {
+        case Some(propertyLinkingUserAnswers) => Some(propertyLinkingUserAnswers.vmvProperty)
+        case None => throw new NotFoundException("failed to find propertyLinkingUserAnswers from backend mongo")
+      }
   }
 }

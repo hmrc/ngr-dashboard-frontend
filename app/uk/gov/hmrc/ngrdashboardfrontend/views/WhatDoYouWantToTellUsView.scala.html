@@ -16,43 +16,37 @@
 
 @import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 @import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.ngrdashboardfrontend.views.html.components.hyperLinkComponent
 
-@this(layout: Layout)
+@this(layout: Layout,
+hyperLinkComponent: hyperLinkComponent)
 
-@(navigationBarContent: NavigationBarContent)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(navigationBarContent: NavigationBarContent, address: String, propertyReference: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(s"${messages("whatYouWillNeed.title")} - ${messages("service.name")}"), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
-    <span class="govuk-caption-m">address TODO</span>
+    <span class="govuk-caption-m">@address</span>
     <h1 class="govuk-heading-l">@messages("whatYouWillNeed.title")</h1>
     <h2 class="govuk-heading-m">@messages("whatYouWillNeed.property")</h2>
-     <p class="govuk-body"><a class="govuk-link" href="#">
-      @messages("whatYouWillNeed.changed.property.features.link")
-     </a></p>
+    @hyperLinkComponent(messages("whatYouWillNeed.changed.property.features.link"), "#", "")
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     <h2 class="govuk-heading-m"> @messages("whatYouWillNeed.rent.agreement")</h2>
     <p class="govuk-body">
         @messages("whatYouWillNeed.rent.agreement.p1")
     </p>
-    <p class="govuk-body"><a class="govuk-link" href="#">
-        @messages("whatYouWillNeed.new.agreement.link")
-    </a></p>
+    @hyperLinkComponent(messages("whatYouWillNeed.new.agreement.link"), "#", "")
 
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     <p class="govuk-body">
         @messages("whatYouWillNeed.rent.agreement.p2")
     </p>
-    <p class="govuk-body"><a class="govuk-link" href="#">
-        @messages("whatYouWillNeed.renew.agreement.link")
-    </a></p>
+    @hyperLinkComponent(messages("whatYouWillNeed.renew.agreement.link"), "#", "")
 
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     <p class="govuk-body">
         @messages("whatYouWillNeed.rent.agreement.p3")
     </p>
-    <p class="govuk-body"><a class="govuk-link" href="#">
-        @messages("whatYouWillNeed.review.rent.link")
-    </a></p>
+    @hyperLinkComponent(messages("whatYouWillNeed.review.rent.link"), "#", "")
 
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
