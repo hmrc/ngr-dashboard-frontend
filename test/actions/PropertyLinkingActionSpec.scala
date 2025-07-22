@@ -16,7 +16,7 @@
 
 package actions
 
-import helpers.TestSupport
+import helpers.{TestData, TestSupport}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{spy, when}
 import play.api.Application
@@ -28,14 +28,15 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, RegistrationActionImpl}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, PropertyLinkingActionImpl}
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.PropertyLinkingUserAnswers
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.UserType.Individual
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration._
 
 import scala.concurrent.Future
 
-class RegistrationActionSpec extends TestSupport {
+class PropertyLinkingActionSpec extends TestSupport with TestData {
   val credId: CredId = CredId("1234")
 
   val testRegistrationModel: RatepayerRegistration =
@@ -59,6 +60,8 @@ class RegistrationActionSpec extends TestSupport {
       isRegistered = Some(false)
     )
 
+  val linkedProperty = PropertyLinkingUserAnswers(credId, property)
+
   override implicit lazy val app: Application = GuiceApplicationBuilder().build()
 
   private val mockAuthConnector: AuthConnector = mock[AuthConnector]
@@ -70,10 +73,10 @@ class RegistrationActionSpec extends TestSupport {
 
   private val testRequest = FakeRequest("GET", "/paye/company-car")
 
-  val registrationAction = new RegistrationActionImpl(ngrConnector = mockNGRConnector,authenticate = mockAuthAction, appConfig = mockConfig,mcc)
+  val propertyLinkingAction = new PropertyLinkingActionImpl(ngrConnector = mockNGRConnector, authenticate = mockAuthAction, appConfig = mockConfig, mcc)
 
   private implicit class HelperOps[A](a: A) {
-    def ~[B](b: B) = new ~(a, b)
+    def ~[B](b: B) = new~(a, b)
   }
 
   val retrievalResult: Future[mockAuthAction.RetrievalsType] =
@@ -86,27 +89,28 @@ class RegistrationActionSpec extends TestSupport {
         Some(testName)
     )
 
-  "Registration Action" when {
-    "a user navigating to /ngr-login-register-frontend/start" must {
-        "must be navigated to requested page if not registered" in {
-          when(
-            mockAuthConnector
-              .authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
-          )
-            .thenReturn(retrievalResult)
-          when(mockNGRConnector.getRatepayer(any())(any()))
-            .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel)))))
+  "Property Linking Action" when {
+    "a user navigating to /ngr-dashboard-frontend/select-your-property" must {
+      "must be navigated to requested page if not registered" in {
+        when(
+          mockAuthConnector
+            .authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
+        )
+          .thenReturn(retrievalResult)
+        when(mockNGRConnector.getRatepayer(any())(any()))
+          .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel)))))
 
-          val stubs = spy(Stubs)
+        val stubs = spy(Stubs)
 
 
-          val authResult = mockAuthAction.invokeBlock(testRequest, stubs.successBlock)
-          status(authResult) mustBe OK
+        val authResult = mockAuthAction.invokeBlock(testRequest, stubs.successBlock)
+        status(authResult) mustBe OK
 
-          val result = registrationAction.invokeBlock(testRequest, stubs.successBlock)
-          status(result) mustBe SEE_OTHER
-        }
-      "must be navigated to dashboard page if registered" in {
+        val result = propertyLinkingAction.invokeBlock(testRequest, stubs.successBlock)
+        status(result) mustBe SEE_OTHER
+      }
+
+      "must be navigated to dashboard page if cannot find linked property but it's registered" in {
         when(
           mockAuthConnector
             .authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
@@ -116,16 +120,37 @@ class RegistrationActionSpec extends TestSupport {
         when(mockNGRConnector.getRatepayer(any())(any()))
           .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel.copy(isRegistered = Some(true)))))))
 
+        when(mockNGRConnector.getPropertyLinkingUserAnswers(any())(any())).thenReturn(Future.successful(None))
 
         val stubs = spy(Stubs)
-
 
         val authResult = mockAuthAction.invokeBlock(testRequest, stubs.successBlock)
         status(authResult) mustBe OK
 
-        val result = registrationAction.invokeBlock(testRequest, stubs.successBlock)
+        val result = propertyLinkingAction.invokeBlock(testRequest, stubs.successBlock)
+        status(result) mustBe SEE_OTHER
+      }
+
+      "must return OK if found linked property and it's registered" in {
+        when(
+          mockAuthConnector
+            .authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
+        )
+          .thenReturn(retrievalResult)
+
+        when(mockNGRConnector.getRatepayer(any())(any()))
+          .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel.copy(isRegistered = Some(true)))))))
+
+        when(mockNGRConnector.getPropertyLinkingUserAnswers(any())(any())).thenReturn(Future.successful(Some(linkedProperty)))
+
+        val stubs = spy(Stubs)
+
+        val authResult = mockAuthAction.invokeBlock(testRequest, stubs.successBlock)
+        status(authResult) mustBe OK
+
+        val result = propertyLinkingAction.invokeBlock(testRequest, stubs.successBlock)
         status(result) mustBe OK
       }
-      }
     }
+  }
 }

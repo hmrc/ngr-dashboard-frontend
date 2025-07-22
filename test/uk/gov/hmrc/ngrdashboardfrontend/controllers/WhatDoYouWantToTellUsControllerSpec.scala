@@ -16,15 +16,21 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
-import helpers.ControllerSpecSupport
+import helpers.{ControllerSpecSupport, TestData}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status.OK
 import play.api.mvc.RequestHeader
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.test.Helpers.{await, contentAsString, status}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.WhatDoYouWantToTellUsView
 
-class WhatDoYouWantToTellUsControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
+import scala.concurrent.Future
+
+class WhatDoYouWantToTellUsControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout with TestData {
   implicit val requestHeader: RequestHeader = mock[RequestHeader]
   val pageTitle = "What do you want to tell us?"
   lazy val frontendAppConfig: AppConfig = inject[AppConfig]
@@ -32,16 +38,27 @@ class WhatDoYouWantToTellUsControllerSpec extends ControllerSpecSupport with Def
 
   def controller() = new WhatDoYouWantToTellUsController(
     mockAuthJourney,
-    mockIsRegisteredCheck,
+    mockHasLinkedProperties,
+    mockNGRConnector,
     whatDoYouWantToTellUsView,
     mcc
-  )(appConfig = mockConfig)
+  )(ec, mockConfig)
 
   "WhatDoYouWantToTellUsController" must {
     "render 'what do you want to tell us' page" in {
-      val result = controller().show()(authenticatedFakeRequest)
+      mockLinkedPropertiesRequest()
+      when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(Some(property)))
+      val result = controller().show("2191322564521")(authenticatedFakeRequest)
       status(result) mustBe OK
       contentAsString(result) must include(pageTitle)
+    }
+    "Throw exception when no property linking is found" in {
+      mockLinkedPropertiesRequest()
+      when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
+      val exception = intercept[NotFoundException] {
+        await(controller().show("2191322564521")(authenticatedFakeRequest))
+      }
+      exception.getMessage contains "Unable to find match Linked Properties" mustBe true
     }
   }
 }

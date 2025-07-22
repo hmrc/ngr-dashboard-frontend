@@ -62,6 +62,10 @@ beforeYouGo.p2=Your feedback helps us make our service better.
 beforeYouGo.feedback=Take a short survey
 beforeYouGo.p3= to share your feedback on this service.
 
+#SelectYourProperty
+selectYourProperty.title = Which property do you want to tell us about?
+selectYourProperty.table.caption = Your properties
+
 whatYouWillNeed.title=What do you want to tell us?
 whatYouWillNeed.property=Property
 whatYouWillNeed.changed.property.features.link=You changed property features or use of space

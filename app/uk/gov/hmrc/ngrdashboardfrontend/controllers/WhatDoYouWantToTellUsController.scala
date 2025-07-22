@@ -18,25 +18,30 @@ package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
+import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
+import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.WhatDoYouWantToTellUsView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WhatDoYouWantToTellUsController @Inject()(
-                                                    authenticate: AuthRetrievals,
-                                                    isRegisteredCheck: RegistrationAction,
-                                                    whatDoYouWantToTellUsView: WhatDoYouWantToTellUsView,
-                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+class WhatDoYouWantToTellUsController @Inject()(authenticate: AuthRetrievals,
+                                                hasLinkedProperties: PropertyLinkingAction,
+                                                ngrConnector: NGRConnector,
+                                                whatDoYouWantToTellUsView: WhatDoYouWantToTellUsView,
+                                                mcc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
-  def show(): Action[AnyContent] =
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
-      Future.successful(Ok(whatDoYouWantToTellUsView(
-        navigationBarContent = createHomeNavBar)))
+  def show(propertyReference: String): Action[AnyContent] =
+    (authenticate andThen hasLinkedProperties).async { implicit request =>
+      ngrConnector.getLinkedProperty(CredId(request.credId.getOrElse(""))).flatMap {
+        case Some(vmvProperty) => Future.successful(Ok(whatDoYouWantToTellUsView(createDefaultNavBar, vmvProperty.addressFull, propertyReference)))
+        case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
+      }
     }
 }

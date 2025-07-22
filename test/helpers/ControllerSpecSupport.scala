@@ -20,7 +20,7 @@ import org.mockito.Mockito.when
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, PropertyLinkingAction, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,6 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait ControllerSpecSupport extends TestSupport {
 
   val mockIsRegisteredCheck: RegistrationAction = mock[RegistrationAction]
+  val mockHasLinkedProperties: PropertyLinkingAction = mock[PropertyLinkingAction]
   val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   mockRequest()
@@ -44,7 +45,7 @@ trait ControllerSpecSupport extends TestSupport {
 
 
   def mockRequest(authRequest: AuthenticatedUserRequest[AnyContentAsEmpty.type]): Unit = {
-    when(mockAuthJourney  andThen mockIsRegisteredCheck) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
+    when(mockAuthJourney andThen mockIsRegisteredCheck) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
       override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
         block(authRequest.asInstanceOf[AuthenticatedUserRequest[A]])
       }
@@ -55,4 +56,14 @@ trait ControllerSpecSupport extends TestSupport {
     }
   }
 
+  def mockLinkedPropertiesRequest(hasCredId: Boolean = false, hasNino: Boolean = true): Unit = {
+    when(mockAuthJourney andThen mockHasLinkedProperties) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
+      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] =  {
+        val authRequest = AuthenticatedUserRequest(request, None, None, Some("user@email.com"), if (hasCredId) Some("1234") else None, None, None, nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None))
+        block(authRequest)
+      }
+      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+      override protected def executionContext: ExecutionContext = ec
+    }
+  }
 }
