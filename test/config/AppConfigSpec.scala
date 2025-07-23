@@ -32,7 +32,6 @@ class AppConfigSpec extends TestSupport {
       val mockServicesConfig = mock[ServicesConfig]
 
       val appConfig = new FrontendAppConfig(mockConfig, mockServicesConfig)
-
       appConfig.features shouldBe a[Features] // Ensures Features is initialized
     }
 

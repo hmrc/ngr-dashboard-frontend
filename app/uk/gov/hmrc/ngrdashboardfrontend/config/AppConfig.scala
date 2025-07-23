@@ -29,6 +29,7 @@ trait AppConfig {
   val registrationUrl: String
   val feedbackFrontendUrl:String
   val nextGenerationRatesUrl: String
+  val ngrRaldUrl: String
   val addAPropertyUrl: String
   def getString(key: String): String
 }
@@ -38,6 +39,7 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   override val registrationUrl: String = sc.baseUrl("ngr-login-register-frontend")
   override val features = new Features()(config)
   override val nextGenerationRatesUrl: String = sc.baseUrl("next-generation-rates")
+
   def getString(key: String): String =
     config.getOptional[String](key).filter(!_.isBlank).getOrElse(throwConfigNotFoundError(key))
   private def throwConfigNotFoundError(key: String): String =
@@ -47,8 +49,10 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   private lazy val propertyLinkingFrontendHost = getString("microservice.services.ngr-property-linking-frontend.host")
   private lazy val envHost = getString("environment.host")
   private lazy val basGatewayHost = getString("microservice.services.bas-gateway-frontend.host")
+  private lazy val raldHost = getString("microservice.services.ngr-rald-frontend.host")
 
   private lazy val dashboardBeforeYouGoUrl: String = s"$envHost${routes.BeforeYouGoController.show.url}"
+  lazy val ngrRaldUrl: String = s"$raldHost/ngr-rald-frontend/"
   lazy val feedbackFrontendUrl: String = s"$feedbackFrontendHost/feedback/Next-Generation-Rates"
   lazy val addAPropertyUrl: String = s"$propertyLinkingFrontendHost/ngr-property-linking-frontend/add-a-property"
   lazy val logoutUrl: String = s"$basGatewayHost/bas-gateway/sign-out-without-state?continue=$dashboardBeforeYouGoUrl"
