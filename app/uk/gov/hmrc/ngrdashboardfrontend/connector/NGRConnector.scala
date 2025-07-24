@@ -47,7 +47,7 @@ class NGRConnector @Inject()(http: HttpClientV2,
 
   def getPropertyLinkingUserAnswers(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[PropertyLinkingUserAnswers]] = {
     implicit val rds: HttpReads[PropertyLinkingUserAnswers] = readFromJson
-    val dummyVMVProperty: VMVProperty = VMVProperty(0L, "", "", "", List.empty)
+    val dummyVMVProperty: VMVProperty = VMVProperty(0L, "", "", "", List.empty) // TODO: Replace with a proper VMVProperty instance if needed
     val model: PropertyLinkingUserAnswers = PropertyLinkingUserAnswers(credId, dummyVMVProperty)
     http.get(url("get-property-linking-user-answers"))
       .withBody(Json.toJson(model))

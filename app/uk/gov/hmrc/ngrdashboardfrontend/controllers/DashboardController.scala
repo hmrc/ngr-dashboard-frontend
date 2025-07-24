@@ -17,52 +17,45 @@
 package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
+import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrdashboardfrontend.utils.DashboardHelper
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DashboardController @Inject()(
-  dashboardView: DashboardView,
-  authenticate: AuthRetrievals,
-  isRegisteredCheck: RegistrationAction,
-  mcc: MessagesControllerComponents
-  )(implicit appConfig: AppConfig)
+                                     dashboardView: DashboardView,
+                                     authenticate: AuthRetrievals,
+                                     isRegisteredCheck: RegistrationAction,
+                                     ngrConnector: NGRConnector,
+                                     mcc: MessagesControllerComponents
+                                   )(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
 
-  // for demonstration:
-  val dashboardCard: DashboardCard = DashboardCard(
-    titleKey = "home.propertiesCard.title",
-    captionKey = Some("home.propertiesCard.caption"),
-    captionKey2 = Some("home.propertiesCard.caption2"),
-    captionKey3 = None,
-    voaReference = None,
-    tag = Some("home.propertiesCard.tag"),
-    links = Some(
-      Seq(
-        Link(
-          href = Call(method = "GET", url = routes.AddPropertyToYourAccountController.show.url.replace("/", "")),
-          linkId = "LinkId-Card",
-          messageKey = "home.propertiesCard.addProperty",
-        )
-      )
-    )
-  )
-
-
-  def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async {implicit request =>
-      val singleCard: Card = DashboardCard.card(dashboardCard)
-      val name = request.name.flatMap(_.name).getOrElse("John Smith")
-      Future.successful(Ok(dashboardView(
-        cards = Seq(singleCard),
+  def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
+    isPropertyLinked(CredId(request.credId.getOrElse(""))).map { flag =>
+      val cards: Seq[Card] = DashboardHelper.getDashboardCards(flag)
+      val name = request.name.flatMap(_.name).getOrElse("John Smith") //TODO - remove hardcoded name
+      Ok(dashboardView(
+        cards = cards,
         name = name,
-        navigationBarContent = createHomeNavBar)))
+        navigationBarContent = createHomeNavBar))
     }
+  }
+
+  private def isPropertyLinked(credId: CredId)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    ngrConnector.getLinkedProperty(credId).map(_.isDefined).recover(_ => false)
+  }
+
 }
+

@@ -52,18 +52,18 @@ class DashboardViewSpec extends ViewBaseSpec {
   )
 
   val dashboardCardOneLink: DashboardCard = DashboardCard(
-    titleKey = "home.propertiesCard.title",
-    captionKey = Some("home.propertiesCard.caption"),
-    captionKey2 = Some("home.propertiesCard.caption2"),
-    captionKey3 = Some("home.propertiesCard.caption2"),
+    titleKey = "home.reportChangeCard.title",
+    captionKey = Some("home.reportChangeCard.caption"),
+    captionKey2 = Some("home.reportChangeCard.caption2"),
+    captionKey3 = None,
     voaReference = Some("ref"),
     tag = Some("home.propertiesCard.tag"),
     links = Some(
       Seq(
         Link(
-          href = Call(method = "GET", url = "some-href"),
+          href = Call(method = "GET", url = "second-href"),
           linkId = "LinkId-Card",
-          messageKey = "home.propertiesCard.addProperty",
+          messageKey = "home.reportChangeCard.link1",
         )
       )
     )
@@ -84,10 +84,19 @@ class DashboardViewSpec extends ViewBaseSpec {
     val homeButton = "#secondary-nav > a > span"
     val messages = "#secondary-nav > ul > li:nth-child(1) > a"
     val signOut = "#secondary-nav > ul > li:nth-child(3) > a"
+    val dashboardFirstCard = "#main-content > div > div > div.flex-container.govuk-grid-row > div:nth-child(1) > div.card-body.active > a"
+    val dashboardFirstCardHeading = s"$dashboardFirstCard > h2.govuk-heading-s.card-heading"
+    val dashboardFirstCardData = s"$dashboardFirstCard > h2:nth-child(2)"
+    val dashboardFirstCardData2 = s"$dashboardFirstCard > h2:nth-child(3)"
+    val dashboardSecondCard = "#main-content > div > div > div.flex-container.govuk-grid-row > div:nth-child(2) > div.card-body.active > a"
+    val dashboardSecondCardHeading = s"$dashboardSecondCard > h2.govuk-heading-s.card-heading"
+    val dashboardSecondCardData = s"$dashboardSecondCard > h2:nth-child(2)"
+    val dashboardSecondCardData2 = s"$dashboardSecondCard > h2:nth-child(3)"
+
   }
 
   "Dashboard view" must {
-    val dashboardView = view(cards = Seq(DashboardCard.card(dashboardCard)), name = "Greg", navigationBarContent = navBarContent)
+    val dashboardView = view(cards = Seq(DashboardCard.card(dashboardCard), DashboardCard.card(dashboardCardOneLink)), name = "Greg", navigationBarContent = navBarContent)
     lazy implicit val document: Document = Jsoup.parse(dashboardView.body)
     lazy val htmlF = view.f(Seq(DashboardCard.card(dashboardCard)), "Greg", navBarContent)
     lazy val htmlFOneLink = view.f(Seq(DashboardCard.card(dashboardCardOneLink)), "Greg", navBarContent)
@@ -107,6 +116,28 @@ class DashboardViewSpec extends ViewBaseSpec {
 
     "show sign out button" in {
       elementText(Selectors.signOut) mustBe "Sign out"
+    }
+
+    "show the correct title" in {
+      document.title() mustBe "Account home - Manage your business rates valuation - GOV.UK"
+    }
+
+    "show the correct heading" in {
+      elementText("h1") mustBe "Greg"
+    }
+
+    "show the correct first dashboard card" in {
+      elementText(Selectors.dashboardFirstCardHeading) mustBe "Add a property"
+      elementText(Selectors.dashboardFirstCardData) mustBe "Add a property you have a connection with."
+      elementText(Selectors.dashboardFirstCardData2) mustBe "You must tell us within 60 days of becoming the ratepayer. Do this by adding the property to your account."
+      element(Selectors.dashboardFirstCard).attr("href") mustBe "some-href"
+    }
+
+    "show the correct seconds dashboard card" in {
+      elementText(Selectors.dashboardSecondCardHeading) mustBe "Tell us about changes to your property, rent or agreement"
+      elementText(Selectors.dashboardSecondCardData) mustBe "You must tell us within 60 days of a change."
+      elementText(Selectors.dashboardSecondCardData2) mustBe "Telling us will help us rate your property."
+      element(Selectors.dashboardSecondCard).attr("href") mustBe "second-href"
     }
 
   }
