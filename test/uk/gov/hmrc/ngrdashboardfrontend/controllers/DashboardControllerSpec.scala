@@ -63,6 +63,15 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
         content must include(pageTitle)
         content must not include tellUsAboutChangeCardHeading
       }
+
+      "Return OK and the correct view without the card 'Tell us about a change' when connector failed to fetch the data" in {
+        when(mockConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.failed(new Exception()))
+        val result = controller().show()(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must not include tellUsAboutChangeCardHeading
+      }
     }
   }
 }
