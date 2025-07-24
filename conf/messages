@@ -24,11 +24,10 @@ home.yourAccountCard.tag=Action needed
 home.yourAccountCard.link1=Add and manage rating agents
 
 #ReportChangeCard
-home.reportChangeCard.title=Report a change
-home.reportChangeCard.caption=Tell us about changes to your property, rent or lease.
-home.reportChangeCard.caption2=You must tell us within 60 days of a change.
-home.reportChangeCard.link1=View change reports in progress
-home.reportChangeCard.link2=Report a change
+home.reportChangeCard.title=Tell us about changes to your property, rent or agreement
+home.reportChangeCard.caption=You must tell us within 60 days of a change.
+home.reportChangeCard.caption2=Telling us will help us rate your property.
+home.reportChangeCard.link1=Tell us about a change
 
 #messageCard
 home.messagesCard.title=Your messages

@@ -51,6 +51,7 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
   }
 
   .card-body {
+    height: 70%;
     border-bottom: 1px solid #dee0e2;
     padding: 15px;
     background-color: govuk-colour("light-grey");

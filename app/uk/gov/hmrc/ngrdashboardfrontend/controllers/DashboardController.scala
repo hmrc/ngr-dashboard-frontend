@@ -38,13 +38,13 @@ class DashboardController @Inject()(
   extends FrontendController(mcc) with I18nSupport {
 
   // for demonstration:
-  val dashboardCard: DashboardCard = DashboardCard(
+  val dashboardYourProperty: DashboardCard = DashboardCard(
     titleKey = "home.propertiesCard.title",
     captionKey = Some("home.propertiesCard.caption"),
     captionKey2 = Some("home.propertiesCard.caption2"),
     captionKey3 = None,
     voaReference = None,
-    tag = Some("home.propertiesCard.tag"),
+    tag = None,
     links = Some(
       Seq(
         Link(
@@ -56,12 +56,29 @@ class DashboardController @Inject()(
     )
   )
 
+  val dashboardCardChangeToProperty: DashboardCard = DashboardCard(
+    titleKey = "home.reportChangeCard.title",
+    captionKey = Some("home.reportChangeCard.caption"),
+    captionKey2 = Some("home.reportChangeCard.caption2"),
+    captionKey3 = None,
+    voaReference = None,
+    tag = None,
+    links = Some(
+      Seq(
+        Link(
+          href = Call(method = "GET", url = routes.SelectYourPropertyController.show.url.replace("/", "")),
+          linkId = "LinkId-Card",
+          messageKey = "home.reportChangeCard.link1",
+        )
+      )
+    )
+  )
 
   def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async {implicit request =>
-      val singleCard: Card = DashboardCard.card(dashboardCard)
+      val cards: Seq[Card] = Seq(DashboardCard.card(dashboardYourProperty), DashboardCard.card(dashboardCardChangeToProperty))
       val name = request.name.flatMap(_.name).getOrElse("John Smith")
       Future.successful(Ok(dashboardView(
-        cards = Seq(singleCard),
+        cards = cards,
         name = name,
         navigationBarContent = createHomeNavBar)))
     }
