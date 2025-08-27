@@ -60,7 +60,7 @@ object DashboardHelper {
   )
 
   def getDashboardCards(isPropertyLinked: Boolean)(implicit messages: Messages): Seq[Card] = {
-    val base = Seq(DashboardCard.card(dashboardYourProperty))
-    if (isPropertyLinked) base :+ DashboardCard.card(dashboardCardChangeToProperty) else base
+    val addProperty = Seq(DashboardCard.card(dashboardYourProperty))
+    if (isPropertyLinked) Seq(DashboardCard.card(dashboardCardChangeToProperty)) else addProperty
   }
 }
