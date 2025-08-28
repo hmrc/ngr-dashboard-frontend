@@ -27,9 +27,8 @@ class DashboardHelperSpec extends TestSupport {
 
       val cards = DashboardHelper.getDashboardCards(isPropertyLinked = true)
 
-      assert(cards.size == 2)
-      assert(cards.head.titleKey.contains(CardTitle(Text("Add a property"), None, "")))
-      assert(cards(1).titleKey.contains(CardTitle(Text("Tell us about changes to your property, rent or agreement"), None, "")))
+      assert(cards.size == 1)
+      assert(cards(0).titleKey.contains(CardTitle(Text("Tell us about changes to your property, rent or agreement"), None, "")))
     }
 
     "return the correct dashboard cards when property is not linked" in {
