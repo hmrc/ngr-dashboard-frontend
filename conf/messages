@@ -7,13 +7,18 @@ service.continue = Continue
 home.heading=Your business rates valuation account
 home.caption=Account home
 
-#propertiesCard
-home.propertiesCard.title=Add a property
-home.propertiesCard.caption=Add a property you have a connection with.
-home.propertiesCard.caption2=You must tell us within 60 days of becoming the ratepayer. Do this by adding the property to your account.
-home.propertiesCard.tag=Action needed
-home.propertiesCard.addProperty=Add a property
-home.propertiesCard.manageProperties=Manage your properties
+#addPropertiesCard
+home.addPropertiesCard.title=Add a property
+home.addPropertiesCard.caption=Add a property you have a connection with.
+home.addPropertiesCard.caption2=You must tell us within 60 days of becoming the ratepayer. Do this by adding the property to your account.
+home.addPropertiesCard.tag=Action needed
+home.addPropertiesCard.addProperty=Add a property
+home.addPropertiesCard.manageProperties=Manage your properties
+
+#yourPropertiesCard
+home.yourPropertiesCard.title=Your property
+home.yourPropertiesCard.caption=You have added your property to your account.
+home.yourPropertiesCard.link.1 =View property
 
 #yourAccountCard
 home.yourAccountCard.title=Account home

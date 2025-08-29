@@ -23,10 +23,10 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.components.{Card, DashboardCard, 
 
 object DashboardHelper {
   // for demonstration:
-  private val dashboardYourProperty: DashboardCard = DashboardCard(
-    titleKey = "home.propertiesCard.title",
-    captionKey = Some("home.propertiesCard.caption"),
-    captionKey2 = Some("home.propertiesCard.caption2"),
+  private val dashboardAddProperty: DashboardCard = DashboardCard(
+    titleKey = "home.addPropertiesCard.title",
+    captionKey = Some("home.addPropertiesCard.caption"),
+    captionKey2 = Some("home.addPropertiesCard.caption2"),
     captionKey3 = None,
     voaReference = None,
     tag = None,
@@ -35,7 +35,25 @@ object DashboardHelper {
         Link(
           href = Call(method = "GET", url = routes.AddPropertyToYourAccountController.show.url),
           linkId = "LinkId-Card",
-          messageKey = "home.propertiesCard.addProperty",
+          messageKey = "home.addPropertiesCard.addProperty",
+        )
+      )
+    )
+  )
+
+  private val dashboardYourProperty: DashboardCard = DashboardCard(
+    titleKey = "home.yourPropertiesCard.title",
+    captionKey = Some("home.yourPropertiesCard.caption"),
+    captionKey2 = None,
+    captionKey3 = None,
+    voaReference = None,
+    tag = None,
+    links = Some(
+      Seq(
+        Link(
+          href = Call(method = "GET", url = routes.AddPropertyToYourAccountController.show.url),//TODO
+          linkId = "Your-Property-Card",
+          messageKey = "home.yourPropertiesCard.link.1",
         )
       )
     )
@@ -60,7 +78,7 @@ object DashboardHelper {
   )
 
   def getDashboardCards(isPropertyLinked: Boolean)(implicit messages: Messages): Seq[Card] = {
-    val addProperty = Seq(DashboardCard.card(dashboardYourProperty))
-    if (isPropertyLinked) Seq(DashboardCard.card(dashboardCardChangeToProperty)) else addProperty
+    val addProperty = Seq(DashboardCard.card(dashboardAddProperty))
+    if (isPropertyLinked) Seq(DashboardCard.card(dashboardYourProperty), DashboardCard.card(dashboardCardChangeToProperty)) else addProperty
   }
 }
