@@ -2,14 +2,14 @@ import sbt.*
 
 object AppDependencies {
 
-  private val bootstrapVersion = "9.16.0"
+  private val bootstrapVersion = "9.19.0"
   private val enumeratumVersion = "1.9.0"
   
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-frontend-play-30"                        % bootstrapVersion,
-    "uk.gov.hmrc"             %% "play-frontend-hmrc-play-30"                        % "12.7.0",
-    "uk.gov.hmrc"             %% "centralised-authorisation-resource-client-play-30" % "1.9.0",
+    "uk.gov.hmrc"             %% "play-frontend-hmrc-play-30"                        % "12.8.0",
+    "uk.gov.hmrc"             %% "centralised-authorisation-resource-client-play-30" % "1.11.0",
     "uk.gov.hmrc"             %% "domain-play-30"                                    % "11.0.0",
     "com.beachape"            %% "enumeratum-play"                                   %  enumeratumVersion
   )
