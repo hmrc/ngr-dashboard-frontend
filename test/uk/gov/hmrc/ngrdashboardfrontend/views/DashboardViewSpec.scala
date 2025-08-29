@@ -29,23 +29,23 @@ class DashboardViewSpec extends ViewBaseSpec {
   val view: DashboardView = app.injector.instanceOf[DashboardView]
 
   val dashboardCard: DashboardCard = DashboardCard(
-    titleKey = "home.propertiesCard.title",
-    captionKey = Some("home.propertiesCard.caption"),
-    captionKey2 = Some("home.propertiesCard.caption2"),
-    captionKey3 = Some("home.propertiesCard.caption2"),
+    titleKey = "home.addPropertiesCard.title",
+    captionKey = Some("home.addPropertiesCard.caption"),
+    captionKey2 = Some("home.addPropertiesCard.caption2"),
+    captionKey3 = Some("home.addPropertiesCard.caption2"),
     voaReference = Some("ref"),
-    tag = Some("home.propertiesCard.tag"),
+    tag = Some("home.addPropertiesCard.tag"),
     links = Some(
       Seq(
         Link(
           href = Call(method = "GET", url = "some-href"),
           linkId = "LinkId-Card",
-          messageKey = "home.propertiesCard.addProperty",
+          messageKey = "home.addPropertiesCard.addProperty",
         ),
         Link(
           href = Call(method = "GET", url = "some-href"),
           linkId = "LinkId2-Card",
-          messageKey = "home.propertiesCard.manageProperties",
+          messageKey = "home.addPropertiesCard.manageProperties",
         )
       )
     )
@@ -57,7 +57,7 @@ class DashboardViewSpec extends ViewBaseSpec {
     captionKey2 = Some("home.reportChangeCard.caption2"),
     captionKey3 = None,
     voaReference = Some("ref"),
-    tag = Some("home.propertiesCard.tag"),
+    tag = Some("home.addPropertiesCard.tag"),
     links = Some(
       Seq(
         Link(
