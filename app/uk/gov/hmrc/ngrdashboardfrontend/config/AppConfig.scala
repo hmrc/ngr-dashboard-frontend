@@ -32,6 +32,7 @@ trait AppConfig {
   val ngrRaldUrl: String
   val ngrPhysicalUrl: String
   val addAPropertyUrl: String
+  val reviewPropertyUrl: String
   def getString(key: String): String
 }
 
@@ -58,5 +59,6 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   lazy val ngrPhysicalUrl: String = s"$physicalHost/ngr-physical-frontend/"
   lazy val feedbackFrontendUrl: String = s"$feedbackFrontendHost/feedback/Next-Generation-Rates"
   lazy val addAPropertyUrl: String = s"$propertyLinkingFrontendHost/ngr-property-linking-frontend/add-a-property"
+  lazy val reviewPropertyUrl: String = s"$propertyLinkingFrontendHost/ngr-property-linking-frontend/review-your-property-details"
   lazy val logoutUrl: String = s"$basGatewayHost/bas-gateway/sign-out-without-state?continue=$dashboardBeforeYouGoUrl"
 }

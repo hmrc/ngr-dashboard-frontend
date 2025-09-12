@@ -27,6 +27,7 @@ class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig{
   override val ngrRaldUrl: String = "https://localhost:1505"
   override val ngrPhysicalUrl: String = "https://localhost:1506"
   override val addAPropertyUrl: String = "http://localhost:1504/ngr-property-linking-frontend/add-a-property"
+  override val reviewPropertyUrl: String = "http://localhost:1504/ngr-property-linking-frontend/review-your-property-details"
   override val logoutUrl: String = "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:1503/ngr-dashboard-frontend/beforeYouGo"
   override val registrationUrl: String = "https://localhost:1502"
   override val feedbackFrontendUrl: String = "http://localhost:9514/feedback/NGR-Dashboard"
