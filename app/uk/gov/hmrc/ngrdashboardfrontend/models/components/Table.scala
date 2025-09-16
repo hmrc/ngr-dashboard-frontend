@@ -33,6 +33,15 @@ final case class TableRowLink(value: String, label: String, classes: Option[Stri
   }
 }
 
+final case class TableRowIsActive(classes: Option[String] = None, isActive: Boolean = false) extends TableRowData {
+  override def html: HtmlContent = {
+    isActive match {
+      case true => HtmlContent(s"""<a class="govuk-tag govuk-tag--blue"> Active </a>""") //TODO this will need some kind of flag going forward
+      case _ =>  HtmlContent(s"""<a class="govuk-tag govuk-tag--grey"> Inactive </a>""")
+    }
+  }
+}
+
 final case class TableHeader(header: String, classes: String, colspan: Option[Int] = None) {
   def htmlContent(): HeadCell = {
     HeadCell(content = Text(header), classes = classes, colspan = colspan)

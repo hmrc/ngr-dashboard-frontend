@@ -25,7 +25,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.{TableData, TableHeader, TableRowLink, TableRowText}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.{TableData, TableHeader, TableRowIsActive, TableRowLink, TableRowText}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVProperty
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
@@ -45,14 +45,14 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
   private def generateTable(propertyList: List[VMVProperty])(implicit messages: Messages): Table = {
     TableData(
       headers = Seq(
-        TableHeader("Address", "govuk-table__caption--s govuk-!-width-one-quarter"),
+        TableHeader("Address", "govuk-table__caption--s govuk-!-width-one-third"),
         TableHeader("Property reference", "govuk-table__caption--s govuk-!-width-one-quarter"),
-        TableHeader("Description", "govuk-table__caption--s govuk-!-width-one-quarter"),
+        TableHeader("Status", "govuk-table__caption--s govuk-!-width-one-quarter"),
         TableHeader("", "")),
       rows = propertyList.map(property => Seq(
         TableRowText(property.addressFull),
         TableRowText(property.localAuthorityReference),
-        TableRowText(property.valuations.last.descriptionText),
+        TableRowIsActive(isActive = true),
         TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url, "Select property")
       )),
       caption = Some(messages("selectYourProperty.table.caption"))
