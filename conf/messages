@@ -67,8 +67,8 @@ beforeYouGo.feedback=Take a short survey
 beforeYouGo.p3= to share your feedback on this service.
 
 #SelectYourProperty
-selectYourProperty.title = Which property do you want to tell us about?
-selectYourProperty.table.caption = Your properties
+selectYourProperty.title = Your property
+selectYourProperty.table.caption = Your property
 
 whatYouWillNeed.title=What do you want to tell us?
 whatYouWillNeed.property=Property

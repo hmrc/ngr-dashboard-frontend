@@ -25,7 +25,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.{TableData, TableHeader, TableRowIsActive, TableRowLink, TableRowText}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVProperty
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
@@ -35,13 +35,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView,
-                                             authenticate: AuthRetrievals,
-                                             hasLinkedProperties: PropertyLinkingAction,
-                                             ngrConnector: NGRConnector,
-                                             mcc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: AppConfig)
+class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView,
+                                   authenticate: AuthRetrievals,
+                                   hasLinkedProperties: PropertyLinkingAction,
+                                   ngrConnector: NGRConnector,
+                                   mcc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
-
 
   private def generateTable(propertyList: List[VMVProperty])(implicit messages: Messages): Table = {
     TableData(
@@ -53,8 +52,7 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
       rows = propertyList.map(property => Seq(
         TableRowText(property.addressFull),
         TableRowText(property.localAuthorityReference),
-        TableRowIsActive(isActive = true),
-        TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url, "Select property")
+        TableRowIsActive(isActive = true)
       )),
       caption = Some(messages(""))
     ).toTable

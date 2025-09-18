@@ -7,5 +7,6 @@ GET        /signout                                          uk.gov.hmrc.ngrdash
 GET        /beforeYouGo                                      uk.gov.hmrc.ngrdashboardfrontend.controllers.BeforeYouGoController.show
 GET        /feedback                                         uk.gov.hmrc.ngrdashboardfrontend.controllers.BeforeYouGoController.feedback
 GET        /add-a-property                                   uk.gov.hmrc.ngrdashboardfrontend.controllers.AddPropertyToYourAccountController.show
+GET        /property                                         uk.gov.hmrc.ngrdashboardfrontend.controllers.PropertyController.show
 GET        /select-your-property                             uk.gov.hmrc.ngrdashboardfrontend.controllers.SelectYourPropertyController.show
 GET        /what-do-you-want-to-tell-us/:propertyReference   uk.gov.hmrc.ngrdashboardfrontend.controllers.WhatDoYouWantToTellUsController.show(propertyReference: String)
