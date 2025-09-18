@@ -51,7 +51,7 @@ object DashboardHelper {
     links = Some(
       Seq(
         Link(
-          href = Call(method = "GET", url = routes.AddPropertyToYourAccountController.show.url),//TODO
+          href = Call(method = "GET", url = routes.PropertyController.show.url),//TODO
           linkId = "Your-Property-Card",
           messageKey = "home.yourPropertiesCard.link.1",
         ),

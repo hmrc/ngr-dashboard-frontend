@@ -27,11 +27,11 @@ import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 
 import scala.concurrent.Future
 
-class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestData {
+class PropertyControllerSpec extends ControllerSpecSupport with TestData {
 
   val selectYourPropertyView: SelectYourPropertyView = inject[SelectYourPropertyView]
 
-  def controller() = new SelectYourPropertyController(
+  def controller() = new PropertyController(
     selectYourPropertyView,
     mockAuthJourney,
     mockHasLinkedProperties,
@@ -48,7 +48,6 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
-        content must include("what-do-you-want-to-tell-us/2191322564521")
         content must include("Active")
       }
 

@@ -25,12 +25,12 @@ import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 
 class SelectYourPropertyViewSpec extends ViewBaseSpec {
   lazy val view: SelectYourPropertyView = inject[SelectYourPropertyView]
-  val title = "Which property do you want to tell us about? - GOV.UK"
-  val heading = "Which property do you want to tell us about?"
-  val caption = "Your properties"
+  val title = "Your property - GOV.UK"
+  val heading = "Your property"
+  val caption = "Your property"
   val tableHeader1 = "Address"
   val tableHeader2 = "Property reference"
-  val tableHeader3 = "Description"
+  val tableHeader3 = "Status"
 
   val content: NavigationBarContent = NavBarPageContents.createDefaultNavBar
 
@@ -48,17 +48,17 @@ class SelectYourPropertyViewSpec extends ViewBaseSpec {
       headers = Seq(
         TableHeader("Address", "govuk-table__caption--s govuk-!-width-one-quarter"),
         TableHeader("Property reference", "govuk-table__caption--s govuk-!-width-one-quarter"),
-        TableHeader("Description", "govuk-table__caption--s govuk-!-width-one-quarter"),
+        TableHeader("Status", "govuk-table__caption--s govuk-!-width-one-quarter"),
         TableHeader("", "")),
       rows = Seq.empty,
       caption = Some(messages("selectYourProperty.table.caption"))
     ).toTable
 
   "SelectYourPropertyView" must {
-    val selectYourPropertyView = view(content, table)
+    val selectYourPropertyView = view(content, table, "www.test.com")
     lazy implicit val document: Document = Jsoup.parse(selectYourPropertyView.body)
-    val htmlApply = view.apply(content, table).body
-    val htmlRender = view.render(content, table, request, messages, mockConfig).body
+    val htmlApply = view.apply(content, table, "www.test.com").body
+    val htmlRender = view.render(content, table, "www.test.com", request, messages, mockConfig).body
 
     "apply must be the same as render" in {
       htmlApply mustBe htmlRender
