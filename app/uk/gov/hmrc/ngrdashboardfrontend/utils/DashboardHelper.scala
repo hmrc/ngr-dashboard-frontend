@@ -54,6 +54,11 @@ object DashboardHelper {
           href = Call(method = "GET", url = routes.AddPropertyToYourAccountController.show.url),//TODO
           linkId = "Your-Property-Card",
           messageKey = "home.yourPropertiesCard.link.1",
+        ),
+        Link(
+          href = Call(method = "GET", url = routes.ReviewYourPropertyDetailsController.show.url),
+          linkId = "Your-Property-Card",
+          messageKey = "home.yourPropertiesCard.link.2",
         )
       )
     )
