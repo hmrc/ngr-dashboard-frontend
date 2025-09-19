@@ -19,6 +19,7 @@
   }
 }
 
+
 @media screen and (min-width:900px) {
   .card {
     flex-basis: 31%;
@@ -51,13 +52,12 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
   }
 
   .card-body {
-    height: 70%;
+    height: 215px;
     border-bottom: 1px solid #dee0e2;
     padding: 15px;
     background-color: govuk-colour("light-grey");
     *:last-child {
-      min-height: 175px;
-      //margin-bottom: 80px;
+     margin-bottom: 0;
     }
 
     &.active {
