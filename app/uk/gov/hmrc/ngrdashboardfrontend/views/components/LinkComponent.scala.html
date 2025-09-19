@@ -18,6 +18,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @(link: Link)(implicit messages: Messages)
-<p class="govuk-body">
+<p class="govuk-body govuk-link">
     <a href="@link.href.url" class="govuk-link govuk-link--no-visited-state">@messages(link.messageKey)</a>
 </p>
