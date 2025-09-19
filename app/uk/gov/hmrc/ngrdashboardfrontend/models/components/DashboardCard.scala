@@ -56,7 +56,7 @@ object DashboardCard {
         case None => None
       },
       links = dashboardCard.links match {
-        case Some(link) => Some(Links(classes = "", links = link))
+        case Some(link) => Some(Links(classes = "govuk-list", links = link))
         case None => None
       }
     )
