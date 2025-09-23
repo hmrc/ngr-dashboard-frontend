@@ -17,7 +17,9 @@
 package uk.gov.hmrc.ngrdashboardfrontend.utils
 
 import helpers.TestSupport
+import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
 import uk.gov.hmrc.govukfrontend.views.Aliases.{CardTitle, Text}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.Link
 
 class DashboardHelperSpec extends TestSupport {
 
@@ -39,6 +41,20 @@ class DashboardHelperSpec extends TestSupport {
       assert(cards.size == 1)
       assert(cards.head.titleKey.contains(CardTitle(Text("Add a property"), None, "")))
     }
+    "return the correct links on the 'Your property' card when property is linked" in {
+      val cards = DashboardHelper.getDashboardCards(isPropertyLinked = true)
+      val yourProperty = cards.head
+      val links: Seq[Link] = yourProperty.links.map(_.links).getOrElse(Seq.empty)
+      val link1 = links.head
+      val link2 = links(1)
+
+      assert(links.size == 2)
+      assert(link1.linkId == "LinkId1-Card")
+      assert(link1.href.url == routes.PropertyController.show.url)
+      assert(link2.linkId == "LinkId2-Card")
+      assert(link2.href.url == routes.SelectYourPropertyController.show.url)
+    }
+
   }
 
 }
