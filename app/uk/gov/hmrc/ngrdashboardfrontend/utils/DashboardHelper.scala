@@ -52,12 +52,12 @@ object DashboardHelper {
       Seq(
         Link(
           href = Call(method = "GET", url = routes.PropertyController.show.url),//TODO
-          linkId = "Your-Property-Card",
+          linkId = "LinkId1-Card",
           messageKey = "home.yourPropertiesCard.link.1",
         ),
         Link(
-          href = Call(method = "GET", url = routes.ReviewYourPropertyDetailsController.show.url),
-          linkId = "Your-Property-Card",
+          href = Call(method = "GET", url = routes.SelectYourPropertyController.show.url),
+          linkId = "LinkId2-Card",
           messageKey = "home.yourPropertiesCard.link.2",
         )
       )
