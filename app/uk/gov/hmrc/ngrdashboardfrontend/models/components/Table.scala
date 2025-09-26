@@ -16,29 +16,31 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.models.components
 
+import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Content, Table}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 
 sealed trait TableRowData {
-  def html: Content
+  def html(implicit messages: Messages): Content
   val classes: Option[String]
 }
 final case class TableRowText(value: String, classes: Option[String] = None) extends TableRowData {
-  override def html: Text = Text(value)
+  override def html(implicit messages: Messages): Text = Text(value)
 }
+
 final case class TableRowLink(value: String, label: String, classes: Option[String] = None) extends TableRowData {
-  override def html: HtmlContent = {
+  override def html(implicit messages: Messages): HtmlContent = {
     HtmlContent(s"""<a href="$value" class="govuk-link">$label</a>""")
   }
 }
 
 final case class TableRowIsActive(classes: Option[String] = None, isActive: Boolean = false) extends TableRowData {
-  override def html: HtmlContent = {
-    //TODO pattern matching has been used here as there are three potential states - Pending, Accepted or Rejected
+  override def html(implicit messages: Messages): HtmlContent = {
+    //TODO pattern matching has been used here as there are three potential states - Pending or Rejected
     isActive match {
-      case true => HtmlContent(s"""<a class="govuk-tag govuk-tag--blue"> Active </a>""") //TODO this will need some kind of flag going forward
-      case _ =>  HtmlContent(s"""<a class="govuk-tag govuk-tag--grey"> Inactive </a>""")
+      case true => HtmlContent(s"""<a class="govuk-tag govuk-tag--blue"> ${messages("selectYourProperty.status.accepted")} </a>""")
+      case _ => HtmlContent(s"""<a class="govuk-tag govuk-tag--grey"> ${messages("selectYourProperty.status.inactive")} </a>""")
     }
   }
 }
@@ -50,7 +52,7 @@ final case class TableHeader(header: String, classes: String, colspan: Option[In
 }
 
 final case class TableData(headers: Seq[TableHeader], rows: Seq[Seq[TableRowData]], caption: Option[String] = None, captionClasses: String = "govuk-table__caption--m") {
-  def toTable: Table = {
+  def toTable(implicit messages: Messages): Table = {
     Table(
       head = Some(headers.map(header => header.htmlContent())),
       rows = rows.map(

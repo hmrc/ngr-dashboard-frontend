@@ -75,6 +75,8 @@ beforeYouGo.p3= to share your feedback on this service.
 selectYourProperty.title = Your property
 selectYourProperty.table.caption = Your property
 selectYourProperty.link = Return to your account home
+selectYourProperty.status.accepted = Accepted
+selectYourProperty.status.inactive = Inactive
 
 whatYouWillNeed.title=What do you want to tell us?
 whatYouWillNeed.property=Property

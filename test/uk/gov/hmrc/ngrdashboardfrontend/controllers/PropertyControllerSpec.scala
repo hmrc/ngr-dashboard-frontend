@@ -48,7 +48,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
-        content must include("Active")
+        content must include("Accepted")
       }
 
       "Throw exception when no property linking is found" in {
