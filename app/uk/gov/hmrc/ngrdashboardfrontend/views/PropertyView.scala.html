@@ -27,14 +27,16 @@
 )
 
 @(navigationBarContent: NavigationBarContent,
-  linkedPropertiesTable: Table
+  linkedPropertiesTable: Table,
+        dashboardUrl: String
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@heading = @{messages("selectYourProperty.title")}
+@heading = @{messages("property.title")}
 
 @layout(pageTitle = Some(heading), fullWidth = true, navigationBarContent =  Some(navigationBarContent), showBackLink = true) {
 
     <h1 class="govuk-heading-l">@heading</h1>
     @govukTable(linkedPropertiesTable)
+    @hyperLinkComponent(messages("property.link"), dashboardUrl, "")
 
 }

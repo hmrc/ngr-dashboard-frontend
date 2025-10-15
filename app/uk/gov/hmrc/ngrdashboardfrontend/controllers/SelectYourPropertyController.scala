@@ -54,16 +54,16 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
         TableRowText(property.addressFull),
         TableRowText(property.localAuthorityReference),
         TableRowIsActive(isActive = true),
-        TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url, "Select property")
+        TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url, messages("selectYourProperty.link"))
       )),
-      caption = Some(messages(""))
+      caption = Some(messages("selectYourProperty.table.caption"))
     ).toTable
   }
 
   def show(): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
       ngrConnector.getLinkedProperty(CredId(request.credId.getOrElse(""))).flatMap {
-        case Some(vmvProperty) => Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)),routes.DashboardController.show.url)))
+        case Some(vmvProperty) => Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)))))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }
     }

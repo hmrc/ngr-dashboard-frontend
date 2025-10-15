@@ -28,14 +28,14 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.cre
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVProperty
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.PropertyView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView,
+class PropertyController @Inject()(propertyView: PropertyView,
                                    authenticate: AuthRetrievals,
                                    hasLinkedProperties: PropertyLinkingAction,
                                    ngrConnector: NGRConnector,
@@ -47,21 +47,22 @@ class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView
       headers = Seq(
         TableHeader("Address", "govuk-table__caption--s govuk-!-width-half"),
         TableHeader("Property reference", "govuk-table__caption--s govuk-!-width-one-quarter"),
-        TableHeader("Status", "govuk-table__caption--s govuk-!-width-one-quarter"),
-        TableHeader("", "")),
+        TableHeader("Status", "govuk-table__caption--s govuk-!-width-one-quarter")
+      ),
       rows = propertyList.map(property => Seq(
         TableRowText(property.addressFull),
         TableRowText(property.localAuthorityReference),
         TableRowIsActive(isActive = true)
       )),
-      caption = Some(messages(""))
+      caption = Some(messages("property.title")),
+      captionClasses = "govuk-visually-hidden"
     ).toTable
   }
 
   def show(): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
       ngrConnector.getLinkedProperty(CredId(request.credId.getOrElse(""))).flatMap {
-        case Some(vmvProperty) => Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)), routes.DashboardController.show.url)))
+        case Some(vmvProperty) => Future.successful(Ok(propertyView(createDefaultNavBar, generateTable(List(vmvProperty)), routes.DashboardController.show.url)))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }
     }

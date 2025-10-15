@@ -21,13 +21,13 @@
 
 @this(govukBackLink: GovukBackLink)
 
-@(navigationBar: NavigationBarContent, showBackLink: Boolean = false)(implicit request: RequestHeader, messages: Messages)
+@(navigationBar: NavigationBarContent, showBackLink: Boolean = false)(implicit messages: Messages)
 
 @hrefLinkClass(button: NavButton) = {
     @if(button.fieldName.equals("SignOutPage")){
-        "hmrc-account-menu__link2 hmrc-account-menu__link@if(button.selected != false){--active}"
+        "hmrc-account-menu__link2 hmrc-account-menu__link@if(button.selected){--active}"
     }else{
-        "hmrc-account-menu__link hmrc-account-menu__link@if(button.selected != false){--active}"
+        "hmrc-account-menu__link hmrc-account-menu__link@if(button.selected){--active}"
     }
 }
 
@@ -35,7 +35,7 @@
     <nav id="secondary-nav" class="hmrc-account-menu">
         @navigationBar.accountHome.map{ Home =>
         <a href=@Home.call.url
-           class="hmrc-account-menu__link hmrc-account-menu__link@if(Home.selected != false){--active} hmrc-account-menu__link--home">
+           class="hmrc-account-menu__link hmrc-account-menu__link@if(Home.selected){--active} hmrc-account-menu__link--home">
             <span class="hmrc-account-icon hmrc-account-icon--home">
                 @messages(Home.messageKey)
             </span>
