@@ -53,7 +53,7 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
       rows = propertyList.map(property => Seq(
         TableRowText(property.addressFull),
         TableRowText(property.localAuthorityReference),
-        TableRowText(property.valuations.lastOption.fold("")(_.descriptionText)),
+        TableRowText(property.valuations.lastOption.fold("")(_.descriptionText.toLowerCase.capitalize)),
         TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url, messages("selectYourProperty.link"))
       )),
       caption = Some(messages("selectYourProperty.table.caption"))

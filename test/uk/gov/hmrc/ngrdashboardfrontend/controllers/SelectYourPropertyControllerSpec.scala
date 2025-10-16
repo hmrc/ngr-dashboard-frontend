@@ -49,7 +49,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
         val content = contentAsString(result)
         content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
         content must include("what-do-you-want-to-tell-us/2191322564521")
-        content must include("Accepted")
+        content must include("Golf")
       }
 
       "Throw exception when no property linking is found" in {
