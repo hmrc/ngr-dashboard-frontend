@@ -25,7 +25,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.{TableData, TableHeader, TableRowIsActive, TableRowLink, TableRowText}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.{TableData, TableHeader, TableRowLink, TableRowText}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVProperty
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
@@ -43,28 +43,38 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
   extends FrontendController(mcc) with I18nSupport {
 
 
-  private def generateTable(propertyList: List[VMVProperty])(implicit messages: Messages): Table = {
+  private def generateTable(journey: String, propertyList: List[VMVProperty])(implicit messages: Messages): Table = {
     TableData(
       headers = Seq(
-        TableHeader("Address", "govuk-table__caption--s govuk-!-width-half"),
-        TableHeader("Property reference", "govuk-table__caption--s, govuk-!-width-one-quarter"),
-        TableHeader("Status", "govuk-table__caption--s"),
+        TableHeader(messages("selectYourProperty.address"), "govuk-table__caption--s govuk-!-width-half"),
+        TableHeader(messages("selectYourProperty.reference"), "govuk-table__caption--s, govuk-!-width-one-quarter"),
+        TableHeader(messages("selectYourProperty.description"), "govuk-table__caption--s"),
         TableHeader("", "govuk-!-width-one-quarter")),
       rows = propertyList.map(property => Seq(
         TableRowText(property.addressFull),
         TableRowText(property.localAuthorityReference),
-        TableRowIsActive(isActive = true),
-        TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url, "Select property")
+        TableRowText(property.valuations.lastOption.fold("")(_.descriptionText.toLowerCase.capitalize)),
+        TableRowLink(
+          journey match {
+            case "review-property" => routes.ReviewYourPropertyDetailsController.show.url
+            case _ => routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url
+          },
+          messages("selectYourProperty.link")
+        )
       )),
-      caption = Some(messages(""))
+      caption = Some(messages("selectYourProperty.table.caption"))
     ).toTable
   }
 
-  def show(): Action[AnyContent] =
+  def showReportChange: Action[AnyContent] = show(journey = "report-change")
+  def showReviewProperty: Action[AnyContent] = show(journey = "review-property")
+
+  private def show(journey: String): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
       ngrConnector.getLinkedProperty(CredId(request.credId.getOrElse(""))).flatMap {
-        case Some(vmvProperty) => Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)),routes.DashboardController.show.url)))
+        case Some(vmvProperty) => Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(journey, List(vmvProperty)))))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }
     }
+
 }

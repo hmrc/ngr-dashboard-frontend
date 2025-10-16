@@ -23,16 +23,16 @@ import play.api.http.Status.OK
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.PropertyView
 
 import scala.concurrent.Future
 
 class PropertyControllerSpec extends ControllerSpecSupport with TestData {
 
-  val selectYourPropertyView: SelectYourPropertyView = inject[SelectYourPropertyView]
+  val propertyView: PropertyView = inject[PropertyView]
 
   def controller() = new PropertyController(
-    selectYourPropertyView,
+    propertyView,
     mockAuthJourney,
     mockHasLinkedProperties,
     mockNGRConnector,

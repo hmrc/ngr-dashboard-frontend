@@ -25,9 +25,9 @@ import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 
 class SelectYourPropertyViewSpec extends ViewBaseSpec {
   lazy val view: SelectYourPropertyView = inject[SelectYourPropertyView]
-  val title = "Your property - GOV.UK"
-  val heading = "Your property"
-  val caption = "Your property"
+  val title = "Which property do you want to tell us about? - GOV.UK"
+  val heading = "Which property do you want to tell us about?"
+  val caption = "Your properties"
   val tableHeader1 = "Address"
   val tableHeader2 = "Property reference"
   val tableHeader3 = "Status"
@@ -55,10 +55,10 @@ class SelectYourPropertyViewSpec extends ViewBaseSpec {
     ).toTable
 
   "SelectYourPropertyView" must {
-    val selectYourPropertyView = view(content, table, "www.test.com")
-    lazy implicit val document: Document = Jsoup.parse(selectYourPropertyView.body)
-    val htmlApply = view.apply(content, table, "www.test.com").body
-    val htmlRender = view.render(content, table, "www.test.com", request, messages, mockConfig).body
+    val selectYourPropertyView = view(content, table)
+    implicit val document: Document = Jsoup.parse(selectYourPropertyView.body)
+    val htmlApply = view.apply(content, table).body
+    val htmlRender = view.render(content, table, request, messages, mockConfig).body
 
     "apply must be the same as render" in {
       htmlApply mustBe htmlRender
