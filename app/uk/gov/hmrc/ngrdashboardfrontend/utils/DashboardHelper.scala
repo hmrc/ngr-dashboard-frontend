@@ -56,7 +56,7 @@ object DashboardHelper {
           messageKey = "home.yourPropertiesCard.link.1",
         ),
         Link(
-          href = Call(method = "GET", url = routes.SelectYourPropertyController.show.url),
+          href = Call(method = "GET", url = routes.SelectYourPropertyController.showReviewProperty.url),
           linkId = "LinkId2-Card",
           messageKey = "home.yourPropertiesCard.link.2",
         )
@@ -74,7 +74,7 @@ object DashboardHelper {
     links = Some(
       Seq(
         Link(
-          href = Call(method = "GET", url = routes.SelectYourPropertyController.show.url),
+          href = Call(method = "GET", url = routes.SelectYourPropertyController.showReportChange.url),
           linkId = "LinkId-Card",
           messageKey = "home.reportChangeCard.link1",
         )

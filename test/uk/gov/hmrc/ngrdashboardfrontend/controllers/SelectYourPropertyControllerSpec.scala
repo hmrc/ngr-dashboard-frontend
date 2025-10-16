@@ -44,7 +44,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
       "Return OK and the correct view" in {
         mockLinkedPropertiesRequest()
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(Some(property)))
-        val result = controller().show()(authenticatedFakeRequest)
+        val result = controller().showReportChange(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
@@ -56,7 +56,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
         mockLinkedPropertiesRequest()
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller().show()(authenticatedFakeRequest))
+          await(controller().showReportChange(authenticatedFakeRequest))
         }
         exception.getMessage contains "Unable to find match Linked Properties" mustBe true
       }

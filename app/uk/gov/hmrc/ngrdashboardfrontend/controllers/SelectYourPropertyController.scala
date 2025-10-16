@@ -43,7 +43,7 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
   extends FrontendController(mcc) with I18nSupport {
 
 
-  private def generateTable(propertyList: List[VMVProperty])(implicit messages: Messages): Table = {
+  private def generateTable(journey: String, propertyList: List[VMVProperty])(implicit messages: Messages): Table = {
     TableData(
       headers = Seq(
         TableHeader(messages("selectYourProperty.address"), "govuk-table__caption--s govuk-!-width-half"),
@@ -54,17 +54,27 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
         TableRowText(property.addressFull),
         TableRowText(property.localAuthorityReference),
         TableRowText(property.valuations.lastOption.fold("")(_.descriptionText.toLowerCase.capitalize)),
-        TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url, messages("selectYourProperty.link"))
+        TableRowLink(
+          journey match {
+            case "review-property" => routes.ReviewYourPropertyDetailsController.show.url
+            case _ => routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url
+          },
+          messages("selectYourProperty.link")
+        )
       )),
       caption = Some(messages("selectYourProperty.table.caption"))
     ).toTable
   }
 
-  def show(): Action[AnyContent] =
+  def showReportChange: Action[AnyContent] = show(journey = "report-change")
+  def showReviewProperty: Action[AnyContent] = show(journey = "review-property")
+
+  private def show(journey: String): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
       ngrConnector.getLinkedProperty(CredId(request.credId.getOrElse(""))).flatMap {
-        case Some(vmvProperty) => Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)))))
+        case Some(vmvProperty) => Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(journey, List(vmvProperty)))))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }
     }
+
 }
