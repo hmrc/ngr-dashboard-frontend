@@ -78,6 +78,9 @@ property.link = Return to your account home
 #SelectYourProperty
 selectYourProperty.title = Which property do you want to tell us about?
 selectYourProperty.table.caption = Your properties
+selectYourProperty.address = Address
+selectYourProperty.reference = Property reference
+selectYourProperty.description = Description
 selectYourProperty.link = Select property
 selectYourProperty.status.accepted = Accepted
 selectYourProperty.status.inactive = Inactive

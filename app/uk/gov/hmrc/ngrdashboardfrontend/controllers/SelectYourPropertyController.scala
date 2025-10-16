@@ -25,7 +25,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.{TableData, TableHeader, TableRowIsActive, TableRowLink, TableRowText}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.{TableData, TableHeader, TableRowLink, TableRowText}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVProperty
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
@@ -46,14 +46,14 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
   private def generateTable(propertyList: List[VMVProperty])(implicit messages: Messages): Table = {
     TableData(
       headers = Seq(
-        TableHeader("Address", "govuk-table__caption--s govuk-!-width-half"),
-        TableHeader("Property reference", "govuk-table__caption--s, govuk-!-width-one-quarter"),
-        TableHeader("Status", "govuk-table__caption--s"),
+        TableHeader(messages("selectYourProperty.address"), "govuk-table__caption--s govuk-!-width-half"),
+        TableHeader(messages("selectYourProperty.reference"), "govuk-table__caption--s, govuk-!-width-one-quarter"),
+        TableHeader(messages("selectYourProperty.description"), "govuk-table__caption--s"),
         TableHeader("", "govuk-!-width-one-quarter")),
       rows = propertyList.map(property => Seq(
         TableRowText(property.addressFull),
         TableRowText(property.localAuthorityReference),
-        TableRowIsActive(isActive = true),
+        TableRowText(property.valuations.lastOption.fold("")(_.descriptionText)),
         TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.localAuthorityReference).url, messages("selectYourProperty.link"))
       )),
       caption = Some(messages("selectYourProperty.table.caption"))
