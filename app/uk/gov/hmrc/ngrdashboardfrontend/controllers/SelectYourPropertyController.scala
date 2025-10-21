@@ -49,7 +49,7 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
         TableHeader("Address", "govuk-table__caption--s govuk-!-width-half"),
         TableHeader("Property reference", "govuk-table__caption--s, govuk-!-width-one-quarter"),
         TableHeader("Status", "govuk-table__caption--s"),
-        TableHeader("", "govuk-!-width-one-quarter")),
+        TableHeader("Action", "govuk-!-width-one-quarter")),
       rows = propertyList.map(property => Seq(
         TableRowText(property.addressFull),
         TableRowText(property.localAuthorityReference),
