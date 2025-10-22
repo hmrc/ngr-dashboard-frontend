@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrdashboardfrontend.config.features
+package uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking
 
-import play.api.Configuration
+import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status
 
-import javax.inject.Inject
+case class VMVPropertyStatus(
+                              status: Status,
+                              vmvProperty : VMVProperty
+                            )
 
-class Features @Inject()(implicit config: Configuration) {
-  val welshLanguageSupportEnabled = new Feature("features.welsh-language-support")
-  val vmvPropertyStatusTestEnabled = new Feature("features.vmvPropertyStatusTestEnabled")
+object VMVPropertyStatus {
+  implicit val format: OFormat[VMVPropertyStatus] = Json.format[VMVPropertyStatus]
 }

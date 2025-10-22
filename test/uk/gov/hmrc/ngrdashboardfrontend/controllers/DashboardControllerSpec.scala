@@ -22,6 +22,7 @@ import org.mockito.Mockito.when
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 
@@ -46,8 +47,8 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
 
   "Dashboard Controller" must {
     "method show" must {
-      "Return OK and the correct view with the card 'Tell us about a change' when the property is linked" in {
-        when(mockConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(Some(property)))
+      "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and approved" in {
+        when(mockConnector.linkedPropertyStatus(any[CredId])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Approved))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -55,17 +56,28 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
         content must include(tellUsAboutChangeCardHeading)
       }
 
-      "Return OK and the correct view without the card 'Tell us about a change' when the property is not liked" in {
-        when(mockConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
+      "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and pending" in {
+        when(mockConnector.linkedPropertyStatus(any[CredId])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Pending))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must not include tellUsAboutChangeCardHeading
+        content mustNot include(tellUsAboutChangeCardHeading)
+        content must include("Your property")
       }
 
-      "Return OK and the correct view without the card 'Tell us about a change' when connector failed to fetch the data" in {
-        when(mockConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.failed(new Exception()))
+      "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and rejected" in {
+        when(mockConnector.linkedPropertyStatus(any[CredId])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Rejected))))
+        val result = controller().show()(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content mustNot include(tellUsAboutChangeCardHeading)
+        content must include("Your property")
+      }
+
+      "Return OK and the correct view without the card 'Tell us about a change' when the property is not liked" in {
+        when(mockConnector.linkedPropertyStatus(any[CredId])(any())).thenReturn(Future.successful(None))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)

@@ -17,42 +17,76 @@
 package uk.gov.hmrc.ngrdashboardfrontend.utils
 
 import helpers.TestSupport
+import play.api.mvc.Call
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
 import uk.gov.hmrc.govukfrontend.views.Aliases.{CardTitle, Text}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.Link
 
 class DashboardHelperSpec extends TestSupport {
 
   "DashboardHelper" should {
-    "return the correct dashboard cards when property is linked" in {
-      // Setup test data and expectations
+    "Approved" should {
+      "return the correct dashboard cards when property is linked" in {
+        // Setup test data and expectations
 
-      val cards = DashboardHelper.getDashboardCards(isPropertyLinked = true)
+        val cards = DashboardHelper.getDashboardCards(isPropertyLinked = true, Approved)
 
-      assert(cards.size == 2)
-      assert(cards(0).titleKey.contains(CardTitle(Text("Your property"), None, "")))
-      assert(cards(1).titleKey.contains(CardTitle(Text("Tell us about changes to your property, rent or agreement"), None, "")))
+        assert(cards.size == 2)
+        assert(cards(0).titleKey.contains(CardTitle(Text("Your property"), None, "")))
+        assert(cards(1).titleKey.contains(CardTitle(Text("Tell us about changes to your property, rent or agreement"), None, "")))
+      }
+
+      "return the correct dashboard cards when property is not linked" in {
+
+        val cards = DashboardHelper.getDashboardCards(isPropertyLinked = false, Approved)
+
+        assert(cards.size == 1)
+        assert(cards.head.titleKey.contains(CardTitle(Text("Add a property"), None, "")))
+      }
+      "return the correct links on the 'Your property' card when property is linked" in {
+        val cards = DashboardHelper.getDashboardCards(isPropertyLinked = true, Approved)
+        val yourProperty = cards.head
+        val links: Seq[Link] = yourProperty.links.map(_.links).getOrElse(Seq.empty)
+        val link1 = links.head
+        val link2 = links(1)
+
+        assert(links.size == 2)
+        assert(link1.linkId == "LinkId1-Card")
+        assert(link1.href.url == routes.PropertyController.show.url)
+        assert(link2.linkId == "LinkId2-Card")
+        assert(link2.href.url == routes.SelectYourPropertyController.show.url)
+      }
     }
-
-    "return the correct dashboard cards when property is not linked" in {
-
-      val cards = DashboardHelper.getDashboardCards(isPropertyLinked = false)
-
-      assert(cards.size == 1)
-      assert(cards.head.titleKey.contains(CardTitle(Text("Add a property"), None, "")))
+    "Pending" should {
+      "return the correct dashboard cards when property is linked but in pending" in {
+        // Setup test data and expectations
+        val cards = DashboardHelper.getDashboardCards(isPropertyLinked = true, Pending)
+        assert(cards.size == 1)
+        assert(cards(0).titleKey.contains(CardTitle(Text("Your property"), None, "")))
+        assert(cards(0).links.get.links.length == 1)
+        assert(cards(0).links.get.links.head.messageKey.contains("home.yourPropertiesCard.link.1"))
+        assert(cards(0).links.get.links.head.href == Call(method = "GET", url = routes.PropertyController.show.url))
+      }
+      "return the correct dashboard cards when property is not linked" in {
+        val cards = DashboardHelper.getDashboardCards(isPropertyLinked = false, Pending)
+        assert(cards.size == 1)
+      }
     }
-    "return the correct links on the 'Your property' card when property is linked" in {
-      val cards = DashboardHelper.getDashboardCards(isPropertyLinked = true)
-      val yourProperty = cards.head
-      val links: Seq[Link] = yourProperty.links.map(_.links).getOrElse(Seq.empty)
-      val link1 = links.head
-      val link2 = links(1)
-
-      assert(links.size == 2)
-      assert(link1.linkId == "LinkId1-Card")
-      assert(link1.href.url == routes.PropertyController.show.url)
-      assert(link2.linkId == "LinkId2-Card")
-      assert(link2.href.url == routes.SelectYourPropertyController.show.url)
+    "Rejected" should {
+      "return the correct dashboard cards when property is linked but in rejected" in {
+        // Setup test data and expectations
+        val cards = DashboardHelper.getDashboardCards(isPropertyLinked = true, Rejected)
+        assert(cards.size == 1)
+        assert(cards(0).titleKey.contains(CardTitle(Text("Your property"), None, "")))
+        assert(cards(0).links.get.links.length == 1)
+        assert(cards(0).links.get.links.head.messageKey.contains("home.yourPropertiesCard.link.1"))
+        assert(cards(0).links.get.links.head.href == Call(method = "GET", url = routes.PropertyController.show.url))
+      }
+      "return the correct dashboard cards when property is not linked" in {
+        val cards = DashboardHelper.getDashboardCards(isPropertyLinked = false, Rejected)
+        assert(cards.size == 1)
+      }
     }
 
   }

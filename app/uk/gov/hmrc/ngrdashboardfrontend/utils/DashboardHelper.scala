@@ -19,6 +19,8 @@ package uk.gov.hmrc.ngrdashboardfrontend.utils
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.{Card, DashboardCard, Link}
 
 object DashboardHelper {
@@ -64,6 +66,24 @@ object DashboardHelper {
     )
   )
 
+  private val dashboardPendingPropertyLink: DashboardCard = DashboardCard(
+    titleKey = "home.yourPropertiesCard.title",
+    captionKey = Some("home.yourPropertiesCard.caption"),
+    captionKey2 = None,
+    captionKey3 = None,
+    voaReference = None,
+    tag = None,
+    links = Some(
+      Seq(
+        Link(
+          href = Call(method = "GET", url = routes.PropertyController.show.url),//TODO
+          linkId = "LinkId1-Card",
+          messageKey = "home.yourPropertiesCard.link.1",
+        )
+      )
+    )
+  )
+
   private val dashboardCardChangeToProperty: DashboardCard = DashboardCard(
     titleKey = "home.reportChangeCard.title",
     captionKey = Some("home.reportChangeCard.caption"),
@@ -82,8 +102,17 @@ object DashboardHelper {
     )
   )
 
-  def getDashboardCards(isPropertyLinked: Boolean)(implicit messages: Messages): Seq[Card] = {
+  def getDashboardCards(isPropertyLinked: Boolean, status: Status)(implicit messages: Messages): Seq[Card] = {
     val addProperty = Seq(DashboardCard.card(dashboardAddProperty))
-    if (isPropertyLinked) Seq(DashboardCard.card(dashboardYourProperty), DashboardCard.card(dashboardCardChangeToProperty)) else addProperty
+    if (isPropertyLinked) {
+      status match {
+        case Approved => Seq(
+          DashboardCard.card(dashboardYourProperty),
+          DashboardCard.card(dashboardCardChangeToProperty)
+        )
+        case Pending => Seq(DashboardCard.card(dashboardPendingPropertyLink))
+        case Rejected => Seq(DashboardCard.card(dashboardPendingPropertyLink))
+      }
+    } else addProperty
   }
 }

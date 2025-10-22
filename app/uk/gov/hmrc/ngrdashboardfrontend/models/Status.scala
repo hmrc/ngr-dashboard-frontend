@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrdashboardfrontend.config.features
+package uk.gov.hmrc.ngrdashboardfrontend.models
 
-import play.api.Configuration
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 
-import javax.inject.Inject
+sealed trait Status extends EnumEntry
 
-class Features @Inject()(implicit config: Configuration) {
-  val welshLanguageSupportEnabled = new Feature("features.welsh-language-support")
-  val vmvPropertyStatusTestEnabled = new Feature("features.vmvPropertyStatusTestEnabled")
+object Status extends Enum[Status] with PlayJsonEnum[Status] {
+
+  val values: IndexedSeq[Status] = findValues
+
+  case object Pending extends Status
+
+  case object Rejected extends Status
+
+  case object Approved extends Status
 }
