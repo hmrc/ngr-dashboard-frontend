@@ -20,7 +20,7 @@ import helpers.TestSupport
 import play.api.mvc.Call
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
 import uk.gov.hmrc.govukfrontend.views.Aliases.{CardTitle, Text}
-import uk.gov.hmrc.ngrdashboardfrontend.models.{Approved, Pending, Rejected}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.Link
 
 class DashboardHelperSpec extends TestSupport {

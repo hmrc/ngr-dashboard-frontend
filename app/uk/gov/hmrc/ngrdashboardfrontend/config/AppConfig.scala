@@ -54,7 +54,7 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   private lazy val basGatewayHost = getString("microservice.services.bas-gateway-frontend.host")
   private lazy val raldHost = getString("microservice.services.ngr-rald-frontend.host")
   private lazy val physicalHost = getString("microservice.services.ngr-physical-frontend.host")
-  override val ngrStubHost: String = getString("microservice.services.ngr-stub.host")
+  lazy val ngrStubHost: String = getString("microservice.services.ngr-stub.host")
 
   private lazy val dashboardBeforeYouGoUrl: String = s"$envHost${routes.BeforeYouGoController.show.url}"
   lazy val ngrRaldUrl: String = s"$raldHost/ngr-rald-frontend/"
