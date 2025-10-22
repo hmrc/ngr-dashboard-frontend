@@ -22,6 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
+import uk.gov.hmrc.ngrdashboardfrontend.models.{Approved, Pending}
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
@@ -44,7 +45,7 @@ class DashboardController @Inject()(
 
   def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
     isPropertyLinked(CredId(request.credId.getOrElse(""))).map { flag =>
-      val cards: Seq[Card] = DashboardHelper.getDashboardCards(flag)
+      val cards: Seq[Card] = DashboardHelper.getDashboardCards(flag, status = Approved) //TODO - the status should come from the bridge
       val name = request.name.flatMap(_.name).getOrElse("John Smith") //TODO - remove hardcoded name
       Ok(dashboardView(
         cards = cards,
