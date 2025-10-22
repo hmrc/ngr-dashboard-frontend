@@ -16,10 +16,17 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.models
 
-trait Status
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 
-case object Pending extends Status
+sealed trait Status extends EnumEntry
 
-case object Rejected extends Status
+object Status extends Enum[Status] with PlayJsonEnum[Status] {
 
-case object Approved extends Status
+  val values: IndexedSeq[Status] = findValues
+
+  case object Pending extends Status
+
+  case object Rejected extends Status
+
+  case object Approved extends Status
+}

@@ -16,14 +16,21 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.connector
 
-import play.api.libs.json.Json
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
+import play.api.i18n.Lang.logger
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readFromJson
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, NotFoundException, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, NotFoundException, StringContextOps}
+import play.api.libs.json._
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Rejected, Pending}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty, VMVPropertyStatus}
+import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
 
 import java.net.URL
 import javax.inject.{Inject, Singleton}
@@ -52,6 +59,39 @@ class NGRConnector @Inject()(http: HttpClientV2,
     http.get(url("get-property-linking-user-answers"))
       .withBody(Json.toJson(model))
       .execute[Option[PropertyLinkingUserAnswers]]
+  }
+
+  def linkedPropertyStatus(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[VMVPropertyStatus]] = {
+   if (appConfig.features.vmvPropertyStatusTestEnabled()) {
+      http.get(url"${appConfig.ngrStubHost}/ngr-stub/ngrPropertyStatus/${credId.value}")
+        .execute[HttpResponse].flatMap{
+          response =>
+            response.body match {
+              case value if value.contains("Rejected") =>
+                getPropertyLinkingUserAnswers(credId).map{
+                  case Some(propertyLinkingUserAnswers) =>
+                    Some(VMVPropertyStatus(Rejected, propertyLinkingUserAnswers.vmvProperty))
+                  case None => None
+              }
+              case value if value.contains("Pending") =>
+                getPropertyLinkingUserAnswers(credId).map{
+                  case Some(propertyLinkingUserAnswers) =>
+                    Some(VMVPropertyStatus(Pending, propertyLinkingUserAnswers.vmvProperty))
+                  case None => None
+              }
+              case value if value.contains("Approved") =>
+                getPropertyLinkingUserAnswers(credId).map{
+                  case Some(propertyLinkingUserAnswers) =>
+                    Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty))
+                  case None => None
+              }
+            }
+        }
+    } else getPropertyLinkingUserAnswers(credId)
+      .map {
+        case Some(propertyLinkingUserAnswers) => Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)) // This would be the call to the bridge but for now is defaulted to Approved for now
+        case None => None
+      }
   }
 
   def getLinkedProperty(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[VMVProperty]] = {

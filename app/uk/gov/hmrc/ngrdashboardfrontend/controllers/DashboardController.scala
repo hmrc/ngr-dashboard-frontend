@@ -22,9 +22,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
-import uk.gov.hmrc.ngrdashboardfrontend.models.{Approved, Pending}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.utils.DashboardHelper
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
@@ -44,8 +45,8 @@ class DashboardController @Inject()(
   extends FrontendController(mcc) with I18nSupport {
 
   def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
-    isPropertyLinked(CredId(request.credId.getOrElse(""))).map { flag =>
-      val cards: Seq[Card] = DashboardHelper.getDashboardCards(flag, status = Approved) //TODO - the status should come from the bridge
+    ngrConnector.linkedPropertyStatus(CredId(request.credId.getOrElse(""))).map { vmvPropertyStatus =>
+      val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, vmvPropertyStatus.map(value => value.status).getOrElse(Rejected))
       val name = request.name.flatMap(_.name).getOrElse("John Smith") //TODO - remove hardcoded name
       Ok(dashboardView(
         cards = cards,
@@ -53,10 +54,5 @@ class DashboardController @Inject()(
         navigationBarContent = createHomeNavBar))
     }
   }
-
-  private def isPropertyLinked(credId: CredId)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    ngrConnector.getLinkedProperty(credId).map(_.isDefined).recover(_ => false)
-  }
-
 }
 

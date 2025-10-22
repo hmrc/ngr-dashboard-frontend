@@ -19,7 +19,8 @@ package uk.gov.hmrc.ngrdashboardfrontend.utils
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
-import uk.gov.hmrc.ngrdashboardfrontend.models.{Approved, Pending, Rejected, Status}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.{Card, DashboardCard, Link}
 
 object DashboardHelper {
