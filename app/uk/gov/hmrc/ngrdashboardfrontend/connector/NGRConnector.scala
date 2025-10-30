@@ -62,11 +62,11 @@ class NGRConnector @Inject()(http: HttpClientV2,
             .execute[HttpResponse].flatMap {
               response =>
                 response.body match {
-                  case value if value.contains("Rejected") =>
+                  case value if value.contains(Rejected.toString) =>
                     Future.successful(Some(VMVPropertyStatus(Rejected, propertyLinkingUserAnswers.vmvProperty)))
-                  case value if value.contains("Pending") =>
+                  case value if value.contains(Pending.toString) =>
                     Future.successful(Some(VMVPropertyStatus(Pending, propertyLinkingUserAnswers.vmvProperty)))
-                  case value if value.contains("Approved") =>
+                  case value if value.contains(Approved.toString) =>
                     Future.successful(Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)))
                 }
             }
