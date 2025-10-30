@@ -16,11 +16,18 @@
 
 package helpers
 
-import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{VMVProperty, Valuation}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{VMVProperty, VMVPropertyStatus, Valuation}
 
 import java.time.LocalDate
 
 trait TestData {
+
+  def  vmvPropertyStatus(status: Status): VMVPropertyStatus = VMVPropertyStatus(
+    status = status,
+    property
+  )
+
   val property = VMVProperty(
     uarn = 11905603000L,
     localAuthorityReference = "2191322564521",
