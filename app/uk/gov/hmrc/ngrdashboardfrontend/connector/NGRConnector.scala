@@ -17,6 +17,7 @@
 package uk.gov.hmrc.ngrdashboardfrontend.connector
 
 import play.api.libs.json.Json
+import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, NotFoundException, StringContextOps}
@@ -54,11 +55,11 @@ class NGRConnector @Inject()(http: HttpClientV2,
       .execute[Option[PropertyLinkingUserAnswers]]
   }
 
-  def linkedPropertyStatus(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[VMVPropertyStatus]] = {
+  def linkedPropertyStatus(credId: CredId, nino: Nino)(implicit hc: HeaderCarrier): Future[Option[VMVPropertyStatus]] = {
     if (appConfig.features.vmvPropertyStatusTestEnabled()) {
       getPropertyLinkingUserAnswers(credId).flatMap {
         case Some(propertyLinkingUserAnswers) =>
-          http.get(url"${appConfig.ngrStubHost}/ngr-stub/ngrPropertyStatus/${credId.value}")
+          http.get(url"${appConfig.ngrStubHost}/ngr-stub/ngrPropertyStatus/${nino.nino.getOrElse("AA000003D")}")
             .execute[HttpResponse].flatMap {
               response =>
                 response.body match {
