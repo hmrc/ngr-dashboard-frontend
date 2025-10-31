@@ -34,7 +34,7 @@ class DashboardViewSpec extends ViewBaseSpec {
     captionKey2 = Some("home.addPropertiesCard.caption2"),
     captionKey3 = Some("home.addPropertiesCard.caption2"),
     voaReference = Some("ref"),
-    tag = Some("home.addPropertiesCard.tag"),
+    tag = Some("nav.actionNeeded"),
     links = Some(
       Seq(
         Link(
@@ -92,6 +92,7 @@ class DashboardViewSpec extends ViewBaseSpec {
     val dashboardSecondCardHeading = s"$dashboardSecondCard > h2.govuk-heading-s.card-heading"
     val dashboardSecondCardData = s"$dashboardSecondCard > h2:nth-child(2)"
     val dashboardSecondCardData2 = s"$dashboardSecondCard > h2:nth-child(3)"
+    val dashboardFirstCardTag = "#main-content > div > div > div.flex-container.govuk-grid-row > div:nth-child(1) strong.govuk-tag"
 
   }
 
@@ -131,6 +132,7 @@ class DashboardViewSpec extends ViewBaseSpec {
       elementText(Selectors.dashboardFirstCardData) mustBe "Add a property you have a connection with."
       elementText(Selectors.dashboardFirstCardData2) mustBe "You must tell us within 60 days of becoming the ratepayer. Do this by adding the property to your account."
       element(Selectors.dashboardFirstCard).attr("href") mustBe "some-href"
+      elementText(Selectors.dashboardFirstCardTag) mustBe "Action needed"
     }
 
     "show the correct seconds dashboard card" in {

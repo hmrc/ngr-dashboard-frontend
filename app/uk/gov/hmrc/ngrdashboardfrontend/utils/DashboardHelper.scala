@@ -31,7 +31,7 @@ object DashboardHelper {
     captionKey2 = Some("home.addPropertiesCard.caption2"),
     captionKey3 = None,
     voaReference = None,
-    tag = None,
+    tag = Some("nav.actionNeeded"),
     links = Some(
       Seq(
         Link(
