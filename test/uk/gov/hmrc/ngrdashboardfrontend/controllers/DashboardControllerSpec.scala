@@ -21,6 +21,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
@@ -48,7 +49,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
   "Dashboard Controller" must {
     "method show" must {
       "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and approved" in {
-        when(mockConnector.linkedPropertyStatus(any[CredId])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Approved))))
+        when(mockConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Approved))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -57,7 +58,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
       }
 
       "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and pending" in {
-        when(mockConnector.linkedPropertyStatus(any[CredId])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Pending))))
+        when(mockConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Pending))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -67,7 +68,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
       }
 
       "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and rejected" in {
-        when(mockConnector.linkedPropertyStatus(any[CredId])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Rejected))))
+        when(mockConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Rejected))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -77,7 +78,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
       }
 
       "Return OK and the correct view without the card 'Tell us about a change' when the property is not liked" in {
-        when(mockConnector.linkedPropertyStatus(any[CredId])(any())).thenReturn(Future.successful(None))
+        when(mockConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)

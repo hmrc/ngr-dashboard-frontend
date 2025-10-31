@@ -45,7 +45,7 @@ class DashboardController @Inject()(
   extends FrontendController(mcc) with I18nSupport {
 
   def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
-    ngrConnector.linkedPropertyStatus(CredId(request.credId.getOrElse(""))).map { vmvPropertyStatus =>
+    ngrConnector.linkedPropertyStatus(CredId(request.credId.getOrElse("")), request.nino).map { vmvPropertyStatus =>
       val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, vmvPropertyStatus.map(value => value.status).getOrElse(Rejected))
       val name = request.name.flatMap(_.name).getOrElse("John Smith") //TODO - remove hardcoded name
       Ok(dashboardView(
