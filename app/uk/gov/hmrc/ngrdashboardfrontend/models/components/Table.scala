@@ -20,6 +20,8 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Content, Table}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status._
 
 sealed trait TableRowData {
   def html(implicit messages: Messages): Content
@@ -35,12 +37,12 @@ final case class TableRowLink(value: String, label: String, classes: Option[Stri
   }
 }
 
-final case class TableRowIsActive(classes: Option[String] = None, isActive: Boolean = false) extends TableRowData {
+final case class TableRowIsActive(classes: Option[String] = None, status: Status = Rejected) extends TableRowData {
   override def html(implicit messages: Messages): HtmlContent = {
-    //TODO pattern matching has been used here as there are three potential states - Pending or Rejected
-    isActive match {
-      case true => HtmlContent(s"""<a class="govuk-tag govuk-tag--blue"> ${messages("selectYourProperty.status.accepted")} </a>""")
-      case _ => HtmlContent(s"""<a class="govuk-tag govuk-tag--grey"> ${messages("selectYourProperty.status.inactive")} </a>""")
+    status match {
+      case Pending => HtmlContent(s"""<a class="govuk-tag govuk-tag--yellow"> ${messages("selectYourProperty.status.pending")} </a>""")
+      case Approved => HtmlContent(s"""<a class="govuk-tag govuk-tag--blue"> ${messages("selectYourProperty.status.accepted")} </a>""")
+      case _ => HtmlContent(s"""<a class="govuk-tag govuk-tag--red"> ${messages("selectYourProperty.status.rejected")} </a>""")
     }
   }
 }

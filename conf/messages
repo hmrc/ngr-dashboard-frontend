@@ -76,6 +76,8 @@ selectYourProperty.title = Your property
 selectYourProperty.table.caption = Your property
 selectYourProperty.link = Return to your account home
 selectYourProperty.status.accepted = Accepted
+selectYourProperty.status.pending = Pending
+selectYourProperty.status.rejected = Rejected
 selectYourProperty.status.inactive = Inactive
 
 whatYouWillNeed.title=What do you want to tell us?
