@@ -21,7 +21,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
+import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status._
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 
@@ -41,9 +44,9 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
 
   "select your property controller" must {
     "method show" must {
-      "Return OK and the correct view" in {
+      "Return OK and the correct view when status is approved" in {
         mockLinkedPropertiesRequest()
-        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(Some(property)))
+        when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -51,10 +54,29 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
         content must include("what-do-you-want-to-tell-us/2191322564521")
         content must include("Accepted")
       }
-
+      "Return OK and the correct view when status is pending" in {
+        mockLinkedPropertiesRequest()
+        when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Pending, property))))
+        val result = controller().show()(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
+        content must include("what-do-you-want-to-tell-us/2191322564521")
+        content must include("Pending")
+      }
+      "Return OK and the correct view when status is rejected" in {
+        mockLinkedPropertiesRequest()
+        when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Rejected, property))))
+        val result = controller().show()(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
+        content must include("what-do-you-want-to-tell-us/2191322564521")
+        content must include("Rejected")
+      }
       "Throw exception when no property linking is found" in {
         mockLinkedPropertiesRequest()
-        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
+        when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
           await(controller().show()(authenticatedFakeRequest))
         }
