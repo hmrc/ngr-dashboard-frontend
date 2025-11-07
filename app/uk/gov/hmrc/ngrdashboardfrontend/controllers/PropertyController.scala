@@ -45,9 +45,9 @@ class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView
   private def generateTable(propertyList: List[VMVPropertyStatus])(implicit messages: Messages): Table = {
     TableData(
       headers = Seq(
-        TableHeader("Address", "govuk-table__caption--s govuk-!-width-half"),
-        TableHeader("Property reference", "govuk-table__caption--s govuk-!-width-one-quarter"),
-        TableHeader("Status", "govuk-table__caption--s govuk-!-width-one-quarter"),
+        TableHeader(messages("property.address"), "govuk-table__caption--s govuk-!-width-half"),
+        TableHeader(messages("property.reference"), "govuk-table__caption--s govuk-!-width-one-quarter"),
+        TableHeader(messages("property.status"), "govuk-table__caption--s govuk-!-width-one-quarter"),
         TableHeader("", "")),
       rows = propertyList.map(property => Seq(
         TableRowText(property.vmvProperty.addressFull),

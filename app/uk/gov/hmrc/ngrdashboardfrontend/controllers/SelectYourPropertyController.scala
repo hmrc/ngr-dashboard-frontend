@@ -46,15 +46,15 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
   private def generateTable(propertyList: List[VMVPropertyStatus])(implicit messages: Messages): Table = {
     TableData(
       headers = Seq(
-        TableHeader("Address", "govuk-table__caption--s govuk-!-width-half"),
-        TableHeader("Property reference", "govuk-table__caption--s, govuk-!-width-one-quarter"),
-        TableHeader("Status", "govuk-table__caption--s"),
-        TableHeader("Action", "govuk-!-width-one-quarter")),
+        TableHeader(messages("property.address"), "govuk-table__caption--s govuk-!-width-half"),
+        TableHeader(messages("property.reference"), "govuk-table__caption--s, govuk-!-width-one-quarter"),
+        TableHeader(messages("property.status"), "govuk-table__caption--s"),
+        TableHeader(messages("property.action"), "govuk-!-width-one-quarter")),
       rows = propertyList.map(property => Seq(
         TableRowText(property.vmvProperty.addressFull),
         TableRowText(property.vmvProperty.localAuthorityReference),
         TableRowIsActive(status = property.status),
-        TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.vmvProperty.localAuthorityReference).url, "Select property")
+        TableRowLink(routes.WhatDoYouWantToTellUsController.show(property.vmvProperty.localAuthorityReference).url, messages("property.select"))
       )),
       caption = Some(messages(""))
     ).toTable
