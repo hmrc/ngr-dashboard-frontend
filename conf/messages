@@ -90,3 +90,9 @@ whatYouWillNeed.rent.agreement.p2=Your agreement to rent a property has ended an
 whatYouWillNeed.renew.agreement.link=You renewed your agreement
 whatYouWillNeed.rent.agreement.p3=You have agreed a new rent on the date set out in your agreement.
 whatYouWillNeed.review.rent.link=You reviewed your rent
+
+property.address = Address
+property.reference = Property reference
+property.status = Status
+property.action = Action
+property.select = Select property

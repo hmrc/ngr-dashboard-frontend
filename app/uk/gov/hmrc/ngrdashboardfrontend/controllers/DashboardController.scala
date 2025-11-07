@@ -47,7 +47,7 @@ class DashboardController @Inject()(
   def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
     ngrConnector.linkedPropertyStatus(CredId(request.credId.getOrElse("")), request.nino).map { vmvPropertyStatus =>
       val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, vmvPropertyStatus.map(value => value.status).getOrElse(Rejected))
-      val name = request.name.flatMap(_.name).getOrElse("John Smith") //TODO - remove hardcoded name
+      val name = request.name.flatMap(_.name).getOrElse(throw new RuntimeException("Name not found"))
       Ok(dashboardView(
         cards = cards,
         name = name,
