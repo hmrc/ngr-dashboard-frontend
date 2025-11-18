@@ -26,7 +26,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
-import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{VMVProperty, VMVPropertyStatus}
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
