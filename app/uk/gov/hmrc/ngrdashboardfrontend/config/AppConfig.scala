@@ -35,6 +35,7 @@ trait AppConfig {
   val reviewPropertyUrl: String
   val ngrStubHost: String
   def getString(key: String): String
+  val notifyNGRUrl: String
 }
 
 @Singleton
@@ -42,6 +43,7 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   override val registrationUrl: String = sc.baseUrl("ngr-login-register-frontend")
   override val features = new Features()(config)
   override val nextGenerationRatesUrl: String = sc.baseUrl("next-generation-rates")
+  override val notifyNGRUrl: String = sc.baseUrl("ngr-notify")
 
   def getString(key: String): String =
     config.getOptional[String](key).filter(!_.isBlank).getOrElse(throwConfigNotFoundError(key))
