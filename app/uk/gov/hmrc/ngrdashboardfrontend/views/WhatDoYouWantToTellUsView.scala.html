@@ -27,7 +27,7 @@ hyperLinkComponent: hyperLinkComponent)
     <span class="govuk-caption-m">@address</span>
     <h1 class="govuk-heading-l">@messages("whatYouWillNeed.title")</h1>
     <h2 class="govuk-heading-m">@messages("whatYouWillNeed.property")</h2>
-    @hyperLinkComponent(messages("whatYouWillNeed.changed.property.features.link"), s"${appConfig.ngrPhysicalUrl}tell-us-changed-property-features-or-use-of-space", "")
+    @hyperLinkComponent(messages("whatYouWillNeed.changed.property.features.link"), s"${appConfig.ngrPhysicalUrl}tell-us-changed-property-features-or-use-of-space/${propertyReference}", "")
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     <h2 class="govuk-heading-m"> @messages("whatYouWillNeed.rent.agreement")</h2>
