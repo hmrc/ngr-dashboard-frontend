@@ -32,4 +32,6 @@ class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig{
   override val registrationUrl: String = "https://localhost:1502"
   override val ngrStubHost: String = "http://localhost:1501"
   override val feedbackFrontendUrl: String = "http://localhost:9514/feedback/NGR-Dashboard"
+
+  override val notifyNGRUrl:String = "http://localhost:1515"
 }
