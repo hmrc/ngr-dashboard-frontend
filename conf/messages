@@ -96,3 +96,8 @@ property.reference = Property reference
 property.status = Status
 property.action = Action
 property.select = Select property
+
+#CheckDetails
+checkDetails.title = We are checking your details
+checkDetails.p1 = Your information has been submitted.
+checkDetails.returnHome = Return to account home

@@ -18,21 +18,19 @@ package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
-import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.Rejected
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
-import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.utils.DashboardHelper
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class DashboardController @Inject()(
