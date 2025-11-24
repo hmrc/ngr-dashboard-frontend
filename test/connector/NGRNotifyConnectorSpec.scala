@@ -30,19 +30,19 @@ import scala.concurrent.Future
 
 class NGRNotifyConnectorSpec extends MockHttpV2 with TestData{
   val ngrConnector: NGRNotifyConnector = new NGRNotifyConnector(mockHttpClientV2, mockConfig)
-  val id = "12345"
+  val id = CredId("12345")
 
   "getRatepayer" when {
     "Successfully return a Ratepayer" in {
       val response: RatepayerStatusResponse = RatepayerStatusResponse(false, false, 0)
-      setupMockHttpV2Get(s"${mockConfig.notifyNGRUrl}/ngr-notify/ratepayer-status/$id")(Some(response))
+      setupMockHttpV2Get(s"${mockConfig.notifyNGRUrl}/ngr-notify/ratepayer-status/${id.value}")(Some(response))
       val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus(id)
       result.futureValue.get.activePropertyLinkCount mustBe 0
-      result.futureValue.get.activeRatepayerPersonaExists mustBe false
+      result.futureValue.get.activeRatepayerPersonExists mustBe false
       result.futureValue.get.activeRatepayerPersonaExists mustBe false
     }
     "ratepayer not found" in {
-      setupMockHttpV2Get(s"${mockConfig.notifyNGRUrl}/ngr-notify/ratepayer-status/$id")(None)
+      setupMockHttpV2Get(s"${mockConfig.notifyNGRUrl}/ngr-notify/ratepayer-status/${id.value}")(None)
       val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus(id)
       result.futureValue mustBe None
     }
