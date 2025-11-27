@@ -16,6 +16,7 @@
 
 package connector
 
+import com.typesafe.config.ConfigFactory
 import helpers.TestData
 import mocks.MockHttpV2
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -29,9 +30,18 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.registration._
 import scala.concurrent.Future
 
 class NGRNotifyConnectorSpec extends MockHttpV2 with TestData{
-  val ngrConnector: NGRNotifyConnector = new NGRNotifyConnector(mockHttpClientV2, mockConfig)
+  val config = Configuration(
+    ConfigFactory.parseString(
+      """
+        | features.getBridgeStatusFromStub = false
+        |""".stripMargin
+    )
+  )
+  val ngrConnector: NGRNotifyConnector = new NGRNotifyConnector(mockHttpClientV2, new MockAppConfig(config))
   val id = CredId("12345")
-  override def beforeEach(): Unit = {
+
+
+override def beforeEach(): Unit = {
     super.beforeEach()
     mockConfig.features.getBridgeStatusFromStub(false)
   }

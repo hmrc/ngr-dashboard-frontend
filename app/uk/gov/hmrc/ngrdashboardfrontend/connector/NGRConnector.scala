@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, NotFoundException, StringContextOps}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
+import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty, VMVPropertyStatus}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
 
@@ -33,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class NGRConnector @Inject()(http: HttpClientV2,
                              appConfig: AppConfig,
-                            )
+                             notifyNGRConnector: NGRNotifyConnector)
                             (implicit ec: ExecutionContext) {
 
   private def url(path: String): URL = url"${appConfig.nextGenerationRatesUrl}/next-generation-rates/$path"
@@ -69,14 +70,27 @@ class NGRConnector @Inject()(http: HttpClientV2,
                     Future.successful(Some(VMVPropertyStatus(Pending, propertyLinkingUserAnswers.vmvProperty)))
                   case value if value.contains(Approved.toString) =>
                     Future.successful(Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)))
+                  case _ =>
+                    http.get(url"${appConfig.ngrStubHost}/ngr-stub/hip-ratepayer-status/testCred123").execute[RatepayerStatusResponse].flatMap {
+                        case response if response.activePropertyLinkCount > 0  =>
+                          Future.successful(Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)))
+                        case response: RatepayerStatusResponse =>
+                          Future.successful(Some(VMVPropertyStatus(Pending, propertyLinkingUserAnswers.vmvProperty)))
+                    }
                 }
             }
         case None => Future.successful(None)
       }
     } else getPropertyLinkingUserAnswers(credId)
-      .map {
-        case Some(propertyLinkingUserAnswers) => Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)) // This would be the call to the bridge but for now is defaulted to Approved for now
-        case None => None
+      .flatMap {
+        case Some(propertyLinkingUserAnswers) =>
+          notifyNGRConnector.getRatepayerStatus(credId).map {
+            case Some(status) if status.activePropertyLinkCount > 0 =>
+              Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty))
+            case None =>
+              Some(VMVPropertyStatus(Pending, propertyLinkingUserAnswers.vmvProperty))
+          }
+        case None => Future.successful(None)
       }
   }
 

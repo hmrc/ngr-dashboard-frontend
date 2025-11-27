@@ -19,20 +19,26 @@ package connector
 import helpers.TestData
 import mocks.MockHttpV2
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
+import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
+import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, Email, RatepayerRegistration, RatepayerRegistrationValuation, TRNReferenceNumber}
 
 import scala.concurrent.Future
 
-class NGRConnectorSpec extends MockHttpV2 with TestData{
+class NGRConnectorSpec extends MockHttpV2 with TestData {
 
-  val ngrConnector: NGRConnector = new NGRConnector(mockHttpClientV2, mockConfig)
+  def notifyResponse(propertyCount: Int = 0): RatepayerStatusResponse = RatepayerStatusResponse(false, false, propertyCount)
+
+  val notifyNGRConnector = mock[NGRNotifyConnector]
+  val ngrConnector: NGRConnector = new NGRConnector(mockHttpClientV2, mockConfig, notifyNGRConnector)
   val email: Email = Email("hello@me.com")
   val trn: TRNReferenceNumber = TRNReferenceNumber(TRN, "1234")
   val credId: CredId = CredId("1234")
+  val nino: Nino = Nino(true, Some("AA000003D"))
 
 
   "getRatepayer" when {

@@ -41,7 +41,6 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
     mockAuthJourney,
     mockIsRegisteredCheck,
     mockNGRConnector,
-    mockNotifyConnector,
     mcc
   )(ec, appConfig = mockConfig)
 
@@ -87,48 +86,6 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
         val content = contentAsString(result)
         content must include(pageTitle)
         content must not include tellUsAboutChangeCardHeading
-      }
-
-      "method show with call too the bridge for status" must {
-        "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and approved" in {
-          when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
-
-          when(mockNotifyConnector.getRatepayerStatus(any[CredId])(any()))
-            .thenReturn(Future.successful(Some(RatepayerStatusResponse(true, true, 1))))
-
-          val result = controller().show()(authenticatedFakeRequest)
-          status(result) mustBe OK
-          val content = contentAsString(result)
-          content must include(pageTitle)
-          content must include(tellUsAboutChangeCardHeading)
-        }
-
-        "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and pending" in {
-          when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
-          when(mockNotifyConnector.getRatepayerStatus(any[CredId])(any()))
-            .thenReturn(Future.successful(Some(RatepayerStatusResponse(true, true, 0))))
-
-          val result = controller().show()(authenticatedFakeRequest)
-          status(result) mustBe OK
-          val content = contentAsString(result)
-          content must include(pageTitle)
-          content mustNot include(tellUsAboutChangeCardHeading)
-          content must include("Your property")
-        }
-
-        "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and rejected" in {
-          when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
-
-          when(mockNotifyConnector.getRatepayerStatus(any[CredId])(any()))
-            .thenReturn(Future.successful(Some(RatepayerStatusResponse(true, true, 0))))
-
-          val result = controller().show()(authenticatedFakeRequest)
-          status(result) mustBe OK
-          val content = contentAsString(result)
-          content must include(pageTitle)
-          content mustNot include(tellUsAboutChangeCardHeading)
-          content must include("Your property")
-        }
       }
     }
   }

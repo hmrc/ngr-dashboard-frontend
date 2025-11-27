@@ -42,7 +42,7 @@ class NGRNotifyConnector @Inject()(http: HttpClientV2,
       http.get(url"${appConfig.notifyNGRUrl}/ngr-notify/ratepayer-status/${credId.value}")
         .execute[Option[RatepayerStatusResponse]]
     } else {
-      http.get(url"${appConfig.ngrStubHost}/ngr-stub/ngrPropertyStatus/testCred123")
+      http.get(url"${appConfig.ngrStubHost}/ngr-stub/hip-ratepayer-status/testCred123")
         .execute[Option[RatepayerStatusResponse]]
     }
   }
