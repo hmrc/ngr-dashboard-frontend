@@ -55,7 +55,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
         val content = contentAsString(result)
         content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
         content must include("what-do-you-want-to-tell-us/85141561000")
-        content must include("Accepted")
+        content must include("Active")
       }
 
       "Return OK and the correct view when status is pending" in {
@@ -66,7 +66,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
         val content = contentAsString(result)
         content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
         content must include("what-do-you-want-to-tell-us/85141561000")
-        content must include("Pending")
+        content must include("Pending approval")
       }
 
       "Return OK and the correct view when status is rejected" in {

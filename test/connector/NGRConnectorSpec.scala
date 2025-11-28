@@ -28,6 +28,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, Email, Rate
 import scala.concurrent.Future
 
 class NGRConnectorSpec extends MockHttpV2 with TestData{
+
   val ngrConnector: NGRConnector = new NGRConnector(mockHttpClientV2, mockConfig)
   val email: Email = Email("hello@me.com")
   val trn: TRNReferenceNumber = TRNReferenceNumber(TRN, "1234")

@@ -38,11 +38,11 @@ final case class TableRowLink(value: String, label: String, classes: Option[Stri
 }
 
 final case class TableRowIsActive(classes: Option[String] = None, status: Status = Rejected) extends TableRowData {
-  override def html(implicit messages: Messages): HtmlContent = {
+  override def html(implicit messages: Messages): Text = {
     status match {
-      case Pending => HtmlContent(s"""<a class="govuk-tag govuk-tag--yellow"> ${messages("selectYourProperty.status.pending")} </a>""")
-      case Approved => HtmlContent(s"""<a class="govuk-tag govuk-tag--blue"> ${messages("selectYourProperty.status.accepted")} </a>""")
-      case _ => HtmlContent(s"""<a class="govuk-tag govuk-tag--red"> ${messages("selectYourProperty.status.rejected")} </a>""")
+      case Pending =>  Text(messages("selectYourProperty.status.pending"))
+      case Approved => Text(messages("selectYourProperty.status.active"))
+      case _ => Text(messages("selectYourProperty.status.rejected"))
     }
   }
 }
