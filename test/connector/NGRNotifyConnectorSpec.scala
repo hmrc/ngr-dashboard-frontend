@@ -30,14 +30,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.registration._
 import scala.concurrent.Future
 
 class NGRNotifyConnectorSpec extends MockHttpV2 with TestData{
-  val config = Configuration(
-    ConfigFactory.parseString(
-      """
-        | features.getBridgeStatusFromStub = false
-        |""".stripMargin
-    )
-  )
-  val ngrConnector: NGRNotifyConnector = new NGRNotifyConnector(mockHttpClientV2, new MockAppConfig(config))
+  val ngrConnector: NGRNotifyConnector = new NGRNotifyConnector(mockHttpClientV2, mockConfig)
   val id = CredId("12345")
 
 
