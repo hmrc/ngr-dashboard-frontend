@@ -24,7 +24,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CredIdValidationFilter @Inject()(implicit val executionContext: ExecutionContext) extends ActionFilter[AuthenticatedUserRequest] {
 
-  override protected def filter[A](request: AuthenticatedUserRequest[A]): Future[Option[Result]] = {
+  override def filter[A](request: AuthenticatedUserRequest[A]): Future[Option[Result]] = {
     Future.successful {
       if (request.credId.exists(_.trim.nonEmpty)) None
       else Some(Results.BadRequest("Missing credId in request"))
