@@ -71,10 +71,10 @@ class NGRConnector @Inject()(http: HttpClientV2,
                   case value if value.contains(Approved.toString) =>
                     Future.successful(Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)))
                   case _ =>
-                    http.get(url"${appConfig.ngrStubHost}/ngr-stub/hip-ratepayer-status/testCred123").execute[RatepayerStatusResponse].flatMap {
-                        case response if response.activePropertyLinkCount > 0  =>
+                    notifyNGRConnector.getRatepayerStatus(credId).flatMap {
+                        case Some(response) if response.activePropertyLinkCount > 0  =>
                           Future.successful(Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)))
-                        case response: RatepayerStatusResponse =>
+                        case None =>
                           Future.successful(Some(VMVPropertyStatus(Pending, propertyLinkingUserAnswers.vmvProperty)))
                     }
                 }
