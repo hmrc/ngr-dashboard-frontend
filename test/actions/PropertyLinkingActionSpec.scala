@@ -20,15 +20,15 @@ import helpers.{TestData, TestSupport}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{spy, when}
 import play.api.Application
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, PropertyLinkingActionImpl}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, CredIdValidationFilter, PropertyLinkingActionImpl}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.PropertyLinkingUserAnswers
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.UserType.Individual
@@ -66,6 +66,7 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
 
   private val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockAuthAction = new AuthRetrievalsImpl(mockAuthConnector, mcc)
+  val credIdValidationFilter: CredIdValidationFilter = inject[CredIdValidationFilter]
 
   private object Stubs {
     def successBlock(request: Request[AnyContent]): Future[Result] = Future.successful(Ok(""))
@@ -73,7 +74,13 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
 
   private val testRequest = FakeRequest("GET", "/paye/company-car")
 
-  val propertyLinkingAction = new PropertyLinkingActionImpl(ngrConnector = mockNGRConnector, authenticate = mockAuthAction, appConfig = mockConfig, mcc)
+  val propertyLinkingAction = new PropertyLinkingActionImpl(
+    ngrConnector = mockNGRConnector,
+    authenticate = mockAuthAction,
+    credIdValidationFilter = credIdValidationFilter,
+    appConfig = mockConfig,
+    mcc
+  )
 
   private implicit class HelperOps[A](a: A) {
     def ~[B](b: B) = new~(a, b)
@@ -150,6 +157,17 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
 
         val result = propertyLinkingAction.invokeBlock(testRequest, stubs.successBlock)
         status(result) mustBe OK
+      }
+
+      "missing credId must return bad request" in {
+        when(
+          mockAuthConnector
+            .authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
+        ).thenReturn(Future.successful(None ~ Some(testNino) ~ testConfidenceLevel ~ Some(testEmail) ~ Some(testAffinityGroup) ~ Some(testName)))
+
+        val result = propertyLinkingAction.invokeBlock(testRequest, Stubs.successBlock)
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) must include("Missing credId in request")
       }
     }
   }

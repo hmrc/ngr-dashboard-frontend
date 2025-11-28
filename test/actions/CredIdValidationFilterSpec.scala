@@ -26,8 +26,8 @@ class CredIdValidationFilterSpec extends TestSupport {
 
   val filter = new CredIdValidationFilter()
 
-  def buildRequest(credId: Option[String]): AuthenticatedUserRequest[AnyContentAsEmpty.type] =
-    authenticatedFakeRequest.copy(credId = credId)
+  def buildRequest(testCredId: Option[String]): AuthenticatedUserRequest[AnyContentAsEmpty.type] =
+    authenticatedFakeRequest.copy(credId = testCredId)
 
   "CredIdValidationFilter" should {
     "return None when credId is present and non-empty" in {
