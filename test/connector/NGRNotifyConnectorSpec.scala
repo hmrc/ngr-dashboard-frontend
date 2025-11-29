@@ -31,7 +31,10 @@ import scala.concurrent.Future
 class NGRNotifyConnectorSpec extends MockHttpV2 with TestData{
   val ngrConnector: NGRNotifyConnector = new NGRNotifyConnector(mockHttpClientV2, mockConfig)
   val id = CredId("12345")
-
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    mockConfig.features.getBridgeStatusFromStub(false)
+  }
   "getRatepayer" when {
     "Successfully return a Ratepayer" in {
       val response: RatepayerStatusResponse = RatepayerStatusResponse(false, false, 0)

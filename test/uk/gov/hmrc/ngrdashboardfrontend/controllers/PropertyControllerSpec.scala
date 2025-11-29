@@ -51,7 +51,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
-        content must include("Accepted")
+        content must include("Active")
       }
       "Return OK and the correct view when status is pending" in {
         mockLinkedPropertiesRequest()
@@ -60,7 +60,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
-        content must include("Pending")
+        content must include("Pending approval")
       }
       "Return OK and the correct view when status is rejected" in {
         mockLinkedPropertiesRequest()
