@@ -20,7 +20,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Table
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, CredIdValidationFilter, PropertyLinkingAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
@@ -39,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView,
                                    authenticate: AuthRetrievals,
                                    hasLinkedProperties: PropertyLinkingAction,
+                                   credIdValidationFilter: CredIdValidationFilter,
                                    ngrService: PropertyLinkingStatusService,
                                    mcc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
@@ -60,8 +61,8 @@ class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView
   }
 
   def show(): Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
-      ngrService.linkedPropertyStatus(CredId(request.credId.getOrElse("")), request.nino).flatMap {
+    (authenticate andThen hasLinkedProperties andThen credIdValidationFilter).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
+      ngrService.linkedPropertyStatus(CredId.fromOption(request.credId), request.nino).flatMap {
         case Some(vmvProperty) =>
           Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)), routes.DashboardController.show.url)))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
