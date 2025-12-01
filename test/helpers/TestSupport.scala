@@ -29,8 +29,9 @@ import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
-import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
+import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
+import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 
 import scala.concurrent.ExecutionContext
 
@@ -50,6 +51,8 @@ trait TestSupport extends PlaySpec
     lazy val messagesApi: MessagesApi = inject[MessagesApi]
     implicit lazy val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
     val mockNGRConnector: NGRConnector = mock[NGRConnector]
+    val mockNotifyNGRConnector: NGRNotifyConnector = mock[NGRNotifyConnector]
+    val mockNGRService: PropertyLinkingStatusService = mock[PropertyLinkingStatusService]
 
     lazy val testCredId: Credentials = Credentials(providerId = "0000000022", providerType = "Government-Gateway")
     lazy val testNino: String = "AA000003D"

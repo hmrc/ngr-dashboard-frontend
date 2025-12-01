@@ -20,55 +20,37 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
-import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Rejected}
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.Rejected
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 import uk.gov.hmrc.ngrdashboardfrontend.utils.DashboardHelper
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class DashboardController @Inject()(
                                      dashboardView: DashboardView,
                                      authenticate: AuthRetrievals,
                                      isRegisteredCheck: RegistrationAction,
-                                     ngrConnector: NGRConnector,
-                                     ngrNotifyConnector: NGRNotifyConnector,
+                                     service: PropertyLinkingStatusService,
                                      mcc: MessagesControllerComponents
                                    )(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
 
   def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
-    ngrConnector.linkedPropertyStatus(CredId(request.credId.getOrElse("")), request.nino).flatMap {
-      case Some(vmvPropertyStatus) =>
-        val cards: Seq[Card] = DashboardHelper.getDashboardCards(true, vmvPropertyStatus.status)
-        val name = request.name.flatMap(_.name).getOrElse(throw new RuntimeException("Name not found"))
-        Future.successful(Ok(dashboardView(
-          cards = cards,
-          name = name,
-          navigationBarContent = createHomeNavBar)))
-      case None => ngrNotifyConnector.getRatepayerStatus(CredId(request.credId.getOrElse(""))).map { vmvPropertyStatus =>
-        val status = vmvPropertyStatus match {
-          case Some(status) if status.activePropertyLinkCount > 0 => Approved
-          case None => Rejected
-          case _ => Rejected
-        }
-
-        val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, status)
-        val name = request.name.flatMap(_.name).getOrElse(throw new RuntimeException("Name not found"))
-        Ok(dashboardView(
-          cards = cards,
-          name = name,
-          navigationBarContent = createHomeNavBar))
-
-      }
+    service.linkedPropertyStatus(CredId(request.credId.getOrElse("")), request.nino).map { vmvPropertyStatus =>
+      val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, vmvPropertyStatus.map(value => value.status).getOrElse(Rejected))
+      val name = request.name.flatMap(_.name).getOrElse(throw new RuntimeException("Name not found"))
+      Ok(dashboardView(
+        cards = cards,
+        name = name,
+        navigationBarContent = createHomeNavBar))
     }
-
   }
 }
 
