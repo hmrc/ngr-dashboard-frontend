@@ -21,10 +21,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidationFilter
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{VMVProperty, VMVPropertyStatus}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
@@ -36,19 +37,21 @@ import scala.concurrent.Future
 class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestData {
 
   val selectYourPropertyView: SelectYourPropertyView = inject[SelectYourPropertyView]
+  val credIdValidationFilter: CredIdValidationFilter = inject[CredIdValidationFilter]
 
   def controller() = new SelectYourPropertyController(
     selectYourPropertyView,
     mockAuthJourney,
     mockHasLinkedProperties,
     mockNGRService,
+    credIdValidationFilter,
     mcc
   )(ec, mockConfig)
 
   "select your property controller" must {
     "method show" must {
       "Return OK and the correct view when status is approved" in {
-        mockLinkedPropertiesRequest()
+        mockLinkedPropertiesRequest(hasCredId = true)
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -59,7 +62,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
       }
 
       "Return OK and the correct view when status is pending" in {
-        mockLinkedPropertiesRequest()
+        mockLinkedPropertiesRequest(hasCredId = true)
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Pending, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -70,7 +73,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
       }
 
       "Return OK and the correct view when status is rejected" in {
-        mockLinkedPropertiesRequest()
+        mockLinkedPropertiesRequest(hasCredId = true)
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Rejected, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -81,7 +84,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
       }
 
       "Throw exception when no property linking is found" in {
-        mockLinkedPropertiesRequest()
+        mockLinkedPropertiesRequest(hasCredId = true)
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
           await(controller().show()(authenticatedFakeRequest))
@@ -96,7 +99,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
           property.valuations.head.copy(effectiveDate = LocalDate.parse("2023-01-01"), assessmentRef = 99999988899L),
           property.valuations.head.copy(effectiveDate = LocalDate.parse("2025-01-01"), assessmentRef = 9999777999L)
         ))
-        mockLinkedPropertiesRequest()
+        mockLinkedPropertiesRequest(hasCredId = true)
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithMultipleValuations))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -108,7 +111,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
         val propertyWithSingleValuation: VMVProperty = property.copy(valuations = List(
           property.valuations.head.copy(effectiveDate = LocalDate.parse("2022-01-01"), assessmentRef = 8888888888L)
         ))
-        mockLinkedPropertiesRequest()
+        mockLinkedPropertiesRequest(hasCredId = true)
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithSingleValuation))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -121,12 +124,24 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
           property.valuations.head.copy(assessmentStatus = "PREVIOUS", effectiveDate = LocalDate.parse("2021-04-01"), assessmentRef = 6666666666L),
           property.valuations.head.copy(assessmentStatus = "PREVIOUS", effectiveDate = LocalDate.parse("2020-04-01"), assessmentRef = 5555555555L)
         ))
-        mockLinkedPropertiesRequest()
+        mockLinkedPropertiesRequest(hasCredId = true)
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithNoCurrentValuation))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content: Document = Jsoup.parse(contentAsString(result))
         content.getElementsByTag("td").last().`val`() mustBe ""
+      }
+
+      "Return a bad request when credId is missing" in {
+        mockLinkedPropertiesRequest()
+        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
+        val result = controller().show()(authenticatedFakeRequest)
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content mustNot include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
+        content mustNot include("what-do-you-want-to-tell-us/85141561000")
+        content mustNot include("Active")
+        content must include("Missing credId in request")
       }
     }
   }
