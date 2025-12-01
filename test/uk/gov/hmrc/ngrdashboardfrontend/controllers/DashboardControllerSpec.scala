@@ -22,7 +22,7 @@ import org.mockito.Mockito.when
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.Nino
-import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidationFilter
+import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidator
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRNotifyConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
@@ -35,14 +35,14 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
 
   lazy val dashboardRoute: Call = routes.DashboardController.show
   lazy val dashboardView: DashboardView = inject[DashboardView]
-  lazy val credIdValidationFilter: CredIdValidationFilter = inject[CredIdValidationFilter]
+  lazy val credIdValidator: CredIdValidator = inject[CredIdValidator]
 
   def controller() = new DashboardController(
     dashboardView,
     mockAuthJourney,
     mockIsRegisteredCheck,
     mockNGRService,
-    credIdValidationFilter,
+    credIdValidator,
     mcc
   )(ec, appConfig = mockConfig)
 

@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, CredIdValidationFilter, PropertyLinkingActionImpl}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, CredIdValidator, PropertyLinkingActionImpl}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.PropertyLinkingUserAnswers
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.UserType.Individual
@@ -66,7 +66,7 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
 
   private val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockAuthAction = new AuthRetrievalsImpl(mockAuthConnector, mcc)
-  val credIdValidationFilter: CredIdValidationFilter = inject[CredIdValidationFilter]
+  val credIdValidator: CredIdValidator = inject[CredIdValidator]
 
   private object Stubs {
     def successBlock(request: Request[AnyContent]): Future[Result] = Future.successful(Ok(""))
@@ -77,7 +77,7 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
   val propertyLinkingAction = new PropertyLinkingActionImpl(
     ngrConnector = mockNGRConnector,
     authenticate = mockAuthAction,
-    credIdValidationFilter = credIdValidationFilter,
+    credIdValidate = credIdValidator,
     appConfig = mockConfig,
     mcc
   )

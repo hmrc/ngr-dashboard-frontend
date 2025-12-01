@@ -19,17 +19,17 @@ package actions
 import helpers.TestSupport
 import play.api.mvc._
 import play.api.test.Helpers._
-import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidationFilter
+import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidator
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 
-class CredIdValidationFilterSpec extends TestSupport {
+class CredIdValidatorSpec extends TestSupport {
 
-  val filter = new CredIdValidationFilter()
+  val filter = new CredIdValidator()
 
   def buildRequest(testCredId: Option[String]): AuthenticatedUserRequest[AnyContentAsEmpty.type] =
     authenticatedFakeRequest.copy(credId = testCredId)
 
-  "CredIdValidationFilter" should {
+  "CredIdValidator" should {
     "return None when credId is present and non-empty" in {
       val request = buildRequest(Some("validCredId"))
       val futureResult = filter.filter(request)

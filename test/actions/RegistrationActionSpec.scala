@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, CredIdValidationFilter, RegistrationActionImpl}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, CredIdValidator, RegistrationActionImpl}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.UserType.Individual
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration._
@@ -63,7 +63,7 @@ class RegistrationActionSpec extends TestSupport {
 
   private val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockAuthAction = new AuthRetrievalsImpl(mockAuthConnector, mcc)
-  val credIdValidationFilter: CredIdValidationFilter = inject[CredIdValidationFilter]
+  val credIdValidator: CredIdValidator = inject[CredIdValidator]
 
   private object Stubs {
     def successBlock(request: Request[AnyContent]): Future[Result] = Future.successful(Ok(""))
@@ -71,7 +71,7 @@ class RegistrationActionSpec extends TestSupport {
 
   private val testRequest = FakeRequest("GET", "/paye/company-car")
 
-  val registrationAction = new RegistrationActionImpl(ngrConnector = mockNGRConnector,authenticate = mockAuthAction, credIdValidationFilter = credIdValidationFilter, appConfig = mockConfig, mcc)
+  val registrationAction = new RegistrationActionImpl(ngrConnector = mockNGRConnector,authenticate = mockAuthAction, credIdValidate = credIdValidator, appConfig = mockConfig, mcc)
 
   private implicit class HelperOps[A](a: A) {
     def ~[B](b: B) = new ~(a, b)

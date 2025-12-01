@@ -25,7 +25,7 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidationFilter
+import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidator
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{VMVProperty, VMVPropertyStatus}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
@@ -37,14 +37,14 @@ import scala.concurrent.Future
 class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestData {
 
   val selectYourPropertyView: SelectYourPropertyView = inject[SelectYourPropertyView]
-  val credIdValidationFilter: CredIdValidationFilter = inject[CredIdValidationFilter]
+  val credIdValidator: CredIdValidator = inject[CredIdValidator]
 
   def controller() = new SelectYourPropertyController(
     selectYourPropertyView,
     mockAuthJourney,
     mockHasLinkedProperties,
     mockNGRService,
-    credIdValidationFilter,
+    credIdValidator,
     mcc
   )(ec, mockConfig)
 

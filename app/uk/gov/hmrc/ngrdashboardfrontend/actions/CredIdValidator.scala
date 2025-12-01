@@ -22,7 +22,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CredIdValidationFilter @Inject()(implicit val executionContext: ExecutionContext) extends ActionFilter[AuthenticatedUserRequest] {
+class CredIdValidator @Inject()(implicit val executionContext: ExecutionContext) extends ActionFilter[AuthenticatedUserRequest] {
 
   override def filter[A](request: AuthenticatedUserRequest[A]): Future[Option[Result]] = {
     Future.successful {

@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrdashboardfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, CredIdValidationFilter, PropertyLinkingAction}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, CredIdValidator, PropertyLinkingAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
@@ -35,11 +35,11 @@ class WhatDoYouWantToTellUsController @Inject()(authenticate: AuthRetrievals,
                                                 hasLinkedProperties: PropertyLinkingAction,
                                                 ngrConnector: NGRConnector,
                                                 whatDoYouWantToTellUsView: WhatDoYouWantToTellUsView,
-                                                credIdValidationFilter: CredIdValidationFilter,
+                                                credIdValidate: CredIdValidator,
                                                 mcc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
   def show(propertyReference: String): Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties andThen credIdValidationFilter).async { implicit request =>
+    (authenticate andThen hasLinkedProperties andThen credIdValidate).async { implicit request =>
       ngrConnector.getLinkedProperty(CredId.fromOption(request.credId)).flatMap {
         case Some(vmvProperty) => Future.successful(Ok(whatDoYouWantToTellUsView(createDefaultNavBar, vmvProperty.addressFull, propertyReference)))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))

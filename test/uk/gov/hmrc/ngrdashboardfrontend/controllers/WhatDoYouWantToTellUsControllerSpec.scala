@@ -24,7 +24,7 @@ import play.api.mvc.RequestHeader
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, contentAsString, status}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidationFilter
+import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidator
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.WhatDoYouWantToTellUsView
@@ -36,14 +36,14 @@ class WhatDoYouWantToTellUsControllerSpec extends ControllerSpecSupport with Def
   val pageTitle = "What do you want to tell us?"
   lazy val frontendAppConfig: AppConfig = inject[AppConfig]
   lazy val whatDoYouWantToTellUsView: WhatDoYouWantToTellUsView = inject[WhatDoYouWantToTellUsView]
-  lazy val credIdValidationFilter: CredIdValidationFilter = inject[CredIdValidationFilter]
+  lazy val credIdValidator: CredIdValidator = inject[CredIdValidator]
 
   def controller() = new WhatDoYouWantToTellUsController(
     mockAuthJourney,
     mockHasLinkedProperties,
     mockNGRConnector,
     whatDoYouWantToTellUsView,
-    credIdValidationFilter,
+    credIdValidator,
     mcc
   )(ec, mockConfig)
 

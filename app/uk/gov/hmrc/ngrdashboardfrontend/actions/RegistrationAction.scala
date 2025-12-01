@@ -30,16 +30,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationActionImpl @Inject()(
-                                    ngrConnector: NGRConnector,
-                                    authenticate: AuthRetrievals,
-                                    credIdValidationFilter: CredIdValidationFilter,
-                                    appConfig: AppConfig,
-                                    mcc: MessagesControllerComponents
+                                        ngrConnector: NGRConnector,
+                                        authenticate: AuthRetrievals,
+                                        credIdValidate: CredIdValidator,
+                                        appConfig: AppConfig,
+                                        mcc: MessagesControllerComponents
                                   )(implicit ec: ExecutionContext) extends RegistrationAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
 
-    (authenticate andThen credIdValidationFilter).invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
+    (authenticate andThen credIdValidate).invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(authRequest, authRequest.session)
 
       val credId = CredId.fromOption(authRequest.credId)
