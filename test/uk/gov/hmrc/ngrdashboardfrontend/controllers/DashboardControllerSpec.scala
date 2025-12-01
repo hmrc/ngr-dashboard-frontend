@@ -34,13 +34,12 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
 
   lazy val dashboardRoute: Call = routes.DashboardController.show
   lazy val dashboardView: DashboardView = inject[DashboardView]
-  lazy val mockNotifyConnector: NGRNotifyConnector = mock[NGRNotifyConnector]
 
   def controller() = new DashboardController(
     dashboardView,
     mockAuthJourney,
     mockIsRegisteredCheck,
-    mockNGRConnector,
+    mockNGRService,
     mcc
   )(ec, appConfig = mockConfig)
 
@@ -50,7 +49,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
   "Dashboard Controller" must {
     "method show" must {
       "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and approved" in {
-        when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Approved))))
+        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Approved))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -59,7 +58,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
       }
 
       "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and pending" in {
-        when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Pending))))
+        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Pending))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -69,7 +68,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
       }
 
       "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and rejected" in {
-        when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Rejected))))
+        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Rejected))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -79,8 +78,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
       }
 
       "Return OK and the correct view without the card 'Tell us about a change' when the property is not linked" in {
-        when(mockNGRConnector.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
-        when(mockNotifyConnector.getRatepayerStatus(any[CredId])(any())).thenReturn(Future.successful(None))
+        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)

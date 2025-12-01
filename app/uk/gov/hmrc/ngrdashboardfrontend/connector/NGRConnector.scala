@@ -22,9 +22,8 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, NotFoundException, StringContextOps}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
-import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
-import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty, VMVPropertyStatus}
+
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
 
 import java.net.URL
@@ -33,8 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NGRConnector @Inject()(http: HttpClientV2,
-                             appConfig: AppConfig,
-                             notifyNGRConnector: NGRNotifyConnector)
+                             appConfig: AppConfig)
                             (implicit ec: ExecutionContext) {
 
   private def url(path: String): URL = url"${appConfig.nextGenerationRatesUrl}/next-generation-rates/$path"
@@ -54,44 +52,6 @@ class NGRConnector @Inject()(http: HttpClientV2,
     http.get(url("get-property-linking-user-answers"))
       .withBody(Json.toJson(model))
       .execute[Option[PropertyLinkingUserAnswers]]
-  }
-
-  def linkedPropertyStatus(credId: CredId, nino: Nino)(implicit hc: HeaderCarrier): Future[Option[VMVPropertyStatus]] = {
-    if (appConfig.features.vmvPropertyStatusTestEnabled()) {
-      getPropertyLinkingUserAnswers(credId).flatMap {
-        case Some(propertyLinkingUserAnswers) =>
-          http.get(url"${appConfig.ngrStubHost}/ngr-stub/ngrPropertyStatus/${nino.nino.getOrElse("AA000003D")}")
-            .execute[HttpResponse].flatMap {
-              response =>
-                response.body match {
-                  case value if value.contains(Rejected.toString) =>
-                    Future.successful(Some(VMVPropertyStatus(Rejected, propertyLinkingUserAnswers.vmvProperty)))
-                  case value if value.contains(Pending.toString) =>
-                    Future.successful(Some(VMVPropertyStatus(Pending, propertyLinkingUserAnswers.vmvProperty)))
-                  case value if value.contains(Approved.toString) =>
-                    Future.successful(Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)))
-                  case _ =>
-                    notifyNGRConnector.getRatepayerStatus(credId).flatMap {
-                        case Some(response) if response.activePropertyLinkCount > 0  =>
-                          Future.successful(Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)))
-                        case None =>
-                          Future.successful(Some(VMVPropertyStatus(Pending, propertyLinkingUserAnswers.vmvProperty)))
-                    }
-                }
-            }
-        case None => Future.successful(None)
-      }
-    } else getPropertyLinkingUserAnswers(credId)
-      .flatMap {
-        case Some(propertyLinkingUserAnswers) =>
-          notifyNGRConnector.getRatepayerStatus(credId).map {
-            case Some(status) if status.activePropertyLinkCount > 0 =>
-              Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty))
-            case None =>
-              Some(VMVPropertyStatus(Pending, propertyLinkingUserAnswers.vmvProperty))
-          }
-        case None => Future.successful(None)
-      }
   }
 
   def getLinkedProperty(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[VMVProperty]] = {
