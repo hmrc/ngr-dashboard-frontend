@@ -33,16 +33,17 @@ import scala.concurrent.{ExecutionContext, Future}
 class PropertyLinkingActionImpl @Inject()(
                                     ngrConnector: NGRConnector,
                                     authenticate: AuthRetrievals,
+                                    credIdValidationFilter: CredIdValidationFilter,
                                     appConfig: AppConfig,
                                     mcc: MessagesControllerComponents
                                   )(implicit ec: ExecutionContext) extends PropertyLinkingAction with RegistrationAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
 
-    authenticate.invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
+    (authenticate andThen credIdValidationFilter).invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(authRequest, authRequest.session)
 
-      val credId = CredId(authRequest.credId.getOrElse(""))
+      val credId = CredId.fromOption(authRequest.credId)
 
       def checkPropertyLinking(): Future[Result] =
         ngrConnector.getPropertyLinkingUserAnswers(credId).flatMap { maybePropertyLinkingUserAnswers =>

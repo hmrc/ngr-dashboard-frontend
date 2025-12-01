@@ -20,15 +20,15 @@ import helpers.TestSupport
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{spy, when}
 import play.api.Application
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, RegistrationActionImpl}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, CredIdValidationFilter, RegistrationActionImpl}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.UserType.Individual
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration._
@@ -63,6 +63,7 @@ class RegistrationActionSpec extends TestSupport {
 
   private val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockAuthAction = new AuthRetrievalsImpl(mockAuthConnector, mcc)
+  val credIdValidationFilter: CredIdValidationFilter = inject[CredIdValidationFilter]
 
   private object Stubs {
     def successBlock(request: Request[AnyContent]): Future[Result] = Future.successful(Ok(""))
@@ -70,7 +71,7 @@ class RegistrationActionSpec extends TestSupport {
 
   private val testRequest = FakeRequest("GET", "/paye/company-car")
 
-  val registrationAction = new RegistrationActionImpl(ngrConnector = mockNGRConnector,authenticate = mockAuthAction, appConfig = mockConfig,mcc)
+  val registrationAction = new RegistrationActionImpl(ngrConnector = mockNGRConnector,authenticate = mockAuthAction, credIdValidationFilter = credIdValidationFilter, appConfig = mockConfig, mcc)
 
   private implicit class HelperOps[A](a: A) {
     def ~[B](b: B) = new ~(a, b)
@@ -126,6 +127,24 @@ class RegistrationActionSpec extends TestSupport {
         val result = registrationAction.invokeBlock(testRequest, stubs.successBlock)
         status(result) mustBe OK
       }
+      }
+      "must return bad request for missing credId" in {
+        when(
+          mockAuthConnector
+            .authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
+        ).thenReturn(Future.successful(None ~ Some(testNino) ~ testConfidenceLevel ~ Some(testEmail) ~ Some(testAffinityGroup) ~ Some(testName)))
+
+        when(mockNGRConnector.getRatepayer(any())(any()))
+          .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel.copy(isRegistered = Some(true)))))))
+
+        val stubs = spy(Stubs)
+
+        val authResult = mockAuthAction.invokeBlock(testRequest, stubs.successBlock)
+        status(authResult) mustBe OK
+
+        val result = registrationAction.invokeBlock(testRequest, stubs.successBlock)
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) must include("Missing credId in request")
       }
     }
 }

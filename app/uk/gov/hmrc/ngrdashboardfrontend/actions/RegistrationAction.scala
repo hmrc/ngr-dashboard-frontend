@@ -32,16 +32,17 @@ import scala.concurrent.{ExecutionContext, Future}
 class RegistrationActionImpl @Inject()(
                                     ngrConnector: NGRConnector,
                                     authenticate: AuthRetrievals,
+                                    credIdValidationFilter: CredIdValidationFilter,
                                     appConfig: AppConfig,
                                     mcc: MessagesControllerComponents
                                   )(implicit ec: ExecutionContext) extends RegistrationAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
 
-    authenticate.invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
+    (authenticate andThen credIdValidationFilter).invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(authRequest, authRequest.session)
 
-      val credId = CredId(authRequest.credId.getOrElse(""))
+      val credId = CredId.fromOption(authRequest.credId)
 
       ngrConnector.getRatepayer(credId).flatMap{ maybeRatepayer =>
         val isRegistered = maybeRatepayer
