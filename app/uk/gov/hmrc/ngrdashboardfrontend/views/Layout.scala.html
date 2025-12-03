@@ -19,16 +19,15 @@
 @import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
 @import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrdashboardfrontend.views.html.components.navigationBarComponent
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
   appConfig: AppConfig,
-  hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
   standardBetaBanner: StandardBetaBanner,
   fullWidthLayout: FullWidthLayout,
   hmrcStandardPage: HmrcStandardPage,
@@ -52,16 +51,9 @@ navigationBarContent: Option[NavigationBarContent] = None
     }
 }
 
-@languageSelector = {
-    @hmrcLanguageSelectHelper()
-}
-
 @content = {
     @if(navigationBarContent != None){
         @navBar
-    }
-    @if(appConfig.features.welshLanguageSupportEnabled()) {
-        @languageSelector
     }
     @contentBlock
 }
@@ -77,5 +69,12 @@ navigationBarContent: Option[NavigationBarContent] = None
         banners = Banners(
             phaseBanner = Some(standardBetaBanner()),
         ),
+        serviceNavigation = Some(
+            if(appConfig.features.welshLanguageSupportEnabled()){
+                ServiceNavigation(serviceName = Some(messages("service.name"))).withLanguageToggle
+            } else{
+                ServiceNavigation(serviceName = Some(messages("service.name")))
+            }
+        )
     )
 )(content)

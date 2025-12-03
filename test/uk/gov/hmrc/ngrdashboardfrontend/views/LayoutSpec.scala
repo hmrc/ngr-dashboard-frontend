@@ -28,8 +28,8 @@ class LayoutSpec extends ViewBaseSpec {
   val backLink = "Back"
 
   object Selectors {
-    val navTitle = ".govuk-header__service-name"
-    val languageSelector = "#main-content > div > div > nav > ul > li:nth-child(1) > span"
+    val navTitle = ".govuk-service-navigation__service-name"
+    val languageSelector = "nav.hmrc-service-navigation-language-select span[aria-current=\"true\"]"
     val backLink = ".govuk-back-link"
   }
 
@@ -45,6 +45,7 @@ class LayoutSpec extends ViewBaseSpec {
       val htmlApply = injectedView.apply(pageTitle = Some("Title of page"))(Html("Test")).body
       val htmlRender = injectedView.render(pageTitle = Some("Title of page"), showBackLink = false, contentBlock = Html("Test"), request = request, messages = messages, appConfig = mockConfig, fullWidth = false, navigationBarContent = None).body
       val htmlF = injectedView.f(Some("Title of page"), false, false, None)(Html("Test"))(request, messages, mockConfig).body
+
       htmlApply mustBe htmlRender
       htmlF must not be empty
     }
@@ -70,8 +71,7 @@ class LayoutSpec extends ViewBaseSpec {
         lazy val view = injectedView(pageTitle = Some("Title of page"))(Html("Test"))(request,messages,  mockConfig)
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
-        elementText(Selectors.languageSelector) mustBe "English"
-        mockConfig.features.welshLanguageSupportEnabled(false)
+        elementText(Selectors.languageSelector) mustBe "ENG"
       }
     }
   }
