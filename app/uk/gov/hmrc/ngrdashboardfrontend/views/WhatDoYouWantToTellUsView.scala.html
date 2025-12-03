@@ -23,7 +23,12 @@ hyperLinkComponent: hyperLinkComponent)
 
 @(navigationBarContent: NavigationBarContent, address: String, propertyReference: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(s"${messages("whatYouWillNeed.title")} - ${messages("service.name")}"), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+@layout(
+    pageTitle = Some(s"${messages("whatYouWillNeed.title")} - ${messages("service.name")}"),
+    backLinkUrl = Some(uk.gov.hmrc.ngrdashboardfrontend.controllers.routes.SelectYourPropertyController.show.url),
+    fullWidth = true,
+    navigationBarContent = Some(navigationBarContent)
+) {
     <span class="govuk-caption-m">@address</span>
     <h1 class="govuk-heading-l">@messages("whatYouWillNeed.title")</h1>
     <h2 class="govuk-heading-m">@messages("whatYouWillNeed.property")</h2>

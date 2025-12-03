@@ -58,7 +58,7 @@ object DashboardHelper {
           messageKey = "home.yourPropertiesCard.link.1",
         ),
         Link(
-          href = Call(method = "GET", url = routes.SelectYourPropertyController.show.url),
+          href = Call(method = "GET", url = routes.SelectPropertyController.show.url),
           linkId = "LinkId2-Card",
           messageKey = "home.yourPropertiesCard.link.2",
         )

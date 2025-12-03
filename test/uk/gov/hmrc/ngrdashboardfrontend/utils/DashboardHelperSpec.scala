@@ -55,7 +55,7 @@ class DashboardHelperSpec extends TestSupport {
         assert(link1.linkId == "LinkId1-Card")
         assert(link1.href.url == routes.PropertyController.show.url)
         assert(link2.linkId == "LinkId2-Card")
-        assert(link2.href.url == routes.SelectYourPropertyController.show.url)
+        assert(link2.href.url == routes.SelectPropertyController.show.url)
       }
     }
     "Pending" should {
