@@ -101,3 +101,8 @@ property.select = Select property
 checkDetails.title = We are checking your details
 checkDetails.p1 = Your information has been submitted.
 checkDetails.returnHome = Return to account home
+
+error.heading = Sorry, the service is unavailable
+error.p1 = You will be able to use this service later
+error.p2.saved = We saved your answers. They will be available for 30 days
+error.p2.not.saved = We have not saved your answers. When the service is available, you will have to start again

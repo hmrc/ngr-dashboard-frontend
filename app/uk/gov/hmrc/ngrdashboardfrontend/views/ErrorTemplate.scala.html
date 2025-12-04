@@ -19,11 +19,12 @@
 
 @this(layout: Layout)
 
-@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(pageTitle: String, heading: String, p1: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(pageTitle)) {
-    <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>
-    <p class="govuk-body">@{Text(message).asHtml}</p>
+    <h1 class="govuk-heading-xl">@{Text("Sorry, the service is unavailable").asHtml}</h1>
+    <p class="govuk-body">@{Text("You will be able to use this service later").asHtml}</p>
+    <p class="govuk-body">@{Text(p1).asHtml}</p>
 }
 
 @{
