@@ -38,7 +38,7 @@ class PropertyLinkingStatusService @Inject()(notifyNGRConnector: NGRNotifyConnec
     if (appConfig.features.vmvPropertyStatusTestEnabled()) {
       nGRConnector.getPropertyLinkingUserAnswers(credId).flatMap {
         case Some(propertyLinkingUserAnswers) =>
-          http.get(url"${appConfig.ngrStubHost}/ngr-stub/ngrPropertyStatus/${nino.nino.getOrElse("AA000003D")}")
+          http.get(url"${appConfig.ngrStubUrl}/ngr-stub/ngrPropertyStatus/${nino.nino.getOrElse("AA000003D")}")
             .execute[HttpResponse].flatMap {
               response =>
                 response.body match {

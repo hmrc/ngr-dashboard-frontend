@@ -33,7 +33,7 @@ trait AppConfig {
   val ngrPhysicalUrl: String
   val addAPropertyUrl: String
   val reviewPropertyUrl: String
-  val ngrStubHost: String
+  val ngrStubUrl: String
   def getString(key: String): String
   val notifyNGRUrl: String
 }
@@ -44,6 +44,7 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   override val features = new Features()(config)
   override val nextGenerationRatesUrl: String = sc.baseUrl("next-generation-rates")
   override val notifyNGRUrl: String = sc.baseUrl("ngr-notify")
+  override val ngrStubUrl: String = s"$ngrStubProtocol://$ngrStubHost:$ngrStubPort"
 
   def getString(key: String): String =
     config.getOptional[String](key).filter(!_.isBlank).getOrElse(throwConfigNotFoundError(key))
@@ -56,8 +57,9 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   private lazy val basGatewayHost = getString("microservice.services.bas-gateway-frontend.host")
   private lazy val raldHost = getString("microservice.services.ngr-rald-frontend.host")
   private lazy val physicalHost = getString("microservice.services.ngr-physical-frontend.host")
-  lazy val ngrStubHost: String = getString("microservice.services.ngr-stub.host")
-
+  private lazy val ngrStubProtocol: String = getString("microservice.services.ngr-stub.protocol")
+  private lazy val ngrStubHost: String     = getString("microservice.services.ngr-stub.host")
+  private lazy val ngrStubPort: String     = getString("microservice.services.ngr-stub.port")
   private lazy val dashboardBeforeYouGoUrl: String = s"$envHost${routes.BeforeYouGoController.show.url}"
   lazy val ngrRaldUrl: String = s"$raldHost/ngr-rald-frontend/"
   lazy val ngrPhysicalUrl: String = s"$physicalHost/ngr-physical-frontend/"
