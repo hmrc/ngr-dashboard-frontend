@@ -22,10 +22,7 @@ import org.mockito.Mockito.when
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.Nino
-import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidator
-import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRNotifyConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
-import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 
@@ -35,14 +32,12 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
 
   lazy val dashboardRoute: Call = routes.DashboardController.show
   lazy val dashboardView: DashboardView = inject[DashboardView]
-  lazy val credIdValidator: CredIdValidator = inject[CredIdValidator]
 
   def controller() = new DashboardController(
     dashboardView,
     mockAuthJourney,
     mockIsRegisteredCheck,
     mockNGRService,
-    credIdValidator,
     mcc
   )(ec, appConfig = mockConfig)
 
@@ -92,18 +87,6 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
         val content = contentAsString(result)
         content must include(pageTitle)
         content must not include tellUsAboutChangeCardHeading
-      }
-
-      "Return a bad request when credId is missing" in {
-        mockRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
-        val result = controller().show()(authenticatedFakeRequest)
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content mustNot include(pageTitle)
-        content mustNot include(tellUsAboutChangeCardHeading)
-        content mustNot include("Your property")
-        content must include("Missing credId in request")
       }
     }
   }

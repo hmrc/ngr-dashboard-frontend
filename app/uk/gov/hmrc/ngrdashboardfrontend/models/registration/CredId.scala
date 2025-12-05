@@ -22,9 +22,4 @@ final case class CredId(value: String)
 
 object CredId {
   implicit val format: Format[CredId] = Json.format[CredId]
-
-  def fromOption(opt: Option[String]): CredId =
-    opt.filter(_.trim.nonEmpty)
-      .map(CredId.apply)
-      .getOrElse(throw new IllegalArgumentException("credId is missing or empty"))
 }

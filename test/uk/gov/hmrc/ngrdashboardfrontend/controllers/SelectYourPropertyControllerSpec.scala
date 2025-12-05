@@ -21,11 +21,10 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.http.Status.OK
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidator
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{VMVProperty, VMVPropertyStatus}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
@@ -37,14 +36,12 @@ import scala.concurrent.Future
 class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestData {
 
   val selectYourPropertyView: SelectYourPropertyView = inject[SelectYourPropertyView]
-  val credIdValidator: CredIdValidator = inject[CredIdValidator]
 
   def controller() = new SelectYourPropertyController(
     selectYourPropertyView,
     mockAuthJourney,
     mockHasLinkedProperties,
     mockNGRService,
-    credIdValidator,
     mcc
   )(ec, mockConfig)
 
@@ -130,18 +127,6 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
         status(result) mustBe OK
         val content: Document = Jsoup.parse(contentAsString(result))
         content.getElementsByTag("td").last().`val`() mustBe ""
-      }
-
-      "Return a bad request when credId is missing" in {
-        mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
-        val result = controller().show()(authenticatedFakeRequest)
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content mustNot include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
-        content mustNot include("what-do-you-want-to-tell-us/85141561000")
-        content mustNot include("Active")
-        content must include("Missing credId in request")
       }
     }
   }

@@ -48,19 +48,26 @@ class AuthRetrievalsImpl @Inject()(
         Retrievals.name
 
     authorised(ConfidenceLevel.L250).retrieve(retrievals){
-      case credentials ~ Some(nino) ~ confidenceLevel ~ email ~ affinityGroup ~ name =>
+      case Some(credentials) ~ Some(nino) ~ confidenceLevel ~ email ~ affinityGroup ~ name =>
+
+        val credId = credentials.providerId.trim
+        if (credId.isEmpty) {
+          throw new Exception("missing credId in request")
+        }
+
         block(
           AuthenticatedUserRequest(
             request = request,
             confidenceLevel = Some(confidenceLevel),
-            authProvider = credentials.map(_.providerType),
+            authProvider = Some(credentials.providerType),
             nino = Nino(hasNino = true,Some(nino)),
             email = email.filter(_.nonEmpty),
-            credId = credentials.map(_.providerId),
+            credId = Some(credId),
             affinityGroup = affinityGroup,
             name = name
           )
         )
+      case None ~ Some(nino) ~ confidenceLevel ~ email ~ affinityGroup ~ name => throw new Exception("credentials is missing")
       case _ ~ _ ~ confidenceLevel ~ _ => throw new Exception("confidenceLevel not met")
     }recoverWith {
       case ex: Throwable =>

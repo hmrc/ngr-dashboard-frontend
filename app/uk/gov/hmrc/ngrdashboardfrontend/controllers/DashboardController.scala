@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, CredIdValidator, RegistrationAction}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.Rejected
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
@@ -38,19 +38,22 @@ class DashboardController @Inject()(
                                      authenticate: AuthRetrievals,
                                      isRegisteredCheck: RegistrationAction,
                                      service: PropertyLinkingStatusService,
-                                     credIdValidate: CredIdValidator,
                                      mcc: MessagesControllerComponents
                                    )(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck andThen credIdValidate).async { implicit request =>
-    service.linkedPropertyStatus(CredId.fromOption(request.credId), request.nino).map { vmvPropertyStatus =>
-      val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, vmvPropertyStatus.map(value => value.status).getOrElse(Rejected))
-      val name = request.name.flatMap(_.name).getOrElse(throw new RuntimeException("Name not found"))
-      Ok(dashboardView(
-        cards = cards,
-        name = name,
-        navigationBarContent = createHomeNavBar))
+  def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
+    request.credId match {
+      case Some(credId) if credId.trim.nonEmpty =>
+        service.linkedPropertyStatus(CredId(credId), request.nino).map { vmvPropertyStatus =>
+          val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, vmvPropertyStatus.map(value => value.status).getOrElse(Rejected))
+          val name = request.name.flatMap(_.name).getOrElse(throw new RuntimeException("Name not found"))
+          Ok(dashboardView(
+            cards = cards,
+            name = name,
+            navigationBarContent = createHomeNavBar))
+        }
+      case None => throw new RuntimeException("Missing or empty credId")
     }
   }
 }

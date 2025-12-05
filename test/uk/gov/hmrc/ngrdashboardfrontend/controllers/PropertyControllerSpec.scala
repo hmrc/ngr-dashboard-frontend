@@ -23,7 +23,6 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidator
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
@@ -34,13 +33,11 @@ import scala.concurrent.Future
 class PropertyControllerSpec extends ControllerSpecSupport with TestData {
 
   val selectYourPropertyView: SelectYourPropertyView = inject[SelectYourPropertyView]
-  val credIdValidator: CredIdValidator = inject[CredIdValidator]
 
   def controller() = new PropertyController(
     selectYourPropertyView,
     mockAuthJourney,
     mockHasLinkedProperties,
-    credIdValidator,
     mockNGRService,
     mcc
   )(ec, mockConfig)
@@ -81,16 +78,6 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
           await(controller().show()(authenticatedFakeRequest))
         }
         exception.getMessage contains "Unable to find match Linked Properties" mustBe true
-      }
-      "Return a bad request when credId is missing" in {
-        mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
-        val result = controller().show()(authenticatedFakeRequest)
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content mustNot include("A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY")
-        content mustNot include("Active")
-        content must include("Missing credId in request")
       }
     }
   }

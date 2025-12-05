@@ -20,46 +20,48 @@ import com.google.inject.ImplementedBy
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.Name
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationActionImpl @Inject()(
-                                        ngrConnector: NGRConnector,
-                                        authenticate: AuthRetrievals,
-                                        credIdValidate: CredIdValidator,
-                                        appConfig: AppConfig,
-                                        mcc: MessagesControllerComponents
+                                    ngrConnector: NGRConnector,
+                                    authenticate: AuthRetrievals,
+                                    appConfig: AppConfig,
+                                    mcc: MessagesControllerComponents
                                   )(implicit ec: ExecutionContext) extends RegistrationAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
 
-    (authenticate andThen credIdValidate).invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
+    authenticate.invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(authRequest, authRequest.session)
 
-      val credId = CredId.fromOption(authRequest.credId)
+      authRequest.credId match {
+        case Some(credId) if credId.trim.nonEmpty =>
+          ngrConnector.getRatepayer(CredId(credId)).flatMap { maybeRatepayer =>
+            val isRegistered = maybeRatepayer
+              .flatMap(_.ratepayerRegistration)
+              .flatMap(_.isRegistered)
+              .getOrElse(false)
 
-      ngrConnector.getRatepayer(credId).flatMap{ maybeRatepayer =>
-        val isRegistered = maybeRatepayer
-          .flatMap(_.ratepayerRegistration)
-          .flatMap(_.isRegistered)
-          .getOrElse(false)
+            val name: Option[String] = maybeRatepayer
+              .flatMap(user => user.ratepayerRegistration)
+              .map(info => info.name.map(value => value.value))
+              .getOrElse(Some(""))
 
-        val name:Option[String] = maybeRatepayer
-          .flatMap(user => user.ratepayerRegistration)
-          .map(info => info.name.map(value => value.value))
-          .getOrElse(Some(""))
-
-        if (isRegistered) {
-          block(authRequest.copy( name = Some(Name(name = name, lastName = Some("")))))
-        } else {
-         redirectToRegister()
-        }
+            if (isRegistered) {
+              block(authRequest.copy(name = Some(Name(name = name, lastName = Some("")))))
+            } else {
+              redirectToRegister()
+            }
+          }
+        case None => Future.failed(throw new NotFoundException("Missing or empty credId"))
       }
     })
   }

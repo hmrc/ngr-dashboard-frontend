@@ -20,9 +20,8 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Table
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, CredIdValidator, PropertyLinkingAction}
+import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
@@ -39,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView,
                                    authenticate: AuthRetrievals,
                                    hasLinkedProperties: PropertyLinkingAction,
-                                   credIdValidate: CredIdValidator,
                                    ngrService: PropertyLinkingStatusService,
                                    mcc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
@@ -61,11 +59,15 @@ class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView
   }
 
   def show(): Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties andThen credIdValidate).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
-      ngrService.linkedPropertyStatus(CredId.fromOption(request.credId), request.nino).flatMap {
-        case Some(vmvProperty) =>
-          Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)), routes.DashboardController.show.url)))
-        case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
+    (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
+      request.credId match {
+        case Some(credId) if credId.trim.nonEmpty =>
+          ngrService.linkedPropertyStatus(CredId(credId), request.nino).flatMap {
+            case Some(vmvProperty) =>
+              Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)), routes.DashboardController.show.url)))
+            case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
+          }
+        case None => Future.failed(throw new NotFoundException("Missing or empty credId"))
       }
     }
 }

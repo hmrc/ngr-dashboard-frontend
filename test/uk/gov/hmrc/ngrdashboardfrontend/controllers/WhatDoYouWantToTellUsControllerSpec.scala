@@ -19,12 +19,11 @@ package uk.gov.hmrc.ngrdashboardfrontend.controllers
 import helpers.{ControllerSpecSupport, TestData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.http.Status.OK
 import play.api.mvc.RequestHeader
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, contentAsString, status}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.actions.CredIdValidator
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.WhatDoYouWantToTellUsView
@@ -36,14 +35,12 @@ class WhatDoYouWantToTellUsControllerSpec extends ControllerSpecSupport with Def
   val pageTitle = "What do you want to tell us?"
   lazy val frontendAppConfig: AppConfig = inject[AppConfig]
   lazy val whatDoYouWantToTellUsView: WhatDoYouWantToTellUsView = inject[WhatDoYouWantToTellUsView]
-  lazy val credIdValidator: CredIdValidator = inject[CredIdValidator]
 
   def controller() = new WhatDoYouWantToTellUsController(
     mockAuthJourney,
     mockHasLinkedProperties,
     mockNGRConnector,
     whatDoYouWantToTellUsView,
-    credIdValidator,
     mcc
   )(ec, mockConfig)
 
@@ -62,15 +59,6 @@ class WhatDoYouWantToTellUsControllerSpec extends ControllerSpecSupport with Def
         await(controller().show("2191322564521")(authenticatedFakeRequest))
       }
       exception.getMessage contains "Unable to find match Linked Properties" mustBe true
-    }
-    "return a bad request when credId is missing" in {
-      mockLinkedPropertiesRequest()
-      when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(Some(property)))
-      val result = controller().show("2191322564521")(authenticatedFakeRequest)
-      status(result) mustBe BAD_REQUEST
-      val content = contentAsString(result)
-      content mustNot include(pageTitle)
-      content must include("Missing credId in request")
     }
   }
 }

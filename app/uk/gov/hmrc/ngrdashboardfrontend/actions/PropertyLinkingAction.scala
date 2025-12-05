@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrdashboardfrontend.actions
 import com.google.inject.ImplementedBy
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
@@ -31,39 +31,41 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PropertyLinkingActionImpl @Inject()(
-                                           ngrConnector: NGRConnector,
-                                           authenticate: AuthRetrievals,
-                                           credIdValidate: CredIdValidator,
-                                           appConfig: AppConfig,
-                                           mcc: MessagesControllerComponents
+                                    ngrConnector: NGRConnector,
+                                    authenticate: AuthRetrievals,
+                                    appConfig: AppConfig,
+                                    mcc: MessagesControllerComponents
                                   )(implicit ec: ExecutionContext) extends PropertyLinkingAction with RegistrationAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
 
-    (authenticate andThen credIdValidate).invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
+    authenticate.invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(authRequest, authRequest.session)
 
-      val credId = CredId.fromOption(authRequest.credId)
+      authRequest.credId match {
+        case Some(credId) if credId.trim.nonEmpty =>
 
-      def checkPropertyLinking(): Future[Result] =
-        ngrConnector.getPropertyLinkingUserAnswers(credId).flatMap { maybePropertyLinkingUserAnswers =>
-          if (maybePropertyLinkingUserAnswers.isDefined) {
-            block(authRequest)
-          } else {
-            redirectToDashboard()
+          def checkPropertyLinking(): Future[Result] =
+            ngrConnector.getPropertyLinkingUserAnswers(CredId(credId)).flatMap { maybePropertyLinkingUserAnswers =>
+              if (maybePropertyLinkingUserAnswers.isDefined) {
+                block(authRequest)
+              } else {
+                redirectToDashboard()
+              }
+            }
+
+          ngrConnector.getRatepayer(CredId(credId)).flatMap { maybeRatepayer =>
+            val isRegistered = maybeRatepayer
+              .flatMap(_.ratepayerRegistration)
+              .flatMap(_.isRegistered)
+              .getOrElse(false)
+
+            if (isRegistered)
+              checkPropertyLinking()
+            else
+              redirectToRegister()
           }
-        }
-
-      ngrConnector.getRatepayer(credId).flatMap { maybeRatepayer =>
-        val isRegistered = maybeRatepayer
-          .flatMap(_.ratepayerRegistration)
-          .flatMap(_.isRegistered)
-          .getOrElse(false)
-
-        if (isRegistered)
-          checkPropertyLinking()
-        else
-          redirectToRegister()
+        case None => Future.failed(throw new NotFoundException("Missing or empty credId"))
       }
     })
   }
