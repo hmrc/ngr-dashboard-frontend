@@ -36,7 +36,8 @@
 )(implicit cfConfig: ContactFrontendConfig)
 
 @(pageTitle: Option[String] = None,
-showBackLink: Boolean = false,
+showJSBackLink: Boolean = false,
+backLinkUrl: Option[String] = None,
 fullWidth: Boolean = false,
 navigationBarContent: Option[NavigationBarContent] = None
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
@@ -47,15 +48,12 @@ navigationBarContent: Option[NavigationBarContent] = None
 
 @navBar = {
     @navigationBarContent.map { content =>
-        @navigationBarComponent(content, showBackLink)
+        @navigationBarComponent(content, showJSBackLink, backLinkUrl)
     }
 }
 
-@content = {
-    @if(navigationBarContent != None){
-        @navBar
-    }
-    @contentBlock
+@beforeContentBlock = @{
+    navigationBarContent.map(_ => navBar)
 }
 
 @hmrcStandardPage(
@@ -63,9 +61,10 @@ navigationBarContent: Option[NavigationBarContent] = None
         pageTitle = pageTitle.map(title => messages("service.base.title", title)),
         templateOverrides = TemplateOverrides(
             mainContentLayout = if(fullWidth) Some(fullWidthLayout(_)) else None,
-            additionalHeadBlock = Some(headScripts)
+            additionalHeadBlock = Some(headScripts),
+            beforeContentBlock = beforeContentBlock
         ),
-        backLink = None,
+        backLink = backLinkUrl.map(BackLink(_)),
         banners = Banners(
             phaseBanner = Some(standardBetaBanner()),
         ),
@@ -77,4 +76,4 @@ navigationBarContent: Option[NavigationBarContent] = None
             }
         )
     )
-)(content)
+)(contentBlock)

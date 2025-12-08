@@ -80,6 +80,10 @@ selectYourProperty.status.pending = Pending approval
 selectYourProperty.status.rejected = Rejected
 selectYourProperty.status.inactive = Inactive
 
+#SelectProperty
+selectProperty.title = Which property do you want to tell us about?
+selectProperty.table.caption = Your properties
+
 whatYouWillNeed.title=What do you want to tell us?
 whatYouWillNeed.property=Property
 whatYouWillNeed.changed.property.features.link=You changed property features or use of space
@@ -93,6 +97,7 @@ whatYouWillNeed.review.rent.link=You reviewed your rent
 
 property.address = Address
 property.reference = Property reference
+property.description = Description
 property.status = Status
 property.action = Action
 property.select = Select property

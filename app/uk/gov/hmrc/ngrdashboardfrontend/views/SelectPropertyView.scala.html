@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.ngrdashboardfrontend.views.html.components._
 @import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 @import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavigationBarContent
@@ -27,11 +26,10 @@
 )
 
 @(navigationBarContent: NavigationBarContent,
-  linkedPropertiesTable: Table,
-        dashboardUrl: String
+  linkedPropertiesTable: Table
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@heading = @{messages("selectYourProperty.title")}
+@heading = @{messages("selectProperty.title")}
 
 @layout(
     pageTitle = Some(heading),
@@ -40,12 +38,7 @@
     backLinkUrl = Some(uk.gov.hmrc.ngrdashboardfrontend.controllers.routes.DashboardController.show.url)
 ) {
 
- @if(request.uri.contains("select-your-property")) {
-  <h1 class="govuk-heading-l">@heading</h1>
-  @govukTable(linkedPropertiesTable)
- } else {
-  <h1 class="govuk-heading-l">@heading</h1>
-  @govukTable(linkedPropertiesTable)
-  @hyperLinkComponent(messages("selectYourProperty.link"), dashboardUrl, "")
- }
+    <h1 class="govuk-heading-l">@heading</h1>
+    @govukTable(linkedPropertiesTable)
+
 }

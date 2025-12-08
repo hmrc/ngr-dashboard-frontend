@@ -9,6 +9,7 @@ GET        /feedback                                         uk.gov.hmrc.ngrdash
 GET        /add-a-property                                   uk.gov.hmrc.ngrdashboardfrontend.controllers.AddPropertyToYourAccountController.show
 GET        /property                                         uk.gov.hmrc.ngrdashboardfrontend.controllers.PropertyController.show
 GET        /select-your-property                             uk.gov.hmrc.ngrdashboardfrontend.controllers.SelectYourPropertyController.show
+GET        /select-property                                  uk.gov.hmrc.ngrdashboardfrontend.controllers.SelectPropertyController.show
 GET        /what-do-you-want-to-tell-us/:propertyReference   uk.gov.hmrc.ngrdashboardfrontend.controllers.WhatDoYouWantToTellUsController.show(propertyReference: String)
 GET        /review-your-property-details                     uk.gov.hmrc.ngrdashboardfrontend.controllers.ReviewYourPropertyDetailsController.show
 GET        /check-your-details                               uk.gov.hmrc.ngrdashboardfrontend.controllers.CheckYourDetailsController.show
