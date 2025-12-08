@@ -44,11 +44,6 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
   val pageTitle = "Manage your business rates valuation"
   val tellUsAboutChangeCardHeading = "Tell us about changes to your property, rent or agreement"
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    mockRequest()
-  }
-
   "Dashboard Controller" must {
     "method show" must {
       "Return OK and the correct view with the card 'Tell us about a change' when the property is linked and approved" in {
