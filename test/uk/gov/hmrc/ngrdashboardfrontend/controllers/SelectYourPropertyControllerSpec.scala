@@ -48,7 +48,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
   "select your property controller" must {
     "method show" must {
       "Return OK and the correct view when status is approved" in {
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -59,7 +59,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
       }
 
       "Return OK and the correct view when status is pending" in {
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Pending, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -70,7 +70,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
       }
 
       "Return OK and the correct view when status is rejected" in {
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Rejected, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -81,7 +81,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
       }
 
       "Throw exception when no property linking is found" in {
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
           await(controller().show()(authenticatedFakeRequest))
@@ -96,7 +96,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
           property.valuations.head.copy(effectiveDate = LocalDate.parse("2023-01-01"), assessmentRef = 99999988899L),
           property.valuations.head.copy(effectiveDate = LocalDate.parse("2025-01-01"), assessmentRef = 9999777999L)
         ))
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithMultipleValuations))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -108,7 +108,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
         val propertyWithSingleValuation: VMVProperty = property.copy(valuations = List(
           property.valuations.head.copy(effectiveDate = LocalDate.parse("2022-01-01"), assessmentRef = 8888888888L)
         ))
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithSingleValuation))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -121,7 +121,7 @@ class SelectYourPropertyControllerSpec extends ControllerSpecSupport with TestDa
           property.valuations.head.copy(assessmentStatus = "PREVIOUS", effectiveDate = LocalDate.parse("2021-04-01"), assessmentRef = 6666666666L),
           property.valuations.head.copy(assessmentStatus = "PREVIOUS", effectiveDate = LocalDate.parse("2020-04-01"), assessmentRef = 5555555555L)
         ))
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithNoCurrentValuation))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK

@@ -26,7 +26,6 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -60,14 +59,10 @@ class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView
 
   def show(): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
-      request.credId match {
-        case Some(credId) if credId.trim.nonEmpty =>
-          ngrService.linkedPropertyStatus(CredId(credId), request.nino).flatMap {
-            case Some(vmvProperty) =>
-              Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)), routes.DashboardController.show.url)))
-            case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
-          }
-        case None => Future.failed(throw new NotFoundException("Missing or empty credId"))
+      ngrService.linkedPropertyStatus(request.credId, request.nino).flatMap {
+        case Some(vmvProperty) =>
+          Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)), routes.DashboardController.show.url)))
+        case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }
     }
 }

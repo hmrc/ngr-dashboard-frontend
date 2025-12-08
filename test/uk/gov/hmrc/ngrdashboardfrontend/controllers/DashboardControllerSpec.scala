@@ -46,7 +46,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    mockRequest(hasCredId = true)
+    mockRequest()
   }
 
   "Dashboard Controller" must {

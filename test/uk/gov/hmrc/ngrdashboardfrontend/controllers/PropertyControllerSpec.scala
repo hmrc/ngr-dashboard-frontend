@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrdashboardfrontend.controllers
 import helpers.{ControllerSpecSupport, TestData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.http.Status.OK
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
@@ -45,7 +45,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
   "select your property controller" must {
     "method show" must {
       "Return OK and the correct view when status is approved" in {
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -54,7 +54,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
         content must include("Active")
       }
       "Return OK and the correct view when status is pending" in {
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Pending, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -63,7 +63,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
         content must include("Pending approval")
       }
       "Return OK and the correct view when status is rejected" in {
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Rejected, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -72,7 +72,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
         content must include("Rejected")
       }
       "Throw exception when no property linking is found" in {
-        mockLinkedPropertiesRequest(hasCredId = true)
+        mockLinkedPropertiesRequest()
         when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
           await(controller().show()(authenticatedFakeRequest))

@@ -23,7 +23,6 @@ import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.Rejected
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 import uk.gov.hmrc.ngrdashboardfrontend.utils.DashboardHelper
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
@@ -43,18 +42,14 @@ class DashboardController @Inject()(
   extends FrontendController(mcc) with I18nSupport {
 
   def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
-    request.credId match {
-      case Some(credId) if credId.trim.nonEmpty =>
-        service.linkedPropertyStatus(CredId(credId), request.nino).map { vmvPropertyStatus =>
-          val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, vmvPropertyStatus.map(value => value.status).getOrElse(Rejected))
-          val name = request.name.flatMap(_.name).getOrElse(throw new RuntimeException("Name not found"))
-          Ok(dashboardView(
-            cards = cards,
-            name = name,
-            navigationBarContent = createHomeNavBar))
-        }
-      case None => throw new RuntimeException("Missing or empty credId")
-    }
+      service.linkedPropertyStatus(request.credId, request.nino).map { vmvPropertyStatus =>
+        val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, vmvPropertyStatus.map(value => value.status).getOrElse(Rejected))
+        val name = request.name.flatMap(_.name).getOrElse(throw new RuntimeException("Name not found"))
+        Ok(dashboardView(
+          cards = cards,
+          name = name,
+          navigationBarContent = createHomeNavBar))
+      }
   }
 }
 

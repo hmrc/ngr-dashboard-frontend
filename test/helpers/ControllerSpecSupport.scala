@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, PropertyLinkingAction, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,10 +35,10 @@ trait ControllerSpecSupport extends TestSupport {
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   mockRequest()
 
-  def mockRequest(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
+  def mockRequest(hasNino: Boolean = true): Unit =
     when(mockAuthJourney andThen mockIsRegisteredCheck) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
       override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] =  {
-        val authRequest = AuthenticatedUserRequest(request, None, None, Some("user@email.com"), if (hasCredId) Some("1234") else None, Some(Name(Some("john"), Some("smith"))), None, nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None))
+        val authRequest = AuthenticatedUserRequest(request, None, None, Some("user@email.com"), CredId("1234"), Some(Name(Some("john"), Some("smith"))), None, nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None))
         block(authRequest)
       }
       override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
@@ -57,10 +58,10 @@ trait ControllerSpecSupport extends TestSupport {
     }
   }
 
-  def mockLinkedPropertiesRequest(hasCredId: Boolean = false, hasNino: Boolean = true): Unit = {
+  def mockLinkedPropertiesRequest(hasNino: Boolean = true): Unit = {
     when(mockAuthJourney andThen mockHasLinkedProperties) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
       override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] =  {
-        val authRequest = AuthenticatedUserRequest(request, None, None, Some("user@email.com"), if (hasCredId) Some("1234") else None, None, None, nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None))
+        val authRequest = AuthenticatedUserRequest(request, None, None, Some("user@email.com"), CredId("1234") , None, None, nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None))
         block(authRequest)
       }
       override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser

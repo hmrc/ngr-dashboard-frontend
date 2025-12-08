@@ -23,7 +23,6 @@ import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, PropertyLinking
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.WhatDoYouWantToTellUsView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -39,13 +38,9 @@ class WhatDoYouWantToTellUsController @Inject()(authenticate: AuthRetrievals,
   extends FrontendController(mcc) with I18nSupport {
   def show(propertyReference: String): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.credId match {
-        case Some(credId) if credId.trim.nonEmpty =>
-          ngrConnector.getLinkedProperty(CredId(credId)).flatMap {
-            case Some(vmvProperty) => Future.successful(Ok(whatDoYouWantToTellUsView(createDefaultNavBar, vmvProperty.addressFull, propertyReference)))
-            case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
-          }
-        case None => Future.failed(throw new NotFoundException("Missing or empty credId"))
+      ngrConnector.getLinkedProperty(request.credId).flatMap {
+        case Some(vmvProperty) => Future.successful(Ok(whatDoYouWantToTellUsView(createDefaultNavBar, vmvProperty.addressFull, propertyReference)))
+        case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }
   }
 }

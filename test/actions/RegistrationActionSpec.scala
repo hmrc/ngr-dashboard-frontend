@@ -141,12 +141,12 @@ class RegistrationActionSpec extends TestSupport {
         val authResult = mockAuthAction.invokeBlock(testRequest, stubs.successBlock)
 
         whenReady(authResult.failed){ e =>
-          e.getMessage mustBe "credentials is missing"
+          e.getMessage mustBe "User credentials are missing"
         }
 
         val result = registrationAction.invokeBlock(testRequest, stubs.successBlock)
         whenReady(result.failed){ e =>
-          e.getMessage mustBe "credentials is missing"
+          e.getMessage mustBe "User credentials are missing"
         }
       }
     }

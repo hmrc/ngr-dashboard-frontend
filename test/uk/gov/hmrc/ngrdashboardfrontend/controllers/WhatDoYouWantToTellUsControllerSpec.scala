@@ -46,14 +46,14 @@ class WhatDoYouWantToTellUsControllerSpec extends ControllerSpecSupport with Def
 
   "WhatDoYouWantToTellUsController" must {
     "render 'what do you want to tell us' page" in {
-      mockLinkedPropertiesRequest(hasCredId = true)
+      mockLinkedPropertiesRequest()
       when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(Some(property)))
       val result = controller().show("2191322564521")(authenticatedFakeRequest)
       status(result) mustBe OK
       contentAsString(result) must include(pageTitle)
     }
     "Throw exception when no property linking is found" in {
-      mockLinkedPropertiesRequest(hasCredId = true)
+      mockLinkedPropertiesRequest()
       when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
       val exception = intercept[NotFoundException] {
         await(controller().show("2191322564521")(authenticatedFakeRequest))

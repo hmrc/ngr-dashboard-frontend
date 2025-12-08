@@ -23,6 +23,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -50,11 +51,6 @@ class AuthRetrievalsImpl @Inject()(
     authorised(ConfidenceLevel.L250).retrieve(retrievals){
       case Some(credentials) ~ Some(nino) ~ confidenceLevel ~ email ~ affinityGroup ~ name =>
 
-        val credId = credentials.providerId.trim
-        if (credId.isEmpty) {
-          throw new Exception("missing credId in request")
-        }
-
         block(
           AuthenticatedUserRequest(
             request = request,
@@ -62,13 +58,15 @@ class AuthRetrievalsImpl @Inject()(
             authProvider = Some(credentials.providerType),
             nino = Nino(hasNino = true,Some(nino)),
             email = email.filter(_.nonEmpty),
-            credId = Some(credId),
+            credId = CredId(credentials.providerId),
             affinityGroup = affinityGroup,
             name = name
           )
         )
-      case None ~ Some(nino) ~ confidenceLevel ~ email ~ affinityGroup ~ name => throw new Exception("credentials is missing")
-      case _ ~ _ ~ confidenceLevel ~ _ => throw new Exception("confidenceLevel not met")
+      case None ~ _ ~ _ ~ _ ~ _ ~ _ =>
+        throw new Exception("User credentials are missing")
+      case _ ~ _ ~ confidenceLevel ~ _ ~ _ ~ _ =>
+        throw InsufficientConfidenceLevel(s"Required confidence level not met: $confidenceLevel")
     }recoverWith {
       case ex: Throwable =>
         throw ex

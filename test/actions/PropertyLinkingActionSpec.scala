@@ -161,20 +161,7 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
         val result = propertyLinkingAction.invokeBlock(testRequest, Stubs.successBlock)
 
         whenReady(result.failed) { e =>
-          e.getMessage mustBe "credentials is missing"
-        }
-      }
-
-      "missing credId must throw an exception" in {
-        when(
-          mockAuthConnector
-            .authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
-        ).thenReturn(Future.successful(Some(Credentials(providerId = "", providerType = "Government-Gateway")) ~ Some(testNino) ~ testConfidenceLevel ~ Some(testEmail) ~ Some(testAffinityGroup) ~ Some(testName)))
-
-        val result = propertyLinkingAction.invokeBlock(testRequest, Stubs.successBlock)
-
-        whenReady(result.failed) { e =>
-          e.getMessage mustBe "missing credId in request"
+          e.getMessage mustBe "User credentials are missing"
         }
       }
     }
