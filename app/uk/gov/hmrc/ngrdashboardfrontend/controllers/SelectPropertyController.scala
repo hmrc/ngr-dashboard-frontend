@@ -26,7 +26,6 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectPropertyView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -70,7 +69,7 @@ class SelectPropertyController @Inject()(selectPropertyView: SelectPropertyView,
 
   def show(): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
-      ngrService.linkedPropertyStatus(CredId(request.credId.getOrElse("")), request.nino).flatMap {
+      ngrService.linkedPropertyStatus(request.credId, request.nino).flatMap {
         case Some(vmvProperty) => Future.successful(Ok(selectPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)))))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }
