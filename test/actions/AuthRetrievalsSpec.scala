@@ -32,6 +32,7 @@ import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.AuthRetrievalsImpl
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import utils.EqualsAuthenticatedUserRequest
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -78,7 +79,7 @@ override implicit lazy val app: Application = GuiceApplicationBuilder().build()
 
         val expectedRequest = AuthenticatedUserRequest(
           request = testRequest,
-          credId = Some(testCredId.providerId),
+          credId = CredId(testCredId.providerId),
           authProvider = Some(testCredId.providerType),
           nino = Nino(true, Some(testNino)),
           confidenceLevel = Some(testConfidenceLevel),
@@ -115,7 +116,7 @@ override implicit lazy val app: Application = GuiceApplicationBuilder().build()
         val result = authAction.invokeBlock(testRequest, stubs.successBlock)
 
         whenReady(result.failed){ e =>
-          e.getMessage mustBe "confidenceLevel not met"
+          e.getMessage mustBe "Required confidence level not met: " + ConfidenceLevel.L50
         }
       }
     }

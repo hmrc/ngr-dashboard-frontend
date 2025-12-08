@@ -27,7 +27,7 @@ import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, PropertyLinkingActionImpl}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.PropertyLinkingUserAnswers
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
@@ -150,6 +150,19 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
 
         val result = propertyLinkingAction.invokeBlock(testRequest, stubs.successBlock)
         status(result) mustBe OK
+      }
+
+      "missing credentials must throw an exception" in {
+        when(
+          mockAuthConnector
+            .authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
+        ).thenReturn(Future.successful(None ~ Some(testNino) ~ testConfidenceLevel ~ Some(testEmail) ~ Some(testAffinityGroup) ~ Some(testName)))
+
+        val result = propertyLinkingAction.invokeBlock(testRequest, Stubs.successBlock)
+
+        whenReady(result.failed) { e =>
+          e.getMessage mustBe "User credentials are missing"
+        }
       }
     }
   }

@@ -24,8 +24,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,23 +41,21 @@ class RegistrationActionImpl @Inject()(
     authenticate.invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(authRequest, authRequest.session)
 
-      val credId = CredId(authRequest.credId.getOrElse(""))
-
-      ngrConnector.getRatepayer(credId).flatMap{ maybeRatepayer =>
+      ngrConnector.getRatepayer(authRequest.credId).flatMap { maybeRatepayer =>
         val isRegistered = maybeRatepayer
           .flatMap(_.ratepayerRegistration)
           .flatMap(_.isRegistered)
           .getOrElse(false)
 
-        val name:Option[String] = maybeRatepayer
+        val name: Option[String] = maybeRatepayer
           .flatMap(user => user.ratepayerRegistration)
           .map(info => info.name.map(value => value.value))
           .getOrElse(Some(""))
 
         if (isRegistered) {
-          block(authRequest.copy( name = Some(Name(name = name, lastName = Some("")))))
+          block(authRequest.copy(name = Some(Name(name = name, lastName = Some("")))))
         } else {
-         redirectToRegister()
+          redirectToRegister()
         }
       }
     })

@@ -24,7 +24,6 @@ import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -42,10 +41,8 @@ class PropertyLinkingActionImpl @Inject()(
     authenticate.invokeBlock(request, { implicit authRequest: AuthenticatedUserRequest[A] =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(authRequest, authRequest.session)
 
-      val credId = CredId(authRequest.credId.getOrElse(""))
-
       def checkPropertyLinking(): Future[Result] =
-        ngrConnector.getPropertyLinkingUserAnswers(credId).flatMap { maybePropertyLinkingUserAnswers =>
+        ngrConnector.getPropertyLinkingUserAnswers(authRequest.credId).flatMap { maybePropertyLinkingUserAnswers =>
           if (maybePropertyLinkingUserAnswers.isDefined) {
             block(authRequest)
           } else {
@@ -53,7 +50,7 @@ class PropertyLinkingActionImpl @Inject()(
           }
         }
 
-      ngrConnector.getRatepayer(credId).flatMap { maybeRatepayer =>
+      ngrConnector.getRatepayer(authRequest.credId).flatMap { maybeRatepayer =>
         val isRegistered = maybeRatepayer
           .flatMap(_.ratepayerRegistration)
           .flatMap(_.isRegistered)

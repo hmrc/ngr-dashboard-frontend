@@ -22,9 +22,7 @@ import org.mockito.Mockito.when
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.Nino
-import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRNotifyConnector}
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
-import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 
@@ -45,6 +43,11 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
 
   val pageTitle = "Manage your business rates valuation"
   val tellUsAboutChangeCardHeading = "Tell us about changes to your property, rent or agreement"
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    mockRequest()
+  }
 
   "Dashboard Controller" must {
     "method show" must {

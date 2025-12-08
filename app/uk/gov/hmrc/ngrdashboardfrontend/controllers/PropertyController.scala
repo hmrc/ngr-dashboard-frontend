@@ -22,12 +22,10 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Table
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -61,7 +59,7 @@ class PropertyController @Inject()(selectYouPropertyView: SelectYourPropertyView
 
   def show(): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
-      ngrService.linkedPropertyStatus(CredId(request.credId.getOrElse("")), request.nino).flatMap {
+      ngrService.linkedPropertyStatus(request.credId, request.nino).flatMap {
         case Some(vmvProperty) =>
           Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)), routes.DashboardController.show.url)))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))

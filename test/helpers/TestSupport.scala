@@ -31,6 +31,7 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 
 import scala.concurrent.ExecutionContext
@@ -64,6 +65,6 @@ trait TestSupport extends PlaySpec
     lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
       FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
     lazy val authenticatedFakeRequest: AuthenticatedUserRequest[AnyContentAsEmpty.type] =
-      AuthenticatedUserRequest(fakeRequest, None, None, None, None, None,None, nino = Nino(true, Some("")))
+      AuthenticatedUserRequest(fakeRequest, None, None, None, CredId("1234"), None,None, nino = Nino(true, Some("")))
 
   }
