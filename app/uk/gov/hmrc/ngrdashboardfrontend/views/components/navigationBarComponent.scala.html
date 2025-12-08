@@ -31,7 +31,7 @@
     }
 }
 
-<div class="govuk-width-container" style="margin-bottom: @if(showJavaScriptBackLink || backLinkUrl.isDefined) {10px} else {30px};">
+<div class="govuk-width-container">
     <nav id="secondary-nav" class="hmrc-account-menu">
         @navigationBar.accountHome.map{ Home =>
         <a href=@Home.call.url
@@ -59,7 +59,7 @@
         </ul>
     </nav>
     @backLinkUrl.map { url =>
-        <div>@govukBackLink(BackLink(url))</div>
+            @govukBackLink(BackLink(url))
     }.getOrElse {
         @if(showJavaScriptBackLink) {
             @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
