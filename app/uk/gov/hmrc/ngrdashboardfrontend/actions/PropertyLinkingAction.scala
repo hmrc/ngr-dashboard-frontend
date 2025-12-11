@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRConnector
 import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
