@@ -104,7 +104,6 @@ object DashboardHelper {
 
   def getDashboardCards(isPropertyLinked: Boolean, status: Status)(implicit messages: Messages): Seq[Card] = {
     val addProperty = Seq(DashboardCard.card(dashboardAddProperty))
-    println("isPropertyLinked=========== " + isPropertyLinked)
     if (isPropertyLinked) {
       status match {
         case Approved => Seq(
