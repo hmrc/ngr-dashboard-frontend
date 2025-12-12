@@ -21,9 +21,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.Rejected
+import uk.gov.hmrc.ngrdashboardfrontend.models.audit.AuditModel
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createHomeNavBar
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
-import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
+import uk.gov.hmrc.ngrdashboardfrontend.services.{DashboardAuditingService, PropertyLinkingStatusService}
 import uk.gov.hmrc.ngrdashboardfrontend.utils.DashboardHelper
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,6 +38,7 @@ class DashboardController @Inject()(
                                      authenticate: AuthRetrievals,
                                      isRegisteredCheck: RegistrationAction,
                                      service: PropertyLinkingStatusService,
+                                     auditingService: DashboardAuditingService,
                                      mcc: MessagesControllerComponents
                                    )(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
@@ -45,6 +47,13 @@ class DashboardController @Inject()(
       service.linkedPropertyStatus(request.credId, request.nino).map { vmvPropertyStatus =>
         val cards: Seq[Card] = DashboardHelper.getDashboardCards(vmvPropertyStatus.isDefined, vmvPropertyStatus.map(value => value.status).getOrElse(Rejected))
         val name = request.name.flatMap(_.name).getOrElse(throw new RuntimeException("Name not found"))
+        auditingService.extendedAudit(
+          AuditModel(
+            credId   = request.credId.toString,
+            action   = "view-dashboard",
+            extraTags = Map("nino" -> request.nino.toString)
+          )
+        )
         Ok(dashboardView(
           cards = cards,
           name = name,
@@ -52,4 +61,5 @@ class DashboardController @Inject()(
       }
   }
 }
+
 
