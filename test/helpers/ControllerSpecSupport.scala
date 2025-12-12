@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, PropertyLinking
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrdashboardfrontend.services.DashboardAuditingService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,6 +33,7 @@ trait ControllerSpecSupport extends TestSupport {
   val mockIsRegisteredCheck: RegistrationAction = mock[RegistrationAction]
   val mockHasLinkedProperties: PropertyLinkingAction = mock[PropertyLinkingAction]
   val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
+  val mockAuditingService: DashboardAuditingService = mock[DashboardAuditingService]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   mockRequest()
 
