@@ -18,24 +18,30 @@ package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.createDefaultNavBar
+import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.ReviewYourPropertyDetailsView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReviewYourPropertyDetailsController @Inject()(view: ReviewYourPropertyDetailsView,
                                                     authenticate: AuthRetrievals,
                                                     isRegisteredCheck: RegistrationAction,
-                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                    ngrService: PropertyLinkingStatusService,
+                                                    mcc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(mcc) with I18nSupport {
 
   def show(): Action[AnyContent] =
     (authenticate andThen isRegisteredCheck).async( implicit request =>
-      Future.successful(Ok(view(createDefaultNavBar)))
+      ngrService.linkedPropertyStatus(request.credId, request.nino).flatMap {
+        case Some(property) => Future.successful(Ok(view(createDefaultNavBar, property.vmvProperty.addressFull)))
+        case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
+      }
     )
 }

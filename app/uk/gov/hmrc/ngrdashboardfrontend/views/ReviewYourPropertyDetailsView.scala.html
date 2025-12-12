@@ -15,24 +15,23 @@
  *@
 
 @import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
-@import uk.gov.hmrc.ngrdashboardfrontend.views.html.components.hyperLinkComponent
 @import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(layout: Layout,
-      hyperLinkComponent: hyperLinkComponent,
       govukButton: GovukButton)
 
-@(navigationBarContent: NavigationBarContent)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(navigationBarContent: NavigationBarContent, address: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(
     pageTitle = Some(messages("reviewYourPropertyDetails.title")),
     backLinkUrl = Some(uk.gov.hmrc.ngrdashboardfrontend.controllers.routes.SelectPropertyController.show.url),
-    fullWidth = true
+    fullWidth = true,
+    navigationBarContent = Some(navigationBarContent)
 ) {
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-          <span class="govuk-caption-m">@messages("reviewYourPropertyDetails.title")</span>
+          <span class="govuk-caption-m">@address</span>
           <h1 class="govuk-heading-l">@messages("reviewYourPropertyDetails.title")</h1>
           <p class="govuk-body">@Messages("reviewYourPropertyDetails.p1")</p>
           <p class="govuk-body">@Messages("reviewYourPropertyDetails.p2")</p>
