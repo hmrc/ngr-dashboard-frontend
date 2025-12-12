@@ -43,7 +43,7 @@ with IntegrationPatience {
       ).build()
 
   private val connector = app.injector.instanceOf[NGRStubConnector]
-  private def url(path: String) = s"/ngr-stub/test-only$path"
+  private def url(path: String) = s"/ngr-stub$path"
 
   "NGRStubConnectorSpec" -  {
     "remove all stub data" in {
