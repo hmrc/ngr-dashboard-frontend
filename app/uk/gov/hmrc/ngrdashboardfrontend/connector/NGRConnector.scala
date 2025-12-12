@@ -17,10 +17,9 @@
 package uk.gov.hmrc.ngrdashboardfrontend.connector
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, NotFoundException, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, NotFoundException, StringContextOps}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
