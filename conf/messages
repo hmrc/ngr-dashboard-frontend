@@ -53,7 +53,10 @@ home.helpAndGuidanceCard.link5=More help with business rates
 
 #reviewYourPropertyDetails
 reviewYourPropertyDetails.title = Review your property details
-reviewYourPropertyDetails.p1 = Holding page
+reviewYourPropertyDetails.p1 = You should review the details we have about your property to make sure they are correct and change anything you need to.
+reviewYourPropertyDetails.p2 = We rely on you to make sure the information we hold about your property and your rental details is correct.
+reviewYourPropertyDetails.p3 = You should upload supporting information to help us understand the updates you tell us about.
+reviewYourPropertyDetails.p4 = Each file must be a PDF or image (JPG or PNG) and be smaller than 25MB. You can email larger files and other file types to us.
 
 #NavigationBar
 nav.home=Account home

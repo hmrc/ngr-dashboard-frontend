@@ -16,30 +16,50 @@
 
 package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
-import helpers.ControllerSpecSupport
-import play.api.http.Status.SEE_OTHER
+import helpers.{ControllerSpecSupport, TestData}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.http.Status.OK
 import play.api.mvc.RequestHeader
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, status}
+import uk.gov.hmrc.auth.core.Nino
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
+import uk.gov.hmrc.ngrdashboardfrontend.models.Status.Approved
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.ReviewYourPropertyDetailsView
 
-class ReviewYourPropertyDetailsControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
+import scala.concurrent.Future
+
+class ReviewYourPropertyDetailsControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout with TestData {
   implicit val requestHeader: RequestHeader = mock[RequestHeader]
-  val pageTitle = "Add a property to your account"
- lazy val frontendAppConfig: AppConfig = inject[AppConfig]
+  val pageTitle = "Review your property details"
+  lazy val frontendAppConfig: AppConfig = inject[AppConfig]
+  lazy val reviewYourPropertyDetailsView: ReviewYourPropertyDetailsView = inject[ReviewYourPropertyDetailsView]
 
   def controller() = new ReviewYourPropertyDetailsController(
+    reviewYourPropertyDetailsView,
     mockAuthJourney,
     mockIsRegisteredCheck,
+    mockNGRService,
     mcc
-  )(appConfig = mockConfig)
+  )(ec, mockConfig)
 
   "ReviewYourPropertyDetailsController" must {
     "method show" must {
-      "Return SEE OTHER and redirect to property linking add a property page" in {
+      "Return OK and render the 'review your property details' page" in {
+        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(vmvPropertyStatus(Approved))))
         val result = controller().show()(authenticatedFakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("http://localhost:1504/ngr-property-linking-frontend/review-your-property-details")
+        status(result) mustBe OK
+        contentAsString(result) must include(pageTitle)
+      }
+      "Throw exception when no property linking is found" in {
+        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
+        val exception = intercept[NotFoundException] {
+          await(controller().show()(authenticatedFakeRequest))
+        }
+        exception.getMessage mustBe "Unable to find match Linked Properties"
       }
     }
   }

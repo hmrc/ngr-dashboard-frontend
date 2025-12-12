@@ -19,45 +19,66 @@ package uk.gov.hmrc.ngrdashboardfrontend.views
 import helpers.ViewBaseSpec
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
-import uk.gov.hmrc.ngrdashboardfrontend.views.html.{BeforeYouGoView, ReviewYourPropertyDetailsView}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components.{NavBarPageContents, NavigationBarContent}
+import uk.gov.hmrc.ngrdashboardfrontend.views.html.ReviewYourPropertyDetailsView
 
 class ReviewYourPropertyDetailsViewSpec extends ViewBaseSpec {
   lazy val view: ReviewYourPropertyDetailsView = inject[ReviewYourPropertyDetailsView]
-  val title = "Review your property details - GOV.UK"
-  val heading = "Review your property details"
+  val content: NavigationBarContent = NavBarPageContents.createDefaultNavBar
+  val address = "Bug Me Not PVT LTD, RODLEY LANE, RODLEY, LEEDS, BH1 1HU"
 
   object Selectors {
+    val homeButton = "#secondary-nav > a > span"
+    val signOut = "#secondary-nav > ul > li > a"
     val navTitle = "head > title"
-    val heading = "#main-content > div > div > h1"
+    val address = "#main-content > div > div > div > div > span"
+    val heading = "#main-content > div > div > div > div > h1"
+    val p1 = "#main-content > div > div > div > div > p:nth-child(3)"
+    val p2 = "#main-content > div > div > div > div > p:nth-child(4)"
+    val p3 = "#main-content > div > div > div > div > p:nth-child(5)"
+    val p4 = "#main-content > div > div > div > div > p:nth-child(6)"
+    val continue = "#continue"
   }
 
   "ReviewYourPropertyDetailsView" must {
-    val reviewYourPropertyDetailsView = view("/ngr-property-linking-frontend/review-your-property-details")
+    val reviewYourPropertyDetailsView = view(content, address)
     lazy implicit val document: Document = Jsoup.parse(reviewYourPropertyDetailsView.body)
-    val htmlApply = view.apply("/ngr-property-linking-frontend/review-your-property-details").body
-    val htmlRender = view.render("/ngr-property-linking-frontend/review-your-property-details", request, messages, mockConfig).body
-    lazy val htmlF = view.f("/ngr-property-linking-frontend/review-your-property-details")
+    val htmlApply = view.apply(content, address).body
+    val htmlRender = view.render(content, address, request, messages, mockConfig).body
+    lazy val htmlF = view.f(content, address)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
     }
-
     "apply must be the same as render" in {
       htmlApply mustBe htmlRender
     }
-
     "render is not empty" in {
       htmlRender must not be empty
     }
-
-    "show correct title" in {
-      elementText(Selectors.navTitle) mustBe title
+    "show account home button" in {
+      elementText(Selectors.homeButton) mustBe "Account home"
     }
-
+    "show sign out button" in {
+      elementText(Selectors.signOut) mustBe "Sign out"
+    }
+    "show address" in {
+      elementText(Selectors.address) mustBe address
+    }
+    "show correct title" in {
+      elementText(Selectors.navTitle) mustBe "Review your property details - GOV.UK"
+    }
     "show correct heading" in {
-      elementText(Selectors.heading) mustBe heading
+      elementText(Selectors.heading) mustBe "Review your property details"
+    }
+    "show body" in {
+      elementText(Selectors.p1) mustBe "You should review the details we have about your property to make sure they are correct and change anything you need to."
+      elementText(Selectors.p2) mustBe "We rely on you to make sure the information we hold about your property and your rental details is correct."
+      elementText(Selectors.p3) mustBe "You should upload supporting information to help us understand the updates you tell us about."
+      elementText(Selectors.p4) mustBe "Each file must be a PDF or image (JPG or PNG) and be smaller than 25MB. You can email larger files and other file types to us."
+    }
+    "show continue button" in {
+      elementText(Selectors.continue) mustBe "Continue"
     }
   }
-
 }
