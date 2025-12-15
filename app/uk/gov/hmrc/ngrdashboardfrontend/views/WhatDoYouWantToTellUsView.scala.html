@@ -39,19 +39,19 @@ hyperLinkComponent: hyperLinkComponent)
     <p class="govuk-body">
         @messages("whatYouWillNeed.rent.agreement.p1")
     </p>
-    @hyperLinkComponent(messages("whatYouWillNeed.new.agreement.link"), s"${appConfig.ngrRaldUrl}tell-us-about-your-new-agreement", "")
+    @hyperLinkComponent(messages("whatYouWillNeed.new.agreement.link"), s"${appConfig.ngrRaldUrl}tell-us-about-your-new-agreement/${propertyReference}", "")
 
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     <p class="govuk-body">
         @messages("whatYouWillNeed.rent.agreement.p2")
     </p>
-    @hyperLinkComponent(messages("whatYouWillNeed.renew.agreement.link"), s"${appConfig.ngrRaldUrl}tell-us-about-your-renewed-agreement", "")
+    @hyperLinkComponent(messages("whatYouWillNeed.renew.agreement.link"), s"${appConfig.ngrRaldUrl}tell-us-about-your-renewed-agreement/${propertyReference}", "")
 
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     <p class="govuk-body">
         @messages("whatYouWillNeed.rent.agreement.p3")
     </p>
-    @hyperLinkComponent(messages("whatYouWillNeed.review.rent.link"), s"${appConfig.ngrRaldUrl}tell-us-about-rent-review", "")
+    @hyperLinkComponent(messages("whatYouWillNeed.review.rent.link"), s"${appConfig.ngrRaldUrl}tell-us-about-rent-review/${propertyReference}", "")
 
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
