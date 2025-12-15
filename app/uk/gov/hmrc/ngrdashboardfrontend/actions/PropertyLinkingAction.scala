@@ -43,7 +43,7 @@ class PropertyLinkingActionImpl @Inject()(
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(authRequest, authRequest.session)
 
       def checkPropertyLinking(): Future[Result] =
-        ngrConnector.getPropertyLinkingUserAnswers(authRequest.credId).flatMap { maybePropertyLinkingUserAnswers =>
+        ngrConnector.getPropertyLinkingUserAnswers().flatMap { maybePropertyLinkingUserAnswers =>
           if (maybePropertyLinkingUserAnswers.isDefined) {
             block(authRequest)
           } else {
