@@ -27,12 +27,12 @@ sm2 --stop  NGR_DASHBOARD_FRONTEND
     * 
 ### Run with test only routes to populate stub data:
 * A dedicated test-only endpoint is available to populate stub data for development and testing purposes:
-* Visit http://localhost:1503/test-only/populate-stub-data in your browser to trigger the stub data population.
+* Visit http://localhost:1503/ngr-dashboard-frontend/test-only/populate-stub-data in your browser to trigger the stub data population.
 * It will clear all existing stub data from the `ngr-stub` service's MongoDB collection and reload it with predefined data from `ngr-stu/conf/stubData`.
 * To use this endpoint locally, run the following command:
    
-      `sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes -Dcentralised-authorisation-resource-client.filter.enabled=false`
-    
+      - Either run `sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes`, or note that `NGR_DASHBOARD_FRONTEND` may already have test-only routes enabled.
+
   * This route is intended for testing purposes only and should not be used in production environments.
   
 ### Running the test suite
