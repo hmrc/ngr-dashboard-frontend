@@ -31,12 +31,12 @@ class ReviewYourPropertyDetailsViewSpec extends ViewBaseSpec {
     val homeButton = "#secondary-nav > a > span"
     val signOut = "#secondary-nav > ul > li > a"
     val navTitle = "head > title"
-    val address = "#main-content > div > div > div > div > span"
-    val heading = "#main-content > div > div > div > div > h1"
-    val p1 = "#main-content > div > div > div > div > p:nth-child(3)"
-    val p2 = "#main-content > div > div > div > div > p:nth-child(4)"
-    val p3 = "#main-content > div > div > div > div > p:nth-child(5)"
-    val p4 = "#main-content > div > div > div > div > p:nth-child(6)"
+    val address = "#main-content > div > div > span"
+    val heading = "#main-content > div > div > h1"
+    val p1 = "#main-content > div > div > p:nth-child(3)"
+    val p2 = "#main-content > div > div > p:nth-child(4)"
+    val p3 = "#main-content > div > div > p:nth-child(5)"
+    val p4 = "#main-content > div > div > p:nth-child(6)"
     val continue = "#continue"
   }
 
