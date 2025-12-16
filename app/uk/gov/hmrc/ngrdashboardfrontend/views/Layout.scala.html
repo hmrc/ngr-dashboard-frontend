@@ -30,6 +30,7 @@
   appConfig: AppConfig,
   standardBetaBanner: StandardBetaBanner,
   fullWidthLayout: FullWidthLayout,
+  twoThirdsLayout: TwoThirdsLayout,
   hmrcStandardPage: HmrcStandardPage,
   stylesheets: Stylesheets,
   navigationBarComponent: navigationBarComponent
@@ -60,7 +61,11 @@ navigationBarContent: Option[NavigationBarContent] = None
     HmrcStandardPageParams(
         pageTitle = pageTitle.map(title => messages("service.base.title", title)),
         templateOverrides = TemplateOverrides(
-            mainContentLayout = if(fullWidth) Some(fullWidthLayout(_)) else None,
+            mainContentLayout = if (fullWidth) {
+                Some((_: Html) => fullWidthLayout(contentBlock))
+            } else {
+                Some((_: Html) => twoThirdsLayout(contentBlock))
+            },
             additionalHeadBlock = Some(headScripts),
             beforeContentBlock = beforeContentBlock
         ),

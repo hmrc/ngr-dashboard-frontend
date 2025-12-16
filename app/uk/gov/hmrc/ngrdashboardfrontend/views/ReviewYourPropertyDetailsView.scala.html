@@ -26,19 +26,15 @@
 @layout(
     pageTitle = Some(messages("reviewYourPropertyDetails.title")),
     backLinkUrl = Some(uk.gov.hmrc.ngrdashboardfrontend.controllers.routes.SelectPropertyController.show.url),
-    fullWidth = true,
+    fullWidth = false,
     navigationBarContent = Some(navigationBarContent)
 ) {
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-          <span class="govuk-caption-m">@address</span>
-          <h1 class="govuk-heading-l">@messages("reviewYourPropertyDetails.title")</h1>
-          <p class="govuk-body">@Messages("reviewYourPropertyDetails.p1")</p>
-          <p class="govuk-body">@Messages("reviewYourPropertyDetails.p2")</p>
-          <p class="govuk-body">@Messages("reviewYourPropertyDetails.p3")</p>
-          <p class="govuk-body">@Messages("reviewYourPropertyDetails.p4")</p>
-        </div>
-    </div>
+    <span class="govuk-caption-m">@address</span>
+    <h1 class="govuk-heading-l">@messages("reviewYourPropertyDetails.title")</h1>
+    <p class="govuk-body">@Messages("reviewYourPropertyDetails.p1")</p>
+    <p class="govuk-body">@Messages("reviewYourPropertyDetails.p2")</p>
+    <p class="govuk-body">@Messages("reviewYourPropertyDetails.p3")</p>
+    <p class="govuk-body">@Messages("reviewYourPropertyDetails.p4")</p>
     <p class="govuk-body">
         @govukButton(
             Button(
