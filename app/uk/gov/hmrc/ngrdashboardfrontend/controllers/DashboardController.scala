@@ -51,8 +51,9 @@ class DashboardController @Inject()(
           AuditModel(
             credId   = request.credId.toString,
             action   = "view-dashboard",
-            extraTags = Map("nino" -> request.nino.toString)
-          )
+            extraTags = Map("ninoLastFourDigits" -> request.nino.toString.takeRight(4))
+          ),
+          routes.DashboardController.show.url
         )
         Ok(dashboardView(
           cards = cards,

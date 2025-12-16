@@ -33,8 +33,8 @@ class AuditModelSpec extends TestSupport with AnyWordSpecLike {
     }
 
     "include extraTags into detail" in {
-      val modelWithTags = AuditModel("123test", "view-dashboard", Map("nino" -> "testNino"))
-      modelWithTags.detail mustBe Map("credId" -> "123test", "nino" -> "testNino")
+      val modelWithTags = AuditModel("123test", "view-dashboard", Map("ninoLastFourDigits" -> "1234"))
+      modelWithTags.detail mustBe Map("credId" -> "123test", "ninoLastFourDigits" -> "1234")
     }
 
   }

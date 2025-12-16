@@ -41,7 +41,7 @@ trait AppConfig {
 
 @Singleton
 class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) extends AppConfig{
-  override val appName: String = sc.getString("appName")
+  override val appName: String = getString("appName")
   override val registrationUrl: String = sc.baseUrl("ngr-login-register-frontend")
   override val features = new Features()(config)
   override val nextGenerationRatesUrl: String = sc.baseUrl("next-generation-rates")
