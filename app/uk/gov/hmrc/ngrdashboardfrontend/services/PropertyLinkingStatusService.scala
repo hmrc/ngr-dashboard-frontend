@@ -22,7 +22,6 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
-import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 
@@ -49,7 +48,7 @@ class PropertyLinkingStatusService @Inject()(notifyNGRConnector: NGRNotifyConnec
                   case value if value.contains(Approved.toString) =>
                     Future.successful(Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)))
                   case _ =>
-                    notifyNGRConnector.getRatepayerStatus(credId).flatMap {
+                    notifyNGRConnector.getRatepayerStatus.flatMap {
                       case Some(response) if response.activePropertyLinkCount > 0  =>
                         Future.successful(Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty)))
                       case Some(_) =>
@@ -64,7 +63,7 @@ class PropertyLinkingStatusService @Inject()(notifyNGRConnector: NGRNotifyConnec
     } else nGRConnector.getPropertyLinkingUserAnswers()
       .flatMap {
         case Some(propertyLinkingUserAnswers) =>
-          notifyNGRConnector.getRatepayerStatus(credId).map {
+          notifyNGRConnector.getRatepayerStatus.map {
             case Some(status) if status.activePropertyLinkCount > 0 =>
               Some(VMVPropertyStatus(Approved, propertyLinkingUserAnswers.vmvProperty))
             case Some(_) =>

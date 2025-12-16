@@ -17,16 +17,11 @@
 package uk.gov.hmrc.ngrdashboardfrontend.connector
 
 import play.api.Logging
-import play.api.libs.json.Json
-import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
-import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 
-import java.net.URL
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,9 +32,9 @@ class NGRNotifyConnector @Inject()(http: HttpClientV2,
                             )(implicit ec: ExecutionContext) extends Logging {
 
 
-  def getRatepayerStatus(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[RatepayerStatusResponse]] = {
+  def getRatepayerStatus(implicit hc: HeaderCarrier): Future[Option[RatepayerStatusResponse]] = {
     if (!appConfig.features.getBridgeStatusFromStub()) {
-      http.get(url"${appConfig.notifyNGRUrl}/ngr-notify/ratepayer-status/${credId.value}")
+      http.get(url"${appConfig.notifyNGRUrl}/ngr-notify/ratepayer-status")
         .execute[Option[RatepayerStatusResponse]]
     } else {
       http.get(url"${appConfig.ngrStubUrl}/ngr-stub/hip-ratepayer-status/testCred123")

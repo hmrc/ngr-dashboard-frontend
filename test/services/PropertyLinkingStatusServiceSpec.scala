@@ -19,13 +19,15 @@ package services
 import helpers.{ControllerSpecSupport, TestData}
 import mocks.MockHttpV2
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import play.api.mvc.RequestHeader
 import play.api.test.DefaultAwaitTimeout
 import uk.gov.hmrc.auth.core.Nino
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending}
 import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
-import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.PropertyLinkingUserAnswers
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVPropertyStatus}
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 
@@ -36,12 +38,14 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
     super.beforeEach()
     mockConfig.features.getBridgeStatusFromStub(false)
     mockConfig.features.vmvPropertyStatusTestEnabled(false)
+    reset(mockNGRConnector.asInstanceOf[NGRConnector],
+    mockNotifyNGRConnector.asInstanceOf[NGRNotifyConnector])
   }
 
   implicit val requestHeader: RequestHeader = mock[RequestHeader]
 
   val credId = CredId("123456")
-  val nino: Nino = Nino(true, Some("AA000003D"))
+  val nino: Nino = Nino(hasNino = true, Some("AA000003D"))
   val linkedProperty = PropertyLinkingUserAnswers(credId, property)
 
   val service = new PropertyLinkingStatusService(
@@ -54,10 +58,11 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
 
   "PropertyLinkingStatusService" must {
     "produce correct results for linkedPropertyStatus when a bridge responds with rate payer status with one property links" in {
-      when(mockNotifyNGRConnector.getRatepayerStatus(any[CredId])(any())).thenReturn(Future.successful(Some(RatepayerStatusResponse(true, true, 1))))
+      when(mockNotifyNGRConnector.getRatepayerStatus(any())).thenReturn(Future.successful(Some(RatepayerStatusResponse(true, true, 1))))
       when(mockNGRConnector.getPropertyLinkingUserAnswers()(any())).thenReturn(Future.successful(Some(linkedProperty)))
 
-      val result = service.linkedPropertyStatus(credId, nino)
+      val result: Future[Option[VMVPropertyStatus]] = service.linkedPropertyStatus(credId, nino)
+      println("result: " + result.futureValue)
 
       result.futureValue.get.status mustBe Approved
     }

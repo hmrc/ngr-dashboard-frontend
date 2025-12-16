@@ -16,15 +16,10 @@
 
 package connector
 
-import com.typesafe.config.ConfigFactory
 import helpers.TestData
 import mocks.MockHttpV2
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
+import uk.gov.hmrc.ngrdashboardfrontend.connector.NGRNotifyConnector
 import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
-import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty}
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration._
 
 import scala.concurrent.Future
