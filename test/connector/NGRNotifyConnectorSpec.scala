@@ -36,15 +36,15 @@ override def beforeEach(): Unit = {
   "getRatepayer" when {
     "Successfully return a Ratepayer when feature switch is off" in {
       val response: RatepayerStatusResponse = RatepayerStatusResponse(false, false, 0)
-      setupMockHttpV2Get(s"${mockConfig.notifyNGRUrl}/ngr-notify/ratepayer-status/${id.value}")(Some(response))
-      val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus(id)
+      setupMockHttpV2Get(s"${mockConfig.notifyNGRUrl}/ngr-notify/ratepayer-status")(Some(response))
+      val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus
       result.futureValue.get.activePropertyLinkCount mustBe 0
       result.futureValue.get.activeRatepayerPersonExists mustBe false
       result.futureValue.get.activeRatepayerPersonaExists mustBe false
     }
     "ratepayer not found when feature switch is off" in {
-      setupMockHttpV2Get(s"${mockConfig.notifyNGRUrl}/ngr-notify/ratepayer-status/${id.value}")(None)
-      val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus(id)
+      setupMockHttpV2Get(s"${mockConfig.notifyNGRUrl}/ngr-notify/ratepayer-status")(None)
+      val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus
       result.futureValue mustBe None
     }
   }
@@ -54,7 +54,7 @@ override def beforeEach(): Unit = {
       mockConfig.features.getBridgeStatusFromStub(true)
       val response: RatepayerStatusResponse = RatepayerStatusResponse(false, false, 0)
       setupMockHttpV2Get(s"${mockConfig.ngrStubUrl}/ngr-stub/hip-ratepayer-status/testCred123")(Some(response))
-      val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus(id)
+      val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus
       result.futureValue.get.activePropertyLinkCount mustBe 0
       result.futureValue.get.activeRatepayerPersonExists mustBe false
       result.futureValue.get.activeRatepayerPersonaExists mustBe false
@@ -62,7 +62,7 @@ override def beforeEach(): Unit = {
     "ratepayer not found when feature switch is on" in {
       mockConfig.features.getBridgeStatusFromStub(true)
       setupMockHttpV2Get(s"${mockConfig.ngrStubUrl}/ngr-stub/hip-ratepayer-status/testCred123")(None)
-      val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus(id)
+      val result: Future[Option[RatepayerStatusResponse]] = ngrConnector.getRatepayerStatus
       result.futureValue mustBe None
     }
   }
