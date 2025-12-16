@@ -24,7 +24,17 @@ sm2 --stop  NGR_DASHBOARD_FRONTEND
     *  run the shell script `runMainPolicyJsonGenerator.sh` found in the `centralised-authorisation-policy-config` repo
     *  stop `CENTRALISED_AUTHORISATION_POLICY_SERVER` in `service manager`
     *  start `CENTRALISED_AUTHORISATION_POLICY_SERVER` in `service manager`
+    * 
+### Run with test only routes to populate stub data:
+* A dedicated test-only endpoint is available to populate stub data for development and testing purposes:
+* Visit http://localhost:1503/ngr-dashboard-frontend/test-only/populate-stub-data in your browser to trigger the stub data population.
+* It will clear all existing stub data from the `ngr-stub` service's MongoDB collection and reload it with predefined data from `ngr-stu/conf/stubData`.
+* To use this endpoint locally, run the following command:
+   
+      - Either run `sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes`, or note that `NGR_DASHBOARD_FRONTEND` may already have test-only routes enabled.
 
+  * This route is intended for testing purposes only and should not be used in production environments.
+  
 ### Running the test suite
 ```
 sbt clean coverage test coverageReport
