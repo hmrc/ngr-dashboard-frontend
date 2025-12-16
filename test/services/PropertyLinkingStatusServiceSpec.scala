@@ -24,7 +24,6 @@ import play.api.mvc.RequestHeader
 import play.api.test.DefaultAwaitTimeout
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending}
 import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVPropertyStatus}
@@ -38,8 +37,7 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
     super.beforeEach()
     mockConfig.features.getBridgeStatusFromStub(false)
     mockConfig.features.vmvPropertyStatusTestEnabled(false)
-    reset(mockNGRConnector.asInstanceOf[NGRConnector],
-    mockNotifyNGRConnector.asInstanceOf[NGRNotifyConnector])
+    reset(mockNGRConnector, mockNotifyNGRConnector)
   }
 
   implicit val requestHeader: RequestHeader = mock[RequestHeader]
@@ -54,7 +52,6 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
     mockNGRConnector,
     mockHttpClientV2
   )
-
 
   "PropertyLinkingStatusService" must {
     "produce correct results for linkedPropertyStatus when a bridge responds with rate payer status with one property links" in {
