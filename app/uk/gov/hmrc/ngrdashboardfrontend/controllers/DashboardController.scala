@@ -28,6 +28,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.services.{DashboardAuditingService, Prop
 import uk.gov.hmrc.ngrdashboardfrontend.utils.DashboardHelper
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.ngrdashboardfrontend.utils.StringHelper
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -41,7 +42,7 @@ class DashboardController @Inject()(
                                      auditingService: DashboardAuditingService,
                                      mcc: MessagesControllerComponents
                                    )(implicit ec: ExecutionContext, appConfig: AppConfig)
-  extends FrontendController(mcc) with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport with StringHelper {
 
   def show(): Action[AnyContent] = (authenticate andThen isRegisteredCheck).async { implicit request =>
       service.linkedPropertyStatus(request.credId, request.nino).map { vmvPropertyStatus =>
@@ -51,7 +52,7 @@ class DashboardController @Inject()(
           AuditModel(
             credId   = request.credId.toString,
             action   = "view-dashboard",
-            extraTags = Map("ninoLastFourDigits" -> request.nino.toString.takeRight(4))
+            extraTags = Map("maskedNino" -> maskNino(request.nino.toString))
           ),
           routes.DashboardController.show.url
         )
