@@ -33,11 +33,7 @@ class NGRConnector @Inject()(http: HttpClientV2,
                              appConfig: AppConfig)
                             (implicit ec: ExecutionContext) {
 
-  private def url(path: String, parameter: Option[String] = None): URL =
-    parameter match {
-      case None => url"${appConfig.nextGenerationRatesUrl}/next-generation-rates/$path"
-      case Some(param) => url"${appConfig.nextGenerationRatesUrl}/next-generation-rates/$path/$param"
-    }
+  private def url(path: String): URL = url"${appConfig.nextGenerationRatesUrl}/next-generation-rates/$path"
 
   def getRatepayer(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[RatepayerRegistrationValuation]] = {
     implicit val rds: HttpReads[RatepayerRegistrationValuation] = readFromJson
@@ -47,14 +43,14 @@ class NGRConnector @Inject()(http: HttpClientV2,
       .execute[Option[RatepayerRegistrationValuation]]
   }
 
-  def getPropertyLinkingUserAnswers(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[PropertyLinkingUserAnswers]] = {
+  def getPropertyLinkingUserAnswers()(implicit hc: HeaderCarrier): Future[Option[PropertyLinkingUserAnswers]] = {
     implicit val rds: HttpReads[PropertyLinkingUserAnswers] = readFromJson
-    http.get(url("get-property-linking-user-answers", Some(credId.value)))
+    http.get(url("get-property-linking-user-answers"))
       .execute[Option[PropertyLinkingUserAnswers]]
   }
 
   def getLinkedProperty(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[VMVProperty]] = {
-    getPropertyLinkingUserAnswers(credId)
+    getPropertyLinkingUserAnswers()
       .map {
         case Some(propertyLinkingUserAnswers) => Some(propertyLinkingUserAnswers.vmvProperty)
         case None => throw new NotFoundException("failed to find propertyLinkingUserAnswers from backend mongo")

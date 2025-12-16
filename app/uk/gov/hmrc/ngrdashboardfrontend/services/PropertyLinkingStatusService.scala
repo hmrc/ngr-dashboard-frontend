@@ -36,7 +36,7 @@ class PropertyLinkingStatusService @Inject()(notifyNGRConnector: NGRNotifyConnec
                                              http: HttpClientV2)(implicit ec: ExecutionContext) {
   def linkedPropertyStatus(credId: CredId, nino: Nino)(implicit hc: HeaderCarrier): Future[Option[VMVPropertyStatus]] = {
     if (appConfig.features.vmvPropertyStatusTestEnabled()) {
-      nGRConnector.getPropertyLinkingUserAnswers(credId).flatMap {
+      nGRConnector.getPropertyLinkingUserAnswers().flatMap {
         case Some(propertyLinkingUserAnswers) =>
           http.get(url"${appConfig.ngrStubUrl}/ngr-stub/ngrPropertyStatus/${nino.nino.getOrElse("AA000003D")}")
             .execute[HttpResponse].flatMap {
@@ -61,7 +61,7 @@ class PropertyLinkingStatusService @Inject()(notifyNGRConnector: NGRNotifyConnec
             }
         case None => Future.successful(None)
       }
-    } else nGRConnector.getPropertyLinkingUserAnswers(credId)
+    } else nGRConnector.getPropertyLinkingUserAnswers()
       .flatMap {
         case Some(propertyLinkingUserAnswers) =>
           notifyNGRConnector.getRatepayerStatus(credId).map {

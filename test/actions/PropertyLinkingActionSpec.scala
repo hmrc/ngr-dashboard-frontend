@@ -120,7 +120,7 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
         when(mockNGRConnector.getRatepayer(any())(any()))
           .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel.copy(isRegistered = Some(true)))))))
 
-        when(mockNGRConnector.getPropertyLinkingUserAnswers(any())(any())).thenReturn(Future.successful(None))
+        when(mockNGRConnector.getPropertyLinkingUserAnswers()(any())).thenReturn(Future.successful(None))
 
         val stubs = spy(Stubs)
 
@@ -141,7 +141,7 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
         when(mockNGRConnector.getRatepayer(any())(any()))
           .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel.copy(isRegistered = Some(true)))))))
 
-        when(mockNGRConnector.getPropertyLinkingUserAnswers(any())(any())).thenReturn(Future.successful(Some(linkedProperty)))
+        when(mockNGRConnector.getPropertyLinkingUserAnswers()(any())).thenReturn(Future.successful(Some(linkedProperty)))
 
         val stubs = spy(Stubs)
 

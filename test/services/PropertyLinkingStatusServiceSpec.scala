@@ -55,7 +55,7 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
   "PropertyLinkingStatusService" must {
     "produce correct results for linkedPropertyStatus when a bridge responds with rate payer status with one property links" in {
       when(mockNotifyNGRConnector.getRatepayerStatus(any[CredId])(any())).thenReturn(Future.successful(Some(RatepayerStatusResponse(true, true, 1))))
-      when(mockNGRConnector.getPropertyLinkingUserAnswers(any[CredId])(any())).thenReturn(Future.successful(Some(linkedProperty)))
+      when(mockNGRConnector.getPropertyLinkingUserAnswers()(any())).thenReturn(Future.successful(Some(linkedProperty)))
 
       val result = service.linkedPropertyStatus(credId, nino)
 
@@ -64,7 +64,7 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
 
     "produce correct results for linkedPropertyStatus when a bridge responds with rate payer status with zero property links" in {
       when(mockNotifyNGRConnector.getRatepayerStatus(any[CredId])(any())).thenReturn(Future.successful(Some(RatepayerStatusResponse(true, true, 0))))
-      when(mockNGRConnector.getPropertyLinkingUserAnswers(any[CredId])(any())).thenReturn(Future.successful(Some(linkedProperty)))
+      when(mockNGRConnector.getPropertyLinkingUserAnswers()(any())).thenReturn(Future.successful(Some(linkedProperty)))
 
       val result = service.linkedPropertyStatus(credId, nino)
 
@@ -73,7 +73,7 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
 
     "produce correct results for linkedPropertyStatus when a bridge responds with rate payer status when no response is received" in {
       when(mockNotifyNGRConnector.getRatepayerStatus(any[CredId])(any())).thenReturn(Future.successful(None))
-      when(mockNGRConnector.getPropertyLinkingUserAnswers(any[CredId])(any())).thenReturn(Future.successful(Some(linkedProperty)))
+      when(mockNGRConnector.getPropertyLinkingUserAnswers()(any())).thenReturn(Future.successful(Some(linkedProperty)))
 
       val result = service.linkedPropertyStatus(credId, nino)
 
@@ -82,7 +82,7 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
 
     "produce correct results for linkedPropertyStatus when a bridge responds with rate payer status when no response is received from property link answer" in {
       when(mockNotifyNGRConnector.getRatepayerStatus(any[CredId])(any())).thenReturn(Future.successful(None))
-      when(mockNGRConnector.getPropertyLinkingUserAnswers(any[CredId])(any())).thenReturn(Future.successful(None))
+      when(mockNGRConnector.getPropertyLinkingUserAnswers()(any())).thenReturn(Future.successful(None))
 
       val result = service.linkedPropertyStatus(credId, nino)
 
