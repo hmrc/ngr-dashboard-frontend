@@ -38,6 +38,7 @@ class DashboardControllerSpec extends ControllerSpecSupport with TestData {
     mockAuthJourney,
     mockIsRegisteredCheck,
     mockNGRService,
+    mockAuditingService,
     mcc
   )(ec, appConfig = mockConfig)
 

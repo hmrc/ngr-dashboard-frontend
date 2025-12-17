@@ -30,6 +30,7 @@ class AppConfigSpec extends TestSupport {
     "initialize features correctly" in {
       val mockConfig = mock[Configuration]
       val mockServicesConfig = mock[ServicesConfig]
+      when(mockConfig.getOptional[String]("appName")).thenReturn(Some("ngr-dashboard-frontend"))
       val appConfig = new FrontendAppConfig(mockConfig, mockServicesConfig)
       appConfig.features shouldBe a[Features] // Ensures Features is initialized
     }
@@ -37,6 +38,7 @@ class AppConfigSpec extends TestSupport {
     "retrieve nextGenerationRatesUrl from ServicesConfig" in {
       val mockConfig = mock[Configuration]
       val mockServicesConfig = mock[ServicesConfig]
+      when(mockConfig.getOptional[String]("appName")).thenReturn(Some("ngr-dashboard-frontend"))
       when(mockServicesConfig.baseUrl("next-generation-rates")).thenReturn("http://localhost/next-generation-rates")
 
       val appConfig = new FrontendAppConfig(mockConfig, mockServicesConfig)
@@ -47,6 +49,7 @@ class AppConfigSpec extends TestSupport {
     "retrieve existing config value using getString" in {
       val mockConfig = mock[Configuration]
       val mockServicesConfig = mock[ServicesConfig]
+      when(mockConfig.getOptional[String]("appName")).thenReturn(Some("ngr-dashboard-frontend"))
       when(mockConfig.getOptional[String]("some.key")).thenReturn(Some("someValue"))
 
       val appConfig = new FrontendAppConfig(mockConfig, mockServicesConfig)
@@ -57,6 +60,7 @@ class AppConfigSpec extends TestSupport {
     "throw an exception when config key is missing" in {
       val mockConfig = mock[Configuration]
       val mockServicesConfig = mock[ServicesConfig]
+      when(mockConfig.getOptional[String]("appName")).thenReturn(Some("ngr-dashboard-frontend"))
       when(mockConfig.getOptional[String]("missing.key")).thenReturn(None)
 
       val appConfig = new FrontendAppConfig(mockConfig, mockServicesConfig)

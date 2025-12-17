@@ -21,6 +21,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.config.features.Features
 
 class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig{
+  override val appName: String = "ngr-dashboard-frontend"
   override val features: Features = new Features()(runModeConfiguration)
   override val nextGenerationRatesUrl: String = "https://localhost:1500"
   override def getString(key: String): String = "???"
