@@ -17,8 +17,6 @@
 package uk.gov.hmrc.ngrdashboardfrontend.controllers
 
 import helpers.{ControllerSpecSupport, TestData}
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.OK
@@ -27,7 +25,6 @@ import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{VMVProperty, VMVPropertyStatus}
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectPropertyView
 
 import java.time.LocalDate
@@ -49,7 +46,7 @@ class SelectPropertyControllerSpec extends ControllerSpecSupport with TestData {
     "method show" must {
       "Return OK and the correct view" in {
         mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
+        when(mockNGRService.linkedPropertyStatus(any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -60,7 +57,7 @@ class SelectPropertyControllerSpec extends ControllerSpecSupport with TestData {
 
       "Throw exception when no property linking is found" in {
         mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
+        when(mockNGRService.linkedPropertyStatus(any[Nino])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
           await(controller().show()(authenticatedFakeRequest))
         }
@@ -75,36 +72,11 @@ class SelectPropertyControllerSpec extends ControllerSpecSupport with TestData {
           property.valuations.head.copy(effectiveDate = LocalDate.parse("2025-01-01"), assessmentRef = 9999777999L)
         ))
         mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithMultipleValuations))))
+        when(mockNGRService.linkedPropertyStatus(any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithMultipleValuations))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include("/review-your-property-details")
-      }
-
-      "assessment id is picked from the correct valuation when only one valuation exists" in {
-        val propertyWithSingleValuation: VMVProperty = property.copy(valuations = List(
-          property.valuations.head.copy(effectiveDate = LocalDate.parse("2022-01-01"), assessmentRef = 8888888888L)
-        ))
-        mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithSingleValuation))))
-        val result = controller().show()(authenticatedFakeRequest)
-        status(result) mustBe OK
-        val content: Document = Jsoup.parse(contentAsString(result))
-        content.getElementsByTag("td").last().html() must include("/review-your-property-details")
-      }
-
-      "assessment id is picked from the correct valuation when no CURRENT valuation exists" in {
-        val propertyWithNoCurrentValuation: VMVProperty = property.copy(valuations = List(
-          property.valuations.head.copy(assessmentStatus = "PREVIOUS", effectiveDate = LocalDate.parse("2021-04-01"), assessmentRef = 6666666666L),
-          property.valuations.head.copy(assessmentStatus = "PREVIOUS", effectiveDate = LocalDate.parse("2020-04-01"), assessmentRef = 5555555555L)
-        ))
-        mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, propertyWithNoCurrentValuation))))
-        val result = controller().show()(authenticatedFakeRequest)
-        status(result) mustBe OK
-        val content: Document = Jsoup.parse(contentAsString(result))
-        content.getElementsByTag("td").last().`val`() mustBe ""
       }
     }
   }

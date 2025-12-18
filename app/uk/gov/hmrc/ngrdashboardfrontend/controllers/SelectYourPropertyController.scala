@@ -69,7 +69,7 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
 
   def show(): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
-      ngrService.linkedPropertyStatus(request.credId, request.nino).flatMap {
+      ngrService.linkedPropertyStatus(request.nino).flatMap {
         case Some(vmvProperty) => Future.successful(Ok(selectYouPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)), routes.DashboardController.show.url)))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }

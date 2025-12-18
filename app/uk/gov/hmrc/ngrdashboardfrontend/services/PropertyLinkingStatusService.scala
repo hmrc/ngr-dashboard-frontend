@@ -23,7 +23,6 @@ import uk.gov.hmrc.ngrdashboardfrontend.config.AppConfig
 import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,11 +32,11 @@ class PropertyLinkingStatusService @Inject()(notifyNGRConnector: NGRNotifyConnec
                                              appConfig: AppConfig,
                                              nGRConnector: NGRConnector,
                                              http: HttpClientV2)(implicit ec: ExecutionContext) {
-  def linkedPropertyStatus(credId: CredId, nino: Nino)(implicit hc: HeaderCarrier): Future[Option[VMVPropertyStatus]] = {
+  def linkedPropertyStatus(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[VMVPropertyStatus]] = {
     if (appConfig.features.vmvPropertyStatusTestEnabled()) {
       nGRConnector.getPropertyLinkingUserAnswers().flatMap {
         case Some(propertyLinkingUserAnswers) =>
-          http.get(url"${appConfig.ngrStubUrl}/ngr-stub/ngrPropertyStatus/${nino.nino.getOrElse("AA000003D")}")
+          http.get(url"${appConfig.ngrStubUrl}/ngr-stub/ngrPropertyStatus/${nino.nino.getOrElse("AA000003D")}") //TODO remove this code once the ngr-notify PropertyStatus endpoint is complete
             .execute[HttpResponse].flatMap {
               response =>
                 response.body match {

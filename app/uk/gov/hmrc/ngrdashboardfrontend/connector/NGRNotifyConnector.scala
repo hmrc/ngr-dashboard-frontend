@@ -36,7 +36,7 @@ class NGRNotifyConnector @Inject()(http: HttpClientV2,
     if (!appConfig.features.getBridgeStatusFromStub()) {
       http.get(url"${appConfig.notifyNGRUrl}/ngr-notify/ratepayer-status")
         .execute[Option[RatepayerStatusResponse]]
-    } else {
+    } else {//TODO remove stub call when ngr-notify implementation is complete
       http.get(url"${appConfig.ngrStubUrl}/ngr-stub/hip-ratepayer-status/testCred123")
         .execute[Option[RatepayerStatusResponse]]
     }

@@ -46,7 +46,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
     "method show" must {
       "Return OK and the correct view when status is approved" in {
         mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
+        when(mockNGRService.linkedPropertyStatus(any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Approved, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -55,7 +55,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
       }
       "Return OK and the correct view when status is pending" in {
         mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Pending, property))))
+        when(mockNGRService.linkedPropertyStatus(any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Pending, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -64,7 +64,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
       }
       "Return OK and the correct view when status is rejected" in {
         mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Rejected, property))))
+        when(mockNGRService.linkedPropertyStatus(any[Nino])(any())).thenReturn(Future.successful(Some(VMVPropertyStatus(Rejected, property))))
         val result = controller().show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -73,7 +73,7 @@ class PropertyControllerSpec extends ControllerSpecSupport with TestData {
       }
       "Throw exception when no property linking is found" in {
         mockLinkedPropertiesRequest()
-        when(mockNGRService.linkedPropertyStatus(any[CredId], any[Nino])(any())).thenReturn(Future.successful(None))
+        when(mockNGRService.linkedPropertyStatus(any[Nino])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
           await(controller().show()(authenticatedFakeRequest))
         }

@@ -59,11 +59,12 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   private lazy val basGatewayHost = getString("microservice.services.bas-gateway-frontend.host")
   private lazy val raldHost = getString("microservice.services.ngr-rald-frontend.host")
   private lazy val physicalHost = getString("microservice.services.ngr-physical-frontend.host")
+  private lazy val reviewFrontendHost = getString("microservice.services.ngr-review-frontend.host")
   private lazy val dashboardBeforeYouGoUrl: String = s"$envHost${routes.BeforeYouGoController.show.url}"
   lazy val ngrRaldUrl: String = s"$raldHost/ngr-rald-frontend/"
   lazy val ngrPhysicalUrl: String = s"$physicalHost/ngr-physical-frontend/"
   lazy val feedbackFrontendUrl: String = s"$feedbackFrontendHost/feedback/Next-Generation-Rates"
   lazy val addAPropertyUrl: String = s"$propertyLinkingFrontendHost/ngr-property-linking-frontend/add-a-property"
-  lazy val reviewPropertyUrl: String = s"$propertyLinkingFrontendHost/ngr-property-linking-frontend/review-your-property-details"
+  lazy val reviewPropertyUrl: String = s"$reviewFrontendHost/ngr-review-frontend/review-your-property-details"
   lazy val logoutUrl: String = s"$basGatewayHost/bas-gateway/sign-out-without-state?continue=$dashboardBeforeYouGoUrl"
 }

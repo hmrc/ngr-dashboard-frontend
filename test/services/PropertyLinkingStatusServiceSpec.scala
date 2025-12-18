@@ -58,7 +58,7 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
       when(mockNotifyNGRConnector.getRatepayerStatus(any())).thenReturn(Future.successful(Some(RatepayerStatusResponse(true, true, 1))))
       when(mockNGRConnector.getPropertyLinkingUserAnswers()(any())).thenReturn(Future.successful(Some(linkedProperty)))
 
-      val result: Future[Option[VMVPropertyStatus]] = service.linkedPropertyStatus(credId, nino)
+      val result: Future[Option[VMVPropertyStatus]] = service.linkedPropertyStatus(nino)
       println("result: " + result.futureValue)
 
       result.futureValue.get.status mustBe Approved
@@ -68,7 +68,7 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
       when(mockNotifyNGRConnector.getRatepayerStatus(any[HeaderCarrier])).thenReturn(Future.successful(Some(RatepayerStatusResponse(true, true, 0))))
       when(mockNGRConnector.getPropertyLinkingUserAnswers()(any[HeaderCarrier])).thenReturn(Future.successful(Some(linkedProperty)))
 
-      val result = service.linkedPropertyStatus(credId, nino)
+      val result = service.linkedPropertyStatus(nino)
 
       result.futureValue.get.status mustBe Pending
     }
@@ -77,7 +77,7 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
       when(mockNotifyNGRConnector.getRatepayerStatus(any[HeaderCarrier])).thenReturn(Future.successful(None))
       when(mockNGRConnector.getPropertyLinkingUserAnswers()(any[HeaderCarrier])).thenReturn(Future.successful(Some(linkedProperty)))
 
-      val result = service.linkedPropertyStatus(credId, nino)
+      val result = service.linkedPropertyStatus(nino)
 
       result.futureValue mustBe None
     }
@@ -86,7 +86,7 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
       when(mockNotifyNGRConnector.getRatepayerStatus(any[HeaderCarrier])).thenReturn(Future.successful(None))
       when(mockNGRConnector.getPropertyLinkingUserAnswers()(any[HeaderCarrier])).thenReturn(Future.successful(None))
 
-      val result = service.linkedPropertyStatus(credId, nino)
+      val result = service.linkedPropertyStatus(nino)
 
       result.futureValue mustBe None
     }
