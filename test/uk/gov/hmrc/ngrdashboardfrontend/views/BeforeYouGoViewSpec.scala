@@ -28,7 +28,6 @@ class BeforeYouGoViewSpec extends ViewBaseSpec {
   val heading = "You have signed out"
   val signInHref = "Sign in to the service"
   val subHeading = "Before you go"
-  val body1 = "We will save your answers for 28 days."
   val body2 = "Your feedback helps us make our service better."
   val feedbackHref = "Take a short survey"
   val body3 = "Take a short survey to share your feedback on this service."
@@ -38,10 +37,9 @@ class BeforeYouGoViewSpec extends ViewBaseSpec {
     val heading = "#main-content > div > div > h1"
     val signIn = "#main-content > div > div > p:nth-child(2) > a"
     val subHeading = "#main-content > div > div > h2"
-    val body1 = "#main-content > div > div > p:nth-child(4)"
-    val body2 = "#main-content > div > div > p:nth-child(5)"
-    val feedback = "#main-content > div > div > p:nth-child(6) > a"
-    val body3 = "#main-content > div > div > p:nth-child(6)"
+    val body2 = "#main-content > div > div > p:nth-child(4)"
+    val feedback = "#main-content > div > div > p:nth-child(5) > a"
+    val body3 = "#main-content > div > div > p:nth-child(5)"
   }
 
   "BeforeYouGoView" must {
@@ -81,10 +79,6 @@ class BeforeYouGoViewSpec extends ViewBaseSpec {
 
     "show correct sub heading" in {
       elementText(Selectors.subHeading) mustBe subHeading
-    }
-
-    "show correct body1" in {
-      elementText(Selectors.body1) mustBe body1
     }
 
     "show correct body2" in {
