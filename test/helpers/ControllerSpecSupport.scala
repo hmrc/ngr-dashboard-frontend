@@ -19,10 +19,10 @@ package helpers
 import org.mockito.Mockito.when
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.Nino
+import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievals, PropertyLinkingAction, RegistrationAction}
 import uk.gov.hmrc.ngrdashboardfrontend.models.auth.AuthenticatedUserRequest
-import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.services.DashboardAuditingService
 

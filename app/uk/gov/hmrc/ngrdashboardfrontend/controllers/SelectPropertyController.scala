@@ -53,23 +53,15 @@ class SelectPropertyController @Inject()(selectPropertyView: SelectPropertyView,
         TableRowText(property.vmvProperty.addressFull),
         TableRowText(property.vmvProperty.localAuthorityReference),
         TableRowText(property.vmvProperty.valuations.lastOption.fold("")(_.descriptionText.toLowerCase.capitalize)),
-        getAssessmentId(property).map(assessmentRef => TableRowLink(routes.ReviewYourPropertyDetailsController.show.url, messages("property.select"))).getOrElse(TableRowText(""))
+        TableRowLink(appConfig.reviewPropertyUrl, messages("property.select"))
       )),
       caption = Some(messages("selectProperty.table.caption"))
     ).toTable
   }
 
-  private def getAssessmentId(property: VMVPropertyStatus): Option[String] = {
-    property.vmvProperty.valuations
-      .filter(_.assessmentStatus == "CURRENT")
-      .sortBy(_.effectiveDate)
-      .lastOption
-      .map(_.assessmentRef.toString)
-  }
-
   def show(): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
-      ngrService.linkedPropertyStatus(request.credId, request.nino).flatMap {
+      ngrService.linkedPropertyStatus(request.nino).flatMap {
         case Some(vmvProperty) => Future.successful(Ok(selectPropertyView(createDefaultNavBar, generateTable(List(vmvProperty)))))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }

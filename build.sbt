@@ -1,7 +1,7 @@
 import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "2.13.17"
 
 val strictBuilding: SettingKey[Boolean] = StrictBuilding.strictBuilding
 StrictBuilding.strictBuildingSetting

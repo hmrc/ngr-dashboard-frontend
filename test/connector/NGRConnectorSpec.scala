@@ -18,12 +18,12 @@ package connector
 
 import helpers.TestData
 import mocks.MockHttpV2
-import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.auth.core.Nino
+import uk.gov.hmrc.ngrdashboardfrontend.connector.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrdashboardfrontend.models.notify.RatepayerStatusResponse
-import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{PropertyLinkingUserAnswers, VMVProperty, VMVPropertyStatus}
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.PropertyLinkingUserAnswers
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.{CredId, Email, RatepayerRegistration, RatepayerRegistrationValuation, TRNReferenceNumber}
+import uk.gov.hmrc.ngrdashboardfrontend.models.registration._
 
 import scala.concurrent.Future
 
