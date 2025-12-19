@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.CreateNavBar
-import uk.gov.hmrc.ngrdashboardfrontend.models.components.{DashboardCard, Link, NavBarContents, NavBarCurrentPage, NavigationBarContent}
+import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 
 class DashboardViewSpec extends ViewBaseSpec {

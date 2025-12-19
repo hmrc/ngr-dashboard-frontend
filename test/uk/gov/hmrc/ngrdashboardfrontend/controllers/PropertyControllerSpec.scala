@@ -25,7 +25,6 @@ import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 
 import scala.concurrent.Future

@@ -27,7 +27,7 @@ import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.ngrdashboardfrontend.actions.{AuthRetrievalsImpl, PropertyLinkingActionImpl}
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.PropertyLinkingUserAnswers
 import uk.gov.hmrc.ngrdashboardfrontend.models.registration.ReferenceType.TRN

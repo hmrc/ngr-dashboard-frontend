@@ -20,8 +20,8 @@ import helpers.TestSupport
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.Configuration
-import uk.gov.hmrc.ngrdashboardfrontend.config.features.Features
 import uk.gov.hmrc.ngrdashboardfrontend.config.FrontendAppConfig
+import uk.gov.hmrc.ngrdashboardfrontend.config.features.Features
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class AppConfigSpec extends TestSupport {

@@ -27,7 +27,6 @@ import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.{VMVProperty, VMVPropertyStatus}
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 
 import java.time.LocalDate

@@ -23,7 +23,6 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
-import uk.gov.hmrc.ngrdashboardfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.DashboardView
 
 import scala.concurrent.Future
