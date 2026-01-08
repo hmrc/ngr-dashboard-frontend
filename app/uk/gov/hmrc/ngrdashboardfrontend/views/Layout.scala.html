@@ -46,20 +46,18 @@ showJSBackLink: Boolean = false,
 backLinkUrl: Option[String] = None,
 fullWidth: Boolean = false,
 navigationBarContent: Option[NavigationBarContent] = None,
-additionalHeadBlock: Option[Html] = None,
 timeout: Boolean = true
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
 
 @headScripts = {
     @stylesheets()
-    @additionalHeadBlock
     @if(timeout) {
         @hmrcTimeoutDialog(TimeoutDialog(
             timeout             = Some(appConfig.timeout),
             countdown           = Some(appConfig.countdown),
-//            keepAliveUrl        = Some(routes.KeepAliveController.keepAlive().url),
+            keepAliveUrl        = Some(uk.gov.hmrc.ngrdashboardfrontend.controllers.routes.KeepAliveController.keepAlive().url),
             keepAliveButtonText = Some(messages("timeout.keepAlive")),
-            signOutUrl          = Some(uk.gov.hmrc.ngrdashboardfrontend.controllers.routes.BeforeYouGoController.show.url),
+            signOutUrl          = Some(uk.gov.hmrc.ngrdashboardfrontend.controllers.routes.BeforeYouGoController.signout.url),
             signOutButtonText   = Some(messages("timeout.signOut")),
             title               = Some(messages("timeout.title")),
             message             = Some(messages("timeout.message")),

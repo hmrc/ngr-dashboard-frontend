@@ -42,9 +42,9 @@ class LayoutSpec extends ViewBaseSpec {
   "The Layout template" when {
 
     "produce the same output for apply() and render()" in {
-      val htmlApply = injectedView.apply(pageTitle = Some("Title of page"))(Html("Test")).body
-      val htmlRender = injectedView.render(pageTitle = Some("Title of page"), showJSBackLink = false, backLinkUrl = None, contentBlock = Html("Test"), request = request, messages = messages, appConfig = mockConfig, fullWidth = false, navigationBarContent = None).body
-      val htmlF = injectedView.f(Some("Title of page"), false, None, false, None)(Html("Test"))(request, messages, mockConfig).body
+      val htmlApply = injectedView.apply(pageTitle = Some("Title of page"), timeout = false)(Html("Test")).body
+      val htmlRender = injectedView.render(pageTitle = Some("Title of page"), showJSBackLink = false, backLinkUrl = None, contentBlock = Html("Test"), request = request, messages = messages, appConfig = mockConfig, fullWidth = false, navigationBarContent = None, timeout = false).body
+      val htmlF = injectedView.f(Some("Title of page"), false, None, false, None, false)(Html("Test"))(request, messages, mockConfig).body
 
       htmlApply mustBe htmlRender
       htmlF must not be empty
