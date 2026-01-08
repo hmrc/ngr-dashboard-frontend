@@ -37,8 +37,7 @@ class LayoutSpec extends ViewBaseSpec {
     super.beforeEach()
     mockConfig.features.welshLanguageSupportEnabled(false)
   }
-
-
+  
   "The Layout template" when {
 
     "produce the same output for apply() and render()" in {
