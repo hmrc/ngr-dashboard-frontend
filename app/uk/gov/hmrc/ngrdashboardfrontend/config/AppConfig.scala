@@ -37,6 +37,8 @@ trait AppConfig {
   val ngrStubUrl: String
   def getString(key: String): String
   val notifyNGRUrl: String
+  val timeout: Int
+  val countdown: Int
 }
 
 @Singleton
@@ -47,6 +49,8 @@ class FrontendAppConfig @Inject()(config: Configuration, sc: ServicesConfig) ext
   override val nextGenerationRatesUrl: String = sc.baseUrl("next-generation-rates")
   override val notifyNGRUrl: String = sc.baseUrl("ngr-notify")
   override val ngrStubUrl: String = sc.baseUrl("ngr-stub")
+  override val timeout: Int   = config.get[Int]("timeout-dialog.timeout")
+  override val countdown: Int = config.get[Int]("timeout-dialog.countdown")
 
   def getString(key: String): String =
     config.getOptional[String](key).filter(!_.isBlank).getOrElse(throwConfigNotFoundError(key))
