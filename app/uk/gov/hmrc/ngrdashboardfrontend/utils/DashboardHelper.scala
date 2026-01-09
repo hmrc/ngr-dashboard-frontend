@@ -22,6 +22,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.controllers.routes
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status
 import uk.gov.hmrc.ngrdashboardfrontend.models.Status.{Approved, Pending, Rejected}
 import uk.gov.hmrc.ngrdashboardfrontend.models.components.{Card, DashboardCard, Link}
+import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
 
 object DashboardHelper {
   // for demonstration:
@@ -114,5 +115,13 @@ object DashboardHelper {
         case Rejected => Seq(DashboardCard.card(dashboardPendingPropertyLink))
       }
     } else addProperty
+  }
+
+  def getAssessmentId(property: VMVPropertyStatus): Option[String] = {
+    property.vmvProperty.valuations
+      .filter(_.assessmentStatus == "CURRENT")
+      .sortBy(_.effectiveDate)
+      .lastOption
+      .map(_.assessmentRef.toString)
   }
 }

@@ -59,7 +59,6 @@ class PropertyLinkingStatusServiceSpec extends ControllerSpecSupport with Defaul
       when(mockNGRConnector.getPropertyLinkingUserAnswers()(any())).thenReturn(Future.successful(Some(linkedProperty)))
 
       val result: Future[Option[VMVPropertyStatus]] = service.linkedPropertyStatus(nino)
-      println("result: " + result.futureValue)
 
       result.futureValue.get.status mustBe Approved
     }
