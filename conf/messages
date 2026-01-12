@@ -101,3 +101,9 @@ property.select = Select property
 checkDetails.title = We are checking your details
 checkDetails.p1 = Your information has been submitted.
 checkDetails.returnHome = Return to account home
+
+#Timeout
+timeout.title = You’re about to be signed out
+timeout.message = Your session is about to expire due to inactivity in
+timeout.keepAlive = Stay Signed In
+timeout.signOut = Sign Out Now
