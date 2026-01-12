@@ -29,7 +29,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
 import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectYourPropertyView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
+import uk.gov.hmrc.ngrdashboardfrontend.utils.DashboardHelper._
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,13 +59,7 @@ class SelectYourPropertyController @Inject()(selectYouPropertyView: SelectYourPr
     ).toTable
   }
 
-  private def getAssessmentId(property: VMVPropertyStatus): Option[String] = {
-    property.vmvProperty.valuations
-      .filter(_.assessmentStatus == "CURRENT")
-      .sortBy(_.effectiveDate)
-      .lastOption
-      .map(_.assessmentRef.toString)
-  }
+
 
   def show(): Action[AnyContent] =
     (authenticate andThen hasLinkedProperties).async { implicit request: AuthenticatedUserRequest[AnyContent] =>

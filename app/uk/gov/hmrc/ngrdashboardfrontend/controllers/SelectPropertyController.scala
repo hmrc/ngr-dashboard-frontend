@@ -27,6 +27,7 @@ import uk.gov.hmrc.ngrdashboardfrontend.models.components.NavBarPageContents.cre
 import uk.gov.hmrc.ngrdashboardfrontend.models.components._
 import uk.gov.hmrc.ngrdashboardfrontend.models.propertyLinking.VMVPropertyStatus
 import uk.gov.hmrc.ngrdashboardfrontend.services.PropertyLinkingStatusService
+import uk.gov.hmrc.ngrdashboardfrontend.utils.DashboardHelper._
 import uk.gov.hmrc.ngrdashboardfrontend.views.html.SelectPropertyView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -53,7 +54,7 @@ class SelectPropertyController @Inject()(selectPropertyView: SelectPropertyView,
         TableRowText(property.vmvProperty.addressFull),
         TableRowText(property.vmvProperty.localAuthorityReference),
         TableRowText(property.vmvProperty.valuations.lastOption.fold("")(_.descriptionText.toLowerCase.capitalize)),
-        TableRowLink(appConfig.reviewPropertyUrl, messages("property.select"))
+        getAssessmentId(property).map(assessmentRef => TableRowLink(appConfig.reviewPropertyUrl(assessmentRef), messages("property.select"))).getOrElse(TableRowText(""))
       )),
       caption = Some(messages("selectProperty.table.caption"))
     ).toTable
